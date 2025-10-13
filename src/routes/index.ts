@@ -5,4 +5,9 @@ export const AuthRoutes = {
   changePassword: "/auth/change-password",
 };
 
+export const SidebarRoutes = {
+  dashboard: "/dashboard",
+};
+
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
+export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];

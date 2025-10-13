@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\"",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "gen-sdk": "openapi --client axios -i ./src/sdk/openapi.json -o ./src/sdk/generated --indent 2 --useUnionTypes"
   },
   "dependencies": {
     "@heroui/react": "^2.8.5",
@@ -37,6 +38,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",
+    "openapi-typescript-codegen": "^0.29.0",
     "prettier": "^3.6.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.45.0",
