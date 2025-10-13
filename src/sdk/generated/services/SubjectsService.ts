@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { MessageResponse } from "../models/MessageResponse";
 import type { SubjectCreate } from "../models/SubjectCreate";
 import type { SubjectListResponse } from "../models/SubjectListResponse";
