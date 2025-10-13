@@ -8,4 +8,3 @@
 export type AssignRolesToUserRequest = {
   role_ids: Array<string>;
 };
-

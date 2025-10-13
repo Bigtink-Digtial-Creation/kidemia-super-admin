@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { QuestionCreate } from './QuestionCreate';
+import type { QuestionCreate } from "./QuestionCreate";
 /**
  * Bulk question import request
  */
@@ -11,4 +11,3 @@ export type BulkQuestionImportRequest = {
   topic_id: string;
   questions: Array<QuestionCreate>;
 };
-

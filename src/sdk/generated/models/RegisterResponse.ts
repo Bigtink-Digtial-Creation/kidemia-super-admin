@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserResponse } from './UserResponse';
+import type { UserResponse } from "./UserResponse";
 /**
  * Schema for registration response
  */
@@ -10,4 +10,3 @@ export type RegisterResponse = {
   message: string;
   user: UserResponse;
 };
-

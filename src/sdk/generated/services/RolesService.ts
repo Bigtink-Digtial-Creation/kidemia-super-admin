@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AssignPermissionsToRoleRequest } from '../models/AssignPermissionsToRoleRequest';
-import type { MessageResponse } from '../models/MessageResponse';
-import type { RoleCreate } from '../models/RoleCreate';
-import type { RoleResponse } from '../models/RoleResponse';
-import type { RoleUpdate } from '../models/RoleUpdate';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { AssignPermissionsToRoleRequest } from "../models/AssignPermissionsToRoleRequest";
+import type { MessageResponse } from "../models/MessageResponse";
+import type { RoleCreate } from "../models/RoleCreate";
+import type { RoleResponse } from "../models/RoleResponse";
+import type { RoleUpdate } from "../models/RoleUpdate";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class RolesService {
   /**
    * Create a new role
@@ -28,10 +28,10 @@ export class RolesService {
     requestBody: RoleCreate,
   ): CancelablePromise<RoleResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/roles/',
+      method: "POST",
+      url: "/api/v1/roles/",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -50,11 +50,11 @@ export class RolesService {
     limit: number = 100,
   ): CancelablePromise<Array<RoleResponse>> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/roles/',
+      method: "GET",
+      url: "/api/v1/roles/",
       query: {
-        'skip': skip,
-        'limit': limit,
+        skip: skip,
+        limit: limit,
       },
       errors: {
         422: `Validation Error`,
@@ -67,10 +67,12 @@ export class RolesService {
    * @returns RoleResponse Successful Response
    * @throws ApiError
    */
-  public static getSystemRolesApiV1RolesSystemGet(): CancelablePromise<Array<RoleResponse>> {
+  public static getSystemRolesApiV1RolesSystemGet(): CancelablePromise<
+    Array<RoleResponse>
+  > {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/roles/system',
+      method: "GET",
+      url: "/api/v1/roles/system",
     });
   }
   /**
@@ -79,10 +81,12 @@ export class RolesService {
    * @returns RoleResponse Successful Response
    * @throws ApiError
    */
-  public static getCustomRolesApiV1RolesCustomGet(): CancelablePromise<Array<RoleResponse>> {
+  public static getCustomRolesApiV1RolesCustomGet(): CancelablePromise<
+    Array<RoleResponse>
+  > {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/roles/custom',
+      method: "GET",
+      url: "/api/v1/roles/custom",
     });
   }
   /**
@@ -98,10 +102,10 @@ export class RolesService {
     name: string,
   ): CancelablePromise<RoleResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/roles/name/{name}',
+      method: "GET",
+      url: "/api/v1/roles/name/{name}",
       path: {
-        'name': name,
+        name: name,
       },
       errors: {
         422: `Validation Error`,
@@ -119,10 +123,10 @@ export class RolesService {
     roleId: string,
   ): CancelablePromise<RoleResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/roles/{role_id}',
+      method: "GET",
+      url: "/api/v1/roles/{role_id}",
       path: {
-        'role_id': roleId,
+        role_id: roleId,
       },
       errors: {
         422: `Validation Error`,
@@ -146,13 +150,13 @@ export class RolesService {
     requestBody: RoleUpdate,
   ): CancelablePromise<RoleResponse> {
     return __request(OpenAPI, {
-      method: 'PATCH',
-      url: '/api/v1/roles/{role_id}',
+      method: "PATCH",
+      url: "/api/v1/roles/{role_id}",
       path: {
-        'role_id': roleId,
+        role_id: roleId,
       },
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -169,10 +173,10 @@ export class RolesService {
     roleId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: 'DELETE',
-      url: '/api/v1/roles/{role_id}',
+      method: "DELETE",
+      url: "/api/v1/roles/{role_id}",
       path: {
-        'role_id': roleId,
+        role_id: roleId,
       },
       errors: {
         422: `Validation Error`,
@@ -194,13 +198,13 @@ export class RolesService {
     requestBody: AssignPermissionsToRoleRequest,
   ): CancelablePromise<RoleResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/roles/{role_id}/permissions',
+      method: "POST",
+      url: "/api/v1/roles/{role_id}/permissions",
       path: {
-        'role_id': roleId,
+        role_id: roleId,
       },
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -219,11 +223,11 @@ export class RolesService {
     permissionId: string,
   ): CancelablePromise<RoleResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/roles/{role_id}/permissions/{permission_id}',
+      method: "POST",
+      url: "/api/v1/roles/{role_id}/permissions/{permission_id}",
       path: {
-        'role_id': roleId,
-        'permission_id': permissionId,
+        role_id: roleId,
+        permission_id: permissionId,
       },
       errors: {
         422: `Validation Error`,
@@ -243,11 +247,11 @@ export class RolesService {
     permissionId: string,
   ): CancelablePromise<RoleResponse> {
     return __request(OpenAPI, {
-      method: 'DELETE',
-      url: '/api/v1/roles/{role_id}/permissions/{permission_id}',
+      method: "DELETE",
+      url: "/api/v1/roles/{role_id}/permissions/{permission_id}",
       path: {
-        'role_id': roleId,
-        'permission_id': permissionId,
+        role_id: roleId,
+        permission_id: permissionId,
       },
       errors: {
         422: `Validation Error`,

@@ -5,4 +5,4 @@
 /**
  * Categories of roles
  */
-export type RoleType = 'system' | 'institution' | 'custom';
+export type RoleType = "system" | "institution" | "custom";

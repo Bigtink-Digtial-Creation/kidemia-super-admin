@@ -23,12 +23,38 @@ export const ChangePasswordSchema = z.object({
       {
         message:
           "New Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
-      }
+      },
     ),
 });
+
+export const SignUpSchema = z
+  .object({
+    first_name: z
+      .string({ message: "FirstName is required" })
+      .min(2, { message: "FirstName is required" }),
+    last_name: z
+      .string({ message: "LastName is required" })
+      .min(2, { message: "LastName is required" }),
+    email: z.email({ message: "Enter a valid email address" }),
+    password: z
+      .string({ message: "Password is required" })
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/,
+        {
+          message:
+            "Password must be at least 8 characters long and include uppercase, lowercase, number, and special character",
+        },
+      ),
+    confirmPassword: z
+      .string({ message: "Confirm Password is required" })
+      .min(8, { message: "Password is required" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  });
 
 export type LoginSchema = z.infer<typeof LoginSchema>;
 export type ForgotPasswordSchema = z.infer<typeof ForgotPasswordSchema>;
 export type ChangePasswordSchema = z.infer<typeof ChangePasswordSchema>;
-
-
+export type SignUpSchema = z.infer<typeof SignUpSchema>;

@@ -5,4 +5,4 @@
 /**
  * Question difficulty levels
  */
-export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'expert';
+export type DifficultyLevel = "easy" | "medium" | "hard" | "expert";

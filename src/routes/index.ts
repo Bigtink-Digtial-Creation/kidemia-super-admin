@@ -11,4 +11,3 @@ export const SidebarRoutes = {
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
-

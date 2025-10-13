@@ -9,4 +9,3 @@ export type ResetPasswordRequest = {
   token: string;
   new_password: string;
 };
-

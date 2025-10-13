@@ -10,13 +10,13 @@ export const apiErrorMessageParser = (message: string | string[]) => {
 };
 
 export const apiErrorParser = (
-  requestError: unknown
+  requestError: unknown,
 ): { name: string; message: string } => {
   const err = requestError as Error;
 
   console.warn(
     "[ERROR_PARSER]",
-    JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err), 2))
+    JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err), 2)),
   );
 
   if (err instanceof ApiError || err.name === "ApiError") {
@@ -68,7 +68,7 @@ export class ApiError extends Error {
   constructor(
     request: ApiRequestOptions,
     response: ApiResult,
-    message: string
+    message: string,
   ) {
     super(message);
 

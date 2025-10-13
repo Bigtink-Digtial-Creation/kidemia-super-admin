@@ -15,7 +15,6 @@ import { ApiSDK } from "../../sdk";
 import { AuthRoutes, SidebarRoutes } from "../../routes";
 import { apiErrorParser } from "../../utils/errorParser";
 
-
 export default function LoginPage() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
