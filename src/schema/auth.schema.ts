@@ -8,4 +8,10 @@ export const LoginSchema = z.object({
   remember_me: z.boolean().default(false).optional(),
 });
 
+export const ForgotPasswordSchema = z.object({
+  email: z.email({ message: "Enter a valid email address" }),
+});
+
 export type LoginSchema = z.infer<typeof LoginSchema>;
+export type ForgotPasswordSchema = z.infer<typeof ForgotPasswordSchema>;
+
