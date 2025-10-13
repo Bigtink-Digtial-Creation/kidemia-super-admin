@@ -7,6 +7,7 @@ import AuthLayout from "./layouts/Auth.layout";
 //auth
 import LoginPage from "./pages/Auth/Login";
 import ForgotPasswordPage from "./pages/Auth/ForgotPassword";
+import ChangePasswordPage from "./pages/Auth/ChangePassword";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -22,7 +23,8 @@ export const  router = createBrowserRouter([
         element: <Navigate to={AuthRoutes.login} replace />,
       },
       { path: AuthRoutes.login, element: <LoginPage /> },
-      { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> }
+      { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
+      { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> }
     ]
   }
 ])
