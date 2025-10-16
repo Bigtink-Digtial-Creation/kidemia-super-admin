@@ -7,6 +7,10 @@ export const AuthRoutes = {
 
 export const SidebarRoutes = {
   dashboard: "/dashboard",
+  settings: "/dashboard/settings",
+  performance: "/dashboard/performance",
+  history: "/dashboard/history",
+  profile: "/dashboard/profile",
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
