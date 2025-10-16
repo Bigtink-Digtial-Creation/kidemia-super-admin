@@ -82,8 +82,9 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
       )}
       <aside
         ref={sidebarRef}
-        className={`w-2xs absolute left-0 top-0 z-50 flex flex-col items-start justify-start overflow-y-clip bg-[#f5f6fa]/30 shadow-md transition-transform duration-300 ease-linear dark:bg-dark lg:static lg:translate-x-0 h-screen ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+        className={`w-2xs absolute left-0 top-0 z-50 flex flex-col items-start justify-start overflow-y-clip bg-[#f5f6fa]/30 shadow-md transition-transform duration-300 ease-linear dark:bg-dark lg:static lg:translate-x-0 h-screen ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="w-full flex justify-start">
           <div className="w-full flex  items-center justify-between px-6 py-4">

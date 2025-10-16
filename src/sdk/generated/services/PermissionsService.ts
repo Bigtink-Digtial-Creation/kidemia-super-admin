@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+
 import type { MessageResponse } from "../models/MessageResponse";
 import type { PermissionCreate } from "../models/PermissionCreate";
 import type { PermissionResponse } from "../models/PermissionResponse";
