@@ -13,6 +13,7 @@ import SignUpPage from "./pages/Auth/SignUp";
 
 //dashboard
 import DashboardPage from "./pages/Dashboard";
+import SubjectsPage from "./pages/Subjects";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
         path: SidebarRoutes.dashboard,
         element: <DashboardPage />,
       },
+      {
+        path: SidebarRoutes.subjects,
+        element: <SubjectsPage />
+      }
     ],
   },
 ]);

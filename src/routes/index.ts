@@ -8,6 +8,7 @@ export const AuthRoutes = {
 export const SidebarRoutes = {
   dashboard: "/dashboard",
   settings: "/dashboard/settings",
+  subjects: "/dashboard/subjects",
   performance: "/dashboard/performance",
   history: "/dashboard/history",
   profile: "/dashboard/profile",
