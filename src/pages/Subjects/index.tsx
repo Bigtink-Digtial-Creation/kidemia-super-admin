@@ -28,14 +28,16 @@ import { formatDateToDDMMYYYY } from "../../utils";
 import { useDebounce } from "../../hooks/use-debounce";
 import { HiDotsHorizontal } from "react-icons/hi";
 import DeleteSubjectModal from "../../components/Modals/DeleteSubjectModal";
+import UpdateSubjectModal from "../../components/Modals/UpdateSubjectModal";
 
 export default function SubjectsPage() {
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [subjectId, setSubjectId] = useState<string | null>(null);
+  const [subjectId, setSubjectId] = useState<string>("");
   const [subjectName, setSubjectName] = useState<string>("");
 
   const delectSubject = useDisclosure();
+  const updateSubject = useDisclosure();
 
   const pageSize = 10;
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -199,7 +201,19 @@ export default function SubjectsPage() {
                           <HiDotsHorizontal className="text-kidemia-secondary text-xl cursor-pointer shrink-0" />
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Static Actions">
-                          <DropdownItem key="view">View Subject</DropdownItem>
+                          <DropdownItem
+                            key="view"
+                            className="text-kidemia-secondary"
+                            color="warning"
+                            onPress={() => {
+                              if (subject?.id) {
+                                setSubjectId(subject.id);
+                                updateSubject.onOpen();
+                              }
+                            }}
+                          >
+                            View Subject
+                          </DropdownItem>
                           <DropdownItem
                             key="delete"
                             className="text-danger"
@@ -224,6 +238,13 @@ export default function SubjectsPage() {
           </div>
         </div>
       </section>
+
+      <UpdateSubjectModal
+        isOpen={updateSubject.isOpen}
+        onOpenChange={updateSubject.onOpenChange}
+        onClose={updateSubject.onClose}
+        id={subjectId}
+      />
 
       {subjectId ? (
         <DeleteSubjectModal
