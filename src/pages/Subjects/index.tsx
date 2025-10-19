@@ -138,7 +138,7 @@ export default function SubjectsPage() {
                       className="text-xs px-3 capitalize font-bold"
                       variant="flat"
                     >
-                      {subject.is_featured === true ? "Featured" : "Not Feauted"}
+                      {subject.is_featured === true ? "Featured" : "Not Featured"}
                     </Chip>
                   </TableCell>
                   <TableCell>
