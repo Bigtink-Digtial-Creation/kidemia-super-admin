@@ -1,15 +1,7 @@
-// export default function SignUpPage() {
-//   return (
-//     <div>SignUp</div>
-//   )
-// }
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { SignUpSchema } from "../../schema/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { useAtom, useSetAtom } from "jotai";
-// import { signupFormData, signupInfoStep } from "../../store/auth.atom";
 import { addToast, Button, Form, Input } from "@heroui/react";
 import { MdOutlineEmail } from "react-icons/md";
 import { BiScan, BiUser } from "react-icons/bi";
@@ -56,7 +48,6 @@ export default function SignUpPage() {
   });
 
   const onSubmit = (data: SignUpSchema) => {
-    console.log(data);
     const payload = {
       email: data.email,
       password: data.password,
@@ -64,7 +55,6 @@ export default function SignUpPage() {
       last_name: data.last_name,
       user_type: "platform_admin" as UserType,
     };
-
     signUpMutation.mutate(payload);
   };
 

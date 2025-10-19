@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+
 import type { DifficultyLevel } from "./DifficultyLevel";
 import type { QuestionOptionPublicResponse } from "./QuestionOptionPublicResponse";
 import type { QuestionTagResponse } from "./QuestionTagResponse";
