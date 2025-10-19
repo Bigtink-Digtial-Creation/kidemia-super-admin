@@ -43,8 +43,8 @@ export const router = createBrowserRouter([
       },
       {
         path: SidebarRoutes.subjects,
-        element: <SubjectsPage />
-      }
+        element: <SubjectsPage />,
+      },
     ],
   },
 ]);

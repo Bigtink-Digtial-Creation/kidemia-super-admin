@@ -20,4 +20,3 @@ export const formatDateToDDMMYYYY = (isoDate: string | Date): string => {
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
 };
-

@@ -55,30 +55,30 @@ export default function AddSubjectModal({
     setValue("color_code", value, { shouldValidate: true });
   };
 
-
   const addSubjectMutation = useMutation({
-    mutationFn: (formData: SubjectCreate) => ApiSDK.SubjectsService.createSubjectApiV1SubjectsPost(formData),
+    mutationFn: (formData: SubjectCreate) =>
+      ApiSDK.SubjectsService.createSubjectApiV1SubjectsPost(formData),
     onSuccess(data) {
-      onClose()
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.subjects] })
+      onClose();
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.subjects] });
       addToast({
         title: `Subject ${data.name} created successfully`,
-        color: "success"
-      })
+        color: "success",
+      });
     },
     onError(error) {
-      const parsedError = apiErrorParser(error)
+      onClose();
+      const parsedError = apiErrorParser(error);
       addToast({
         title: "An Error Occured",
         description: parsedError.message,
-        color: "danger"
-      })
-    }
-  })
-
+        color: "danger",
+      });
+    },
+  });
 
   const onSubmit = (data: AddSubjectSchema) => {
-    addSubjectMutation.mutate(data)
+    addSubjectMutation.mutate(data);
   };
 
   return (
