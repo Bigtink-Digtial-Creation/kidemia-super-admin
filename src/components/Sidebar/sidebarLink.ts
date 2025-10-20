@@ -1,8 +1,8 @@
 import type { IconType } from "react-icons";
 import { SidebarRoutes } from "../../routes";
-import { MdManageHistory, MdOutlineDashboard } from "react-icons/md";
-import { CgPerformance } from "react-icons/cg";
+import { MdOutlineDashboard } from "react-icons/md";
 import { PiBooksBold } from "react-icons/pi";
+import { SiPrivateinternetaccess } from "react-icons/si";
 
 export type SidebarLinkT = {
   title: string;
@@ -22,13 +22,8 @@ export const sidebarLinks: SidebarLinkT[] = [
     pathname: SidebarRoutes.subjects,
   },
   {
-    title: "Performance",
-    icon: CgPerformance,
-    pathname: SidebarRoutes.performance,
-  },
-  {
-    title: "History",
-    icon: MdManageHistory,
-    pathname: SidebarRoutes.history,
+    title: "Permissions",
+    icon: SiPrivateinternetaccess,
+    pathname: SidebarRoutes.permissions,
   },
 ];
