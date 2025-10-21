@@ -15,4 +15,14 @@ export const AddSubjectSchema = z.object({
     .min(2, { message: "Color Code is required" }),
 });
 
+export const updateSubjectSchema = z.object({
+  name: z.string().min(2, "Subject name is required"),
+  code: z.string().min(2, "Subject code is required"),
+  description: z.string().optional(),
+  color_code: z.string().optional(),
+  is_active: z.boolean(),
+  is_featured: z.boolean(),
+});
+
 export type AddSubjectSchema = z.infer<typeof AddSubjectSchema>;
+export type UpdateSubjectFormData = z.infer<typeof updateSubjectSchema>;

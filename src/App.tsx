@@ -49,12 +49,12 @@ export const router = createBrowserRouter([
       },
       {
         path: SidebarRoutes.profile,
-        element: <ProfilePage />
+        element: <ProfilePage />,
       },
       {
         path: SidebarRoutes.settings,
-        element: <SettingsPage />
-      }
+        element: <SettingsPage />,
+      },
     ],
   },
 ]);

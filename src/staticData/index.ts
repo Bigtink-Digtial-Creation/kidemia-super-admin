@@ -28,13 +28,3 @@ export const colors = [
   { key: "#9B5DE5", label: "Imagination Violet" },
   { key: "#4B4453", label: "Reflection Grey" },
 ];
-
-export const isActiveList = [
-  { key: "true", label: "True" },
-  { key: "false", label: "False" },
-];
-
-export const isFeaturedList = [
-  { key: "true", label: "True" },
-  { key: "false", label: "False" },
-];
