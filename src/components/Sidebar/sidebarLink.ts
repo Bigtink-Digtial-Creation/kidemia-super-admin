@@ -22,8 +22,8 @@ export const sidebarLinks: SidebarLinkT[] = [
     pathname: SidebarRoutes.subjects,
   },
   {
-    title: "Permissions",
+    title: "Roles",
     icon: SiPrivateinternetaccess,
-    pathname: SidebarRoutes.permissions,
+    pathname: SidebarRoutes.roles,
   },
 ];

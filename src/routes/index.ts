@@ -9,7 +9,7 @@ export const SidebarRoutes = {
   dashboard: "/dashboard",
   settings: "/dashboard/settings",
   subjects: "/dashboard/subjects",
-  permissions: "/dashboard/permissions",
+  roles: "/dashboard/roles",
   profile: "/dashboard/profile",
 };
 
