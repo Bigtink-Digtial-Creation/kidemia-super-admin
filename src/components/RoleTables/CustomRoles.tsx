@@ -10,38 +10,28 @@ import {
   TableHeader,
   TableRow,
 } from "@heroui/react";
+import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
-import { useQuery } from "@tanstack/react-query";
 import { formatDateToDDMMYYYY } from "../../utils";
 
-export default function AllRoles() {
+export default function CustomRoles() {
   const [page, setPage] = useState<number>(1);
   const pageSize = 10;
 
-  const { data: roles, isLoading } = useQuery({
-    queryKey: [QueryKeys.roles, page],
-    queryFn: () => ApiSDK.RolesService.listRolesApiV1RolesGet(),
+  const { data: customRoles, isLoading } = useQuery({
+    queryKey: [QueryKeys.customRole, page],
+    queryFn: () => ApiSDK.RolesService.getCustomRolesApiV1RolesCustomGet(),
   });
 
-  const totalRoles = roles?.length ?? 0;
+  const totalRoles = customRoles?.length ?? 0;
   const totalPages = Math.ceil(totalRoles / pageSize);
-
   const paginatedRoles =
-    roles?.slice((page - 1) * pageSize, page * pageSize) || [];
-
-  if (isLoading && !roles) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" color="warning" />
-      </div>
-    );
-  }
-
+    customRoles?.slice((page - 1) * pageSize, page * pageSize) || [];
   return (
     <div>
       <Table
-        aria-label="all roles table"
+        aria-label="custom roles table"
         isStriped
         className="pt-4"
         bottomContent={
@@ -64,7 +54,6 @@ export default function AllRoles() {
           <TableColumn>Display Name</TableColumn>
           <TableColumn>Name</TableColumn>
           <TableColumn>Description</TableColumn>
-          <TableColumn>Role Category</TableColumn>
           <TableColumn>Permissions</TableColumn>
           <TableColumn>Role Type</TableColumn>
           <TableColumn>Date Created</TableColumn>
@@ -75,7 +64,7 @@ export default function AllRoles() {
             isLoading ? (
               <Spinner size="lg" color="warning" />
             ) : (
-              "No available roles"
+              "No available custom roles"
             )
           }
         >
@@ -86,15 +75,7 @@ export default function AllRoles() {
               </TableCell>
               <TableCell>{role?.name}</TableCell>
               <TableCell>{role?.description}</TableCell>
-              <TableCell>
-                <Chip
-                  color={role?.is_system === true ? "success" : "warning"}
-                  className="text-xs px-3 capitalize font-bold"
-                  variant="flat"
-                >
-                  {role?.is_system === true ? "System" : "Custom"}
-                </Chip>
-              </TableCell>
+
               <TableCell>
                 <div className="flex flex-wrap gap-2">
                   {role.permissions?.length ? (
