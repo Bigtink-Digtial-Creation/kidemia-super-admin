@@ -1,6 +1,7 @@
 import {
   BreadcrumbItem,
   Breadcrumbs,
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -13,6 +14,8 @@ import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
+import { RiDeleteBin2Line } from "react-icons/ri";
+
 
 export default function SingleRoles() {
   const { id } = useParams<{ id: string }>();
@@ -53,11 +56,40 @@ export default function SingleRoles() {
           </BreadcrumbItem>
         </Breadcrumbs>
       </div>
-      <Card className="px-6 py-4">
-        <CardHeader>
+      <Card className="px-6 py-4 space-y-6">
+        <CardHeader className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-kidemia-primary capitalize">
             {singleRole?.display_name || "Role"}
           </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 ">
+            <Button
+              className="bg-kidemia-secondary text-kidemia-white font-semibold"
+              size="md"
+              radius="sm"
+              type="button"
+            >
+              Add Single Permission
+            </Button>
+
+            <Button
+              className="bg-kidemia-success text-kidemia-white font-semibold"
+              size="md"
+              radius="sm"
+              type="button"
+            >
+              Add Bulk Permissions
+            </Button>
+
+            <Button
+              className="bg-red-500 text-kidemia-white font-semibold"
+              size="md"
+              radius="sm"
+              type="button"
+            >
+              Delete Role
+            </Button>
+          </div>
         </CardHeader>
         <CardBody className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -72,6 +104,12 @@ export default function SingleRoles() {
             <div>
               <p className="text-sm text-kidemia-grey/70">Role Type</p>
               <p className="font-medium capitalize">{singleRole?.role_type}</p>
+            </div>
+            <div>
+              <p className="text-sm text-kidemia-grey/70">Role Category</p>
+              <p className="font-medium capitalize">
+                {singleRole?.is_system === true ? "System" : "Custom"}
+              </p>
             </div>
             <div>
               <p className="text-sm text-kidemia-grey/70">Created At</p>
@@ -118,6 +156,10 @@ export default function SingleRoles() {
                     <p className="text-kidemia-grey/70 capitalize">
                       Desc: {permission?.description}
                     </p>
+
+                    <div className="flex justify-end items-center">
+                      <RiDeleteBin2Line className="text-red-500 text-xl cursor-pointer shrink-0" />
+                    </div>
                   </div>
                 ))}
               </div>
