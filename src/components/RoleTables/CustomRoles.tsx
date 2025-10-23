@@ -9,13 +9,17 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
 } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import { formatDateToDDMMYYYY } from "../../utils";
+import { useNavigate } from "react-router";
+import { FaEye } from "react-icons/fa";
 
 export default function CustomRoles() {
+  const navigate = useNavigate()
   const [page, setPage] = useState<number>(1);
   const pageSize = 10;
 
@@ -57,6 +61,7 @@ export default function CustomRoles() {
           <TableColumn>Permissions</TableColumn>
           <TableColumn>Role Type</TableColumn>
           <TableColumn>Date Created</TableColumn>
+          <TableColumn>Action</TableColumn>
         </TableHeader>
 
         <TableBody
@@ -100,6 +105,13 @@ export default function CustomRoles() {
               <TableCell className="capitalize">{role?.role_type}</TableCell>
               <TableCell className="whitespace-nowrap">
                 {formatDateToDDMMYYYY(role?.created_at)}
+              </TableCell>
+              <TableCell>
+                <Tooltip content="View Details">
+                  <FaEye
+                    onClick={() => navigate(`/dashboard/roles/${role.id}`)}
+                    className="text-kidemia-secondary text-xl cursor-pointer shrink-0 hover:text-kidemia-primary transition-colors duration-200" />
+                </Tooltip>
               </TableCell>
             </TableRow>
           ))}

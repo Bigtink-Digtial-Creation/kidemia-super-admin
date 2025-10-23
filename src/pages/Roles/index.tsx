@@ -1,15 +1,19 @@
-import { BreadcrumbItem, Breadcrumbs, Tab, Tabs } from "@heroui/react";
+import { BreadcrumbItem, Breadcrumbs, Button, Tab, Tabs, useDisclosure } from "@heroui/react";
 import { SidebarRoutes } from "../../routes";
 import { MdOutlineDashboard } from "react-icons/md";
 import { SiPrivateinternetaccess } from "react-icons/si";
 import AllRoles from "../../components/RoleTables/AllRoles";
 import SystemRoles from "../../components/RoleTables/SystemRoles";
 import CustomRoles from "../../components/RoleTables/CustomRoles";
+import { FiPlusSquare } from "react-icons/fi";
+import AddRoleModal from "../../components/Modals/AddRoleModal";
 
 export default function RolesPage() {
+  const addRole = useDisclosure()
   return (
+    <>
     <section className="space-y-8">
-      <div>
+        <div className="flex justify-between items-center">
         <Breadcrumbs variant="light" color="foreground">
           <BreadcrumbItem
             href={SidebarRoutes.dashboard}
@@ -24,6 +28,17 @@ export default function RolesPage() {
             Roles
           </BreadcrumbItem>
         </Breadcrumbs>
+
+          <Button
+            className="bg-kidemia-secondary text-kidemia-white font-medium"
+            size="md"
+            radius="sm"
+            type="button"
+            startContent={<FiPlusSquare />}
+            onPress={() => addRole.onOpen()}
+          >
+            Add New Role
+          </Button>
       </div>
       <div className="space-y-3">
         <Tabs
@@ -52,5 +67,8 @@ export default function RolesPage() {
         </Tabs>
       </div>
     </section>
+
+      <AddRoleModal isOpen={addRole.isOpen} onOpenChange={addRole.onOpenChange} onClose={addRole.onClose} />
+    </>
   );
 }
