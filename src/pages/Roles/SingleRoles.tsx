@@ -18,11 +18,16 @@ import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import DeleteRoleModal from "../../components/Modals/DeleteRoleModal";
+import DeleteRolePermissionModal from "../../components/Modals/DeleteRolePermissionModal";
 
 export default function SingleRoles() {
   const { id } = useParams<{ id: string }>();
   const [roleName, setRoleName] = useState<string>("");
+  const [permName, setPermName] = useState<string>("");
+  const [permId, setPermId] = useState<string>("");
+
   const deleteRole = useDisclosure();
+  const deleteRolePerm = useDisclosure();
 
   const { data: singleRole, isLoading } = useQuery({
     queryKey: [QueryKeys.singleRole, id],
@@ -168,7 +173,15 @@ export default function SingleRoles() {
                       </p>
 
                       <div className="flex justify-end items-center">
-                        <RiDeleteBin2Line className="text-red-500 text-xl cursor-pointer shrink-0" />
+                        <RiDeleteBin2Line
+                          onClick={() => {
+                            setPermName(permission?.display_name);
+                            setPermId(permission?.id);
+                            setRoleName(singleRole?.display_name);
+                            deleteRolePerm.onOpen();
+                          }}
+                          className="text-red-500 text-xl cursor-pointer shrink-0"
+                        />
                       </div>
                     </div>
                   ))}
@@ -186,6 +199,18 @@ export default function SingleRoles() {
           onOpenChange={deleteRole.onOpenChange}
           role_id={id}
           name={roleName}
+        />
+      ) : null}
+
+      {id ? (
+        <DeleteRolePermissionModal
+          isOpen={deleteRolePerm.isOpen}
+          onClose={deleteRolePerm.onClose}
+          onOpenChange={deleteRolePerm.onOpenChange}
+          role_id={id}
+          permission_id={permId}
+          name={roleName}
+          permission={permName}
         />
       ) : null}
     </>
