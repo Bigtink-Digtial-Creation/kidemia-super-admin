@@ -19,7 +19,6 @@ import { RiDeleteBin2Line } from "react-icons/ri";
 
 export default function SingleRoles() {
   const { id } = useParams<{ id: string }>();
-  console.log({ id });
 
   const { data: singleRole, isLoading } = useQuery({
     queryKey: [QueryKeys.singleRole, id],
