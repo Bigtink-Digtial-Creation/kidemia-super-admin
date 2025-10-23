@@ -1,6 +1,16 @@
-import { Button, Form, Input, Modal, ModalBody, ModalContent, Select, SelectItem, Textarea } from '@heroui/react';
-import { MdOutlineMessage, MdSubject } from 'react-icons/md';
-import { PiLockKeyFill } from 'react-icons/pi';
+import {
+  Button,
+  Form,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  Select,
+  SelectItem,
+  Textarea,
+} from "@heroui/react";
+import { MdOutlineMessage, MdSubject } from "react-icons/md";
+import { PiLockKeyFill } from "react-icons/pi";
 
 interface AddRoleModalI {
   isOpen: boolean;
@@ -10,14 +20,22 @@ interface AddRoleModalI {
 
 const roleType = [
   { key: "custom", label: "Custom" },
-  { key: "system", label: "System" }
-]
-export default function AddRoleModal({ isOpen, onOpenChange, onClose }: AddRoleModalI) {
+  { key: "system", label: "System" },
+];
+export default function AddRoleModal({
+  isOpen,
+  onOpenChange,
+  onClose,
+}: AddRoleModalI) {
   return (
-    <Modal size='xl' isOpen={isOpen} onOpenChange={onOpenChange} onClose={onClose}>
-
+    <Modal
+      size="xl"
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      onClose={onClose}
+    >
       <ModalContent>
-        <ModalBody className='py-8'>
+        <ModalBody className="py-8">
           <div className="flex flex-col justify-center px-4 space-y-4">
             <div className="space-y-1">
               <h3 className="text-kidemia-primary text-2xl font-semibold text-center">
@@ -28,9 +46,8 @@ export default function AddRoleModal({ isOpen, onOpenChange, onClose }: AddRoleM
               </p>
             </div>
 
-            {/* form here */}
-            <Form className='py-4 space-y-2'>
-              <div className='pb-2 w-full'>
+            <Form className="py-4 space-y-2">
+              <div className="pb-2 w-full">
                 <Input
                   variant="flat"
                   size="lg"
@@ -41,13 +58,9 @@ export default function AddRoleModal({ isOpen, onOpenChange, onClose }: AddRoleM
                   }
                   type="text"
                   description="A unique role name"
-                // {...register("name")}
-                // isInvalid={!!errors?.name?.message}
-                // errorMessage={errors?.name?.message}
-                // isDisabled={addSubjectMutation.isPending}
                 />
               </div>
-              <div className='pb-2 w-full'>
+              <div className="pb-2 w-full">
                 <Input
                   variant="flat"
                   size="lg"
@@ -58,10 +71,6 @@ export default function AddRoleModal({ isOpen, onOpenChange, onClose }: AddRoleM
                   }
                   type="text"
                   description="Human-readable role name"
-                // {...register("name")}
-                // isInvalid={!!errors?.name?.message}
-                // errorMessage={errors?.name?.message}
-                // isDisabled={addSubjectMutation.isPending}
                 />
               </div>
 
@@ -97,7 +106,6 @@ export default function AddRoleModal({ isOpen, onOpenChange, onClose }: AddRoleM
                 </Select>
               </div>
 
-
               <div className="pb-2 w-full">
                 <Textarea
                   variant="flat"
@@ -107,10 +115,6 @@ export default function AddRoleModal({ isOpen, onOpenChange, onClose }: AddRoleM
                   startContent={
                     <MdOutlineMessage className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
                   }
-                // {...register("description")}
-                // isInvalid={!!errors?.description?.message}
-                // errorMessage={errors?.description?.message}
-                // isDisabled={addSubjectMutation.isPending}
                 />
               </div>
 
@@ -121,18 +125,14 @@ export default function AddRoleModal({ isOpen, onOpenChange, onClose }: AddRoleM
                   size="lg"
                   className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
                   radius="sm"
-                // isDisabled={addSubjectMutation.isPending}
-                // isLoading={addSubjectMutation.isPending}
                 >
                   Add Role
                 </Button>
               </div>
             </Form>
-
           </div>
         </ModalBody>
       </ModalContent>
-
     </Modal>
-  )
+  );
 }

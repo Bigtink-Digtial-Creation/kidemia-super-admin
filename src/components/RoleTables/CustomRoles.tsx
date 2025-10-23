@@ -19,7 +19,7 @@ import { useNavigate } from "react-router";
 import { FaEye } from "react-icons/fa";
 
 export default function CustomRoles() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const pageSize = 10;
 
@@ -110,7 +110,8 @@ export default function CustomRoles() {
                 <Tooltip content="View Details">
                   <FaEye
                     onClick={() => navigate(`/dashboard/roles/${role.id}`)}
-                    className="text-kidemia-secondary text-xl cursor-pointer shrink-0 hover:text-kidemia-primary transition-colors duration-200" />
+                    className="text-kidemia-secondary text-xl cursor-pointer shrink-0 hover:text-kidemia-primary transition-colors duration-200"
+                  />
                 </Tooltip>
               </TableCell>
             </TableRow>

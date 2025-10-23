@@ -64,12 +64,12 @@ export const router = createBrowserRouter([
       },
       {
         path: SidebarRoutes.singleRole,
-        element: <SingleRoles />
+        element: <SingleRoles />,
       },
       {
         path: SidebarRoutes.permissions,
-        element: <PermissionsPage />
-      }
+        element: <PermissionsPage />,
+      },
     ],
   },
 ]);

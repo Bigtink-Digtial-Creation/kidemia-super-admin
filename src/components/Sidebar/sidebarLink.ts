@@ -5,7 +5,6 @@ import { PiBooksBold } from "react-icons/pi";
 import { SiPrivateinternetaccess } from "react-icons/si";
 import { GoPasskeyFill } from "react-icons/go";
 
-
 export type SidebarLinkT = {
   title: string;
   icon: IconType;
