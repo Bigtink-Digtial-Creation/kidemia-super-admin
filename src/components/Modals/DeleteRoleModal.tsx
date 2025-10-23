@@ -12,29 +12,29 @@ import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
 import { apiErrorParser } from "../../utils/errorParser";
 
-interface DeleteSubjectModalI {
+interface DeleteRoleModalI {
   isOpen: boolean;
   onClose: () => void;
   onOpenChange: () => void;
-  id: string;
+  role_id: string;
   name: string;
 }
 
-export default function DeleteSubjectModal({
+export default function DeleteRoleModal({
   isOpen,
   onClose,
   onOpenChange,
-  id,
+  role_id,
   name,
-}: DeleteSubjectModalI) {
+}: DeleteRoleModalI) {
   const queryClient = useQueryClient();
 
-  const deleteSubjectMutation = useMutation({
-    mutationFn: (id: string) =>
-      ApiSDK.SubjectsService.deleteSubjectApiV1SubjectsSubjectIdDelete(id),
+  const deleteRoleMutation = useMutation({
+    mutationFn: (role_id: string) =>
+      ApiSDK.RolesService.deleteRoleApiV1RolesRoleIdDelete(role_id),
     onSuccess(data) {
       onClose();
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.subjects] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.roles] });
       addToast({
         title: data.message,
         color: "success",
@@ -50,7 +50,6 @@ export default function DeleteSubjectModal({
       });
     },
   });
-
   return (
     <Modal size="md" isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
@@ -63,22 +62,23 @@ export default function DeleteSubjectModal({
             </div>
             <div className="space-y-4 text-center">
               <h3 className="text-xl font-semibold text-kidemia-primary">
-                Are you sure you want to delete this subject({name})
+                Are you sure you want to delete this {name} Role
               </h3>
               <p className="text-sm  text-kidemia-grey">
-                Deleting this subject will revoke your access to the subject and
+                Deleting this role will revoke your access to the role and
                 remove all traces of it from Kidemia database.
               </p>
             </div>
           </div>
         </ModalBody>
+
         <ModalFooter>
           <div className="flex gap-3 w-full">
             <Button
               onPress={onClose}
               fullWidth
               className="bg-kidemia-biege border border-kidemia-black3 font-semibold text-kidemia-primary w-full"
-              isDisabled={deleteSubjectMutation.isPending}
+              isDisabled={deleteRoleMutation.isPending}
             >
               Cancel
             </Button>
@@ -86,10 +86,10 @@ export default function DeleteSubjectModal({
               fullWidth
               className="bg-red-500 text-kidemia-white font-semibold"
               onPress={() => {
-                deleteSubjectMutation.mutate(id);
+                deleteRoleMutation.mutate(role_id);
               }}
-              isLoading={deleteSubjectMutation.isPending}
-              isDisabled={deleteSubjectMutation.isPending}
+              isLoading={deleteRoleMutation.isPending}
+              isDisabled={deleteRoleMutation.isPending}
             >
               Delete
             </Button>

@@ -12,31 +12,44 @@ import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
 import { apiErrorParser } from "../../utils/errorParser";
 
-interface DeleteSubjectModalI {
+interface DeleteRolePermissionModalI {
   isOpen: boolean;
   onClose: () => void;
   onOpenChange: () => void;
-  id: string;
+  role_id: string;
+  permission_id: string;
   name: string;
+  permission: string;
 }
 
-export default function DeleteSubjectModal({
+export default function DeleteRolePermissionModal({
   isOpen,
   onClose,
   onOpenChange,
-  id,
+  role_id,
+  permission_id,
   name,
-}: DeleteSubjectModalI) {
+  permission,
+}: DeleteRolePermissionModalI) {
   const queryClient = useQueryClient();
 
-  const deleteSubjectMutation = useMutation({
-    mutationFn: (id: string) =>
-      ApiSDK.SubjectsService.deleteSubjectApiV1SubjectsSubjectIdDelete(id),
-    onSuccess(data) {
+  const deleteRolePermMutation = useMutation({
+    mutationFn: ({
+      role_id,
+      permission_id,
+    }: {
+      role_id: string;
+      permission_id: string;
+    }) =>
+      ApiSDK.RolesService.removePermissionFromRoleApiV1RolesRoleIdPermissionsPermissionIdDelete(
+        role_id,
+        permission_id,
+      ),
+    onSuccess() {
       onClose();
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.subjects] });
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.singleRole] });
       addToast({
-        title: data.message,
+        title: "Permission deleted successfully",
         color: "success",
       });
     },
@@ -50,7 +63,6 @@ export default function DeleteSubjectModal({
       });
     },
   });
-
   return (
     <Modal size="md" isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
@@ -63,22 +75,24 @@ export default function DeleteSubjectModal({
             </div>
             <div className="space-y-4 text-center">
               <h3 className="text-xl font-semibold text-kidemia-primary">
-                Are you sure you want to delete this subject({name})
+                Are you sure you want to delete the {permission} Permission for
+                the {name} Role
               </h3>
               <p className="text-sm  text-kidemia-grey">
-                Deleting this subject will revoke your access to the subject and
+                Deleting this permission will revoke such access to the role and
                 remove all traces of it from Kidemia database.
               </p>
             </div>
           </div>
         </ModalBody>
+
         <ModalFooter>
           <div className="flex gap-3 w-full">
             <Button
               onPress={onClose}
               fullWidth
               className="bg-kidemia-biege border border-kidemia-black3 font-semibold text-kidemia-primary w-full"
-              isDisabled={deleteSubjectMutation.isPending}
+              isDisabled={deleteRolePermMutation.isPending}
             >
               Cancel
             </Button>
@@ -86,10 +100,10 @@ export default function DeleteSubjectModal({
               fullWidth
               className="bg-red-500 text-kidemia-white font-semibold"
               onPress={() => {
-                deleteSubjectMutation.mutate(id);
+                deleteRolePermMutation.mutate({ role_id, permission_id });
               }}
-              isLoading={deleteSubjectMutation.isPending}
-              isDisabled={deleteSubjectMutation.isPending}
+              isLoading={deleteRolePermMutation.isPending}
+              isDisabled={deleteRolePermMutation.isPending}
             >
               Delete
             </Button>

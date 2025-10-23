@@ -16,6 +16,9 @@ import DashboardPage from "./pages/Dashboard";
 import SubjectsPage from "./pages/Subjects";
 import ProfilePage from "./pages/Profile";
 import SettingsPage from "./pages/Settings";
+import RolesPage from "./pages/Roles";
+import SingleRoles from "./pages/Roles/SingleRoles";
+import PermissionsPage from "./pages/Permissions";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -54,6 +57,18 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.settings,
         element: <SettingsPage />,
+      },
+      {
+        path: SidebarRoutes.roles,
+        element: <RolesPage />,
+      },
+      {
+        path: SidebarRoutes.singleRole,
+        element: <SingleRoles />,
+      },
+      {
+        path: SidebarRoutes.permissions,
+        element: <PermissionsPage />,
       },
     ],
   },

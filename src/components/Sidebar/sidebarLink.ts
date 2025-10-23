@@ -3,6 +3,7 @@ import { SidebarRoutes } from "../../routes";
 import { MdOutlineDashboard } from "react-icons/md";
 import { PiBooksBold } from "react-icons/pi";
 import { SiPrivateinternetaccess } from "react-icons/si";
+import { GoPasskeyFill } from "react-icons/go";
 
 export type SidebarLinkT = {
   title: string;
@@ -22,8 +23,13 @@ export const sidebarLinks: SidebarLinkT[] = [
     pathname: SidebarRoutes.subjects,
   },
   {
-    title: "Permissions",
+    title: "Roles",
     icon: SiPrivateinternetaccess,
+    pathname: SidebarRoutes.roles,
+  },
+  {
+    title: "Permissions",
+    icon: GoPasskeyFill,
     pathname: SidebarRoutes.permissions,
   },
 ];
