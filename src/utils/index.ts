@@ -20,3 +20,18 @@ export const formatDateToDDMMYYYY = (isoDate: string | Date): string => {
   const year = date.getFullYear();
   return `${day}-${month}-${year}`;
 };
+
+export const getChipColor = (action: string) => {
+  switch (action?.toLowerCase()) {
+    case "create":
+      return "success";
+    case "read":
+      return "primary";
+    case "update":
+      return "warning";
+    case "delete":
+      return "danger";
+    default:
+      return "secondary";
+  }
+};
