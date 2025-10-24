@@ -3,7 +3,7 @@ import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 
 export default function PermissionsPage() {
-  const { data: permissions, isLoading } = useQuery({
+  const { data: permissions } = useQuery({
     queryKey: [QueryKeys.permissions],
     queryFn: () =>
       ApiSDK.PermissionsService.listPermissionsApiV1PermissionsGet(),
