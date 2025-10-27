@@ -40,4 +40,8 @@ export const AddRoleSchema = z.object({
     .describe("List of permission IDs to assign"),
 });
 
+export const SinglePermSchema = z.object({
+  permission_id: z.string().min(1, "Select at least one permission"),
+});
 export type AddRoleSchema = z.infer<typeof AddRoleSchema>;
+export type SinglePermSchema = z.infer<typeof SinglePermSchema>;
