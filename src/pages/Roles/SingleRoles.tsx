@@ -243,6 +243,9 @@ export default function SingleRoles() {
           onOpenChange={bulkPerm.onOpenChange}
           role_id={id}
           name={roleName}
+          existingPermissionIds={
+            singleRole?.permissions?.map((perm) => perm.id) || []
+          }
         />
       ) : null}
     </>

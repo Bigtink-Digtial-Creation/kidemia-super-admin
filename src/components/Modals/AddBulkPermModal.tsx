@@ -26,6 +26,7 @@ interface AddBulkPermModalI {
   onOpenChange: () => void;
   role_id: string;
   name: string;
+  existingPermissionIds?: string[];
 }
 
 export default function AddBulkPermModal({
@@ -34,6 +35,7 @@ export default function AddBulkPermModal({
   onOpenChange,
   role_id,
   name,
+  existingPermissionIds = [],
 }: AddBulkPermModalI) {
   const { permissions, isLoading } = usePermissions();
   const queryClient = useQueryClient();
@@ -56,39 +58,46 @@ export default function AddBulkPermModal({
       permission_ids,
     }: {
       role_id: string;
-      permission_ids: any;
+      permission_ids: string[];
     }) =>
       ApiSDK.RolesService.assignPermissionsToRoleApiV1RolesRoleIdPermissionsPost(
         role_id,
-        permission_ids as any,
+        { permission_ids },
       ),
     onSuccess() {
-      onClose();
-      reset();
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.singleRole] });
       addToast({
         title: "Permission added Successfully",
         color: "success",
       });
+      reset();
+      onClose();
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.singleRole] });
     },
     onError(error) {
-      onClose();
       const parsedError = apiErrorParser(error);
       addToast({
         title: "An Error Occured",
         description: parsedError.message,
         color: "danger",
       });
+      onClose();
+      reset();
     },
   });
 
   const onSubmit = (data: BulkPermSchema) => {
-    console.log({ data });
+    const newIds = Array.isArray(data.permission_ids)
+      ? data.permission_ids
+      : [data.permission_ids];
+
+    const mergedIds = Array.from(
+      new Set([...existingPermissionIds, ...newIds]),
+    );
+
     const payload = {
-      ...data,
       role_id,
+      permission_ids: mergedIds,
     };
-    console.log("Final payload being sent:", payload);
     bulkPermMutation.mutate(payload);
   };
 
