@@ -24,7 +24,6 @@ export const AddRoleSchema = z.object({
       message: "Role type must be either 'system' or 'custom'",
     })
     .describe("Type of role (system, custom)"),
-    
   permission_ids: z
     .union([
       z.array(z.uuid("Each permission ID must be a valid UUID")),
@@ -33,18 +32,12 @@ export const AddRoleSchema = z.object({
         .transform((val) =>
           val
             ? val.split(",").filter((id) => z.uuid().safeParse(id).success)
-            : []
+            : [],
         ),
     ])
-    .transform((val) => (Array.isArray(val) ? val : [])) // Ensure output is always an array
-    .pipe(z.array(z.uuid()).min(1, "At least one permission must be selected"))
+    .transform((val) => (Array.isArray(val) ? val : []))
+    .pipe(z.array(z.uuid("Each permission ID must be a valid UUID")))
     .describe("List of permission IDs to assign"),
 });
-
-//   permission_ids: z
-//     .array(z.uuid("Each permission ID must be a valid UUID"))
-//     .min(1, "At least one permission must be selected")
-//     .describe("List of permission IDs to assign"),
-// });
 
 export type AddRoleSchema = z.infer<typeof AddRoleSchema>;

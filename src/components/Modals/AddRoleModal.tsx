@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   addToast,
   Button,
@@ -23,9 +24,8 @@ import { QueryKeys } from "../../utils/queryKeys";
 import { apiErrorParser } from "../../utils/errorParser";
 import z from "zod";
 
-
 interface Permission {
-  id: string; // UUID string
+  id: string;
   display_name: string;
 }
 
@@ -41,16 +41,21 @@ const roleType = [
   { key: "custom", label: "Custom" },
   { key: "system", label: "System" },
 ];
+
 export default function AddRoleModal({
   isOpen,
   onOpenChange,
   onClose,
 }: AddRoleModalI) {
-
   const { permissions, isLoading } = usePermissions();
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm<AddRoleSchema>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(AddRoleSchema),
     defaultValues: {
       name: "",
@@ -59,35 +64,33 @@ export default function AddRoleModal({
       role_type: undefined,
       permission_ids: [],
     },
-  })
-
+  });
 
   const addRoleMutation = useMutation({
-    mutationFn: (formData: RoleCreate) => ApiSDK.RolesService.createRoleApiV1RolesPost(formData),
+    mutationFn: (formData: RoleCreate) =>
+      ApiSDK.RolesService.createRoleApiV1RolesPost(formData),
     onSuccess() {
-      onClose()
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.roles] })
+      onClose();
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.roles] });
       addToast({
         title: "Role created successfully",
-        color: "success"
-      })
+        color: "success",
+      });
     },
     onError(error) {
-      onClose()
-      const parsedError = apiErrorParser(error)
+      onClose();
+      const parsedError = apiErrorParser(error);
       addToast({
         title: "An Error Occured",
         description: parsedError.message,
-        color: "danger"
-      })
-    }
-  })
+        color: "danger",
+      });
+    },
+  });
 
-  const onSubmit = (data: AddRoleSchema) => {
-    // addRoleMutation.mutate(data)
-    console.log({ data });
-
-  }
+  const onSubmit = (data: AddRoleSchema | any) => {
+    addRoleMutation.mutate(data);
+  };
 
   return (
     <Modal
@@ -123,7 +126,7 @@ export default function AddRoleModal({
                   {...register("name")}
                   isInvalid={!!errors?.name?.message}
                   errorMessage={errors?.name?.message}
-                  // isDisabled={addRoleMutation.isPending}
+                  isDisabled={addRoleMutation.isPending}
                 />
               </div>
               <div className="pb-2 w-full">
@@ -140,36 +143,11 @@ export default function AddRoleModal({
                   {...register("display_name")}
                   isInvalid={!!errors?.display_name?.message}
                   errorMessage={errors?.display_name?.message}
-                  // isDisabled={addRoleMutation.isPending}
+                  isDisabled={addRoleMutation.isPending}
                 />
               </div>
 
               <div className="pb-2 w-full">
-                {/* <Controller
-                  name="role_type"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      selectedKeys={field.value ? [field.value] : []}
-                      onSelectionChange={(keys) =>
-                        field.onChange(Array.from(keys)[0])
-                      }
-                      variant="flat"
-                      size="lg"
-                      radius="sm"
-                      placeholder="Role Type"
-                      startContent={<PiLockKeyFill className="text-kidemia-secondary text-xl" />}
-                      isInvalid={!!errors.role_type}
-                      errorMessage={errors.role_type?.message}
-                    // isDisabled={addRoleMutation.isPending}
-                    >
-                      {roleType.map((role) => (
-                        <SelectItem key={role.key}>{role.label}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                /> */}
                 <Controller
                   name="role_type"
                   control={control}
@@ -178,16 +156,18 @@ export default function AddRoleModal({
                       {...field}
                       selectedKeys={field.value ? [field.value] : []}
                       onSelectionChange={(keys) =>
-                        field.onChange(Array.from(keys)[0] || undefined) // CHANGE: Handle undefined
+                        field.onChange(Array.from(keys)[0] || undefined)
                       }
                       variant="flat"
                       size="lg"
                       radius="sm"
                       placeholder="Role Type"
-                      startContent={<PiLockKeyFill className="text-kidemia-secondary text-xl" />}
+                      startContent={
+                        <PiLockKeyFill className="text-kidemia-secondary text-xl" />
+                      }
                       isInvalid={!!errors.role_type}
                       errorMessage={errors.role_type?.message}
-                      // isDisabled={addRoleMutation.isPending}
+                      isDisabled={addRoleMutation.isPending}
                     >
                       {roleType.map((role) => (
                         <SelectItem key={role.key}>{role.label}</SelectItem>
@@ -197,147 +177,23 @@ export default function AddRoleModal({
                 />
               </div>
               <div className="pb-2 w-full">
-                {/* <Controller
-                  name="permission_ids"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      selectionMode="multiple"
-                      selectedKeys={field.value || []}
-                      onSelectionChange={(keys) =>
-                        field.onChange(Array.from(keys))
-                      }
-                      isLoading={isLoading}
-                      variant="flat"
-                      size="lg"
-                      radius="sm"
-                      placeholder="Role Permissions"
-                      startContent={<PiLockKeyFill className="text-kidemia-secondary text-xl" />}
-                      isInvalid={!!errors.permission_ids}
-                      errorMessage={errors.permission_ids?.message}
-                    // isDisabled={addRoleMutation.isPending}
-                    >
-                      {permissions?.map((perm) => (
-                        <SelectItem key={perm.id}>{perm.display_name}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                /> */}
-
-
-                {/* <Controller
-                  name="permission_ids"
-                  control={control}
-                  render={({ field }) => (
-                    <Select
-                      {...field}
-                      selectionMode="multiple"
-                      selectedKeys={new Set(field.value ?? [])} // ✅ convert array to Set
-                      onSelectionChange={(keys) => field.onChange(Array.from(keys))} // ✅ convert Set to array
-                      isLoading={isLoading}
-                      variant="flat"
-                      size="lg"
-                      radius="sm"
-                      placeholder="Role Permissions"
-                      startContent={<PiLockKeyFill className="text-kidemia-secondary text-xl" />}
-                      isInvalid={!!errors.permission_ids}
-                      errorMessage={errors.permission_ids?.message}
-                    >
-                      {permissions?.map((perm) => (
-                        <SelectItem key={perm.id}>{perm.display_name}</SelectItem>
-                      ))}
-                    </Select>
-                  )}
-                /> */}
-                {/*
-                {permissions && permissions.length > 0 ? (
-                  <Controller
-                    name="permission_ids"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        {...field}
-                        selectionMode="multiple"
-                        selectedKeys={new Set(field.value?.filter(id =>
-                          permissions.some(perm => perm.id === id)
-                        ) ?? [])}
-                        onSelectionChange={(keys) => field.onChange(Array.from(keys))}
-                        isLoading={isLoading}
-                        variant="flat"
-                        size="lg"
-                        radius="sm"
-                        placeholder="Role Permissions"
-                        startContent={<PiLockKeyFill className="text-kidemia-secondary text-xl" />}
-                        isInvalid={!!errors.permission_ids}
-                        errorMessage={errors.permission_ids?.message}
-                      >
-                        {permissions.map((perm) => (
-                          <SelectItem key={perm.id}>{perm.display_name}</SelectItem>
-                        ))}
-                      </Select>
-                    )}
-                  />
-                ) : (
-                  <div>Loading permissions...</div>
-                )} */}
-
-                {/* <Controller
-                  name="permission_ids"
-                  control={control}
-                  render={({ field }) => {
-                    // Normalize field.value to an array
-                    const valueAsArray = Array.isArray(field.value)
-                      ? field.value
-                      : typeof field.value === 'string' && field.value
-                        ? field.value.split(',') // Convert comma-separated string to array
-                        : [];
-
-                    // Filter valid IDs
-                    const validIds = valueAsArray.filter((id: any) =>
-                      permissions?.some(perm => String(perm.id) === String(id))
-                    );
-
-                    return (
-                      <Select
-                        {...field}
-                        selectionMode="multiple"
-                        selectedKeys={new Set(validIds)}
-                        onSelectionChange={(keys) => field.onChange(Array.from(keys))}
-                        isLoading={isLoading}
-                        variant="flat"
-                        size="lg"
-                        radius="sm"
-                        placeholder="Role Permissions"
-                        startContent={<PiLockKeyFill className="text-kidemia-secondary text-xl" />}
-                        isInvalid={!!errors.permission_ids}
-                        errorMessage={errors.permission_ids?.message}
-                      >
-                        {permissions?.map((perm) => (
-                          <SelectItem key={perm.id}>{perm.display_name}</SelectItem>
-                        ))}
-                      </Select>
-                    );
-                  }}
-                /> */}
-
                 <Controller
                   name="permission_ids"
                   control={control}
                   render={({ field }) => {
-                    // CHANGE: Add debug log
-                    console.log("field.value:", field.value, "type:", typeof field.value);
-
-                    // CHANGE: Normalize field.value to array with UUID validation
                     const valueAsArray = Array.isArray(field.value)
                       ? field.value
-                      : typeof field.value === 'string' && field.value
-                        ? field.value.split(',').filter((id: unknown) => z.uuid().safeParse(id).success)
+                      : typeof field.value === "string" && field.value
+                        ? field?.value
+                            ?.split(",")
+                            .filter(
+                              (id: unknown) => z.uuid().safeParse(id).success,
+                            )
                         : [];
-
-                    // CHANGE: Filter valid UUIDs that exist in permissions
                     const validIds = valueAsArray.filter((id: any) =>
-                      permissions?.some(perm => String(perm.id) === String(id))
+                      permissions?.some(
+                        (perm) => String(perm.id) === String(id),
+                      ),
                     );
 
                     return (
@@ -345,20 +201,26 @@ export default function AddRoleModal({
                         {...field}
                         selectionMode="multiple"
                         selectedKeys={new Set(validIds)}
-                        onSelectionChange={(keys) => field.onChange(Array.from(keys))}
+                        onSelectionChange={(keys) =>
+                          field.onChange(Array.from(keys))
+                        }
                         isLoading={isLoading}
                         variant="flat"
                         size="lg"
                         radius="sm"
                         placeholder="Role Permissions"
-                        startContent={<PiLockKeyFill className="text-kidemia-secondary text-xl" />}
+                        startContent={
+                          <PiLockKeyFill className="text-kidemia-secondary text-xl" />
+                        }
                         isInvalid={!!errors.permission_ids}
                         errorMessage={errors.permission_ids?.message}
-                      // isDisabled={addRoleMutation.isPending}
+                        isDisabled={addRoleMutation.isPending}
                       >
                         {permissions ? (
                           permissions.map((perm) => (
-                            <SelectItem key={perm.id}>{perm.display_name}</SelectItem>
+                            <SelectItem key={perm.id}>
+                              {perm.display_name}
+                            </SelectItem>
                           ))
                         ) : (
                           <SelectItem key="loading">Loading...</SelectItem>
@@ -381,7 +243,7 @@ export default function AddRoleModal({
                   {...register("description")}
                   isInvalid={!!errors?.description?.message}
                   errorMessage={errors?.description?.message}
-                  // isDisabled={addRoleMutation.isPending}
+                  isDisabled={addRoleMutation.isPending}
                 />
               </div>
 
@@ -392,8 +254,8 @@ export default function AddRoleModal({
                   size="lg"
                   className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
                   radius="sm"
-                  // isDisabled={addRoleMutation.isPending}
-                  // isLoading={addRoleMutation.isPending}
+                  isDisabled={addRoleMutation.isPending}
+                  isLoading={addRoleMutation.isPending}
                 >
                   Add Role
                 </Button>
