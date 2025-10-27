@@ -43,5 +43,24 @@ export const AddRoleSchema = z.object({
 export const SinglePermSchema = z.object({
   permission_id: z.string().min(1, "Select at least one permission"),
 });
+
+export const BulkPermSchema = z.object({
+  permission_ids: z
+    .union([
+      z.array(z.uuid("Each permission ID must be a valid UUID")),
+      z
+        .string()
+        .transform((val) =>
+          val
+            ? val.split(",").filter((id) => z.uuid().safeParse(id).success)
+            : [],
+        ),
+    ])
+    .transform((val) => (Array.isArray(val) ? val : []))
+    .pipe(z.array(z.uuid("Each permission ID must be a valid UUID")))
+    .describe("List of permission IDs to assign"),
+});
+
 export type AddRoleSchema = z.infer<typeof AddRoleSchema>;
 export type SinglePermSchema = z.infer<typeof SinglePermSchema>;
+export type BulkPermSchema = z.infer<typeof BulkPermSchema>;
