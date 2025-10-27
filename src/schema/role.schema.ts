@@ -61,6 +61,15 @@ export const BulkPermSchema = z.object({
     .describe("List of permission IDs to assign"),
 });
 
+export const PermissionSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  display_name: z.string().min(1, "Display Name is required"),
+  description: z.string().min(1, "Description is required"),
+  resource: z.string().min(1, "Resource is required"),
+  action: z.string().min(1, "Action is required"),
+});
+
 export type AddRoleSchema = z.infer<typeof AddRoleSchema>;
 export type SinglePermSchema = z.infer<typeof SinglePermSchema>;
 export type BulkPermSchema = z.infer<typeof BulkPermSchema>;
+export type PermissionSchema = z.infer<typeof PermissionSchema>;

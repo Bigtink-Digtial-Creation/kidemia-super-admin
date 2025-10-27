@@ -159,7 +159,12 @@ export default function AddBulkPermModal({
                       >
                         {permissions ? (
                           permissions.map((perm) => (
-                            <SelectItem key={perm.id}>
+                            <SelectItem
+                              key={perm.id}
+                              isDisabled={existingPermissionIds.includes(
+                                perm.id,
+                              )}
+                            >
                               {perm.display_name}
                             </SelectItem>
                           ))
