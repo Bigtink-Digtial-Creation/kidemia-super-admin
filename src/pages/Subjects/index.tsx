@@ -49,7 +49,7 @@ export default function SubjectsPage() {
   const { data: subjects, isLoading } = useQuery({
     queryKey: [QueryKeys.subjects, page],
     queryFn: () =>
-      ApiSDK.SubjectsService.getSubjectsApiV1SubjectsGet(page, pageSize),
+      ApiSDK.SubjectsService.getSubjectsApiV1SubjectsGet(),
     placeholderData: keepPreviousData,
   });
 
