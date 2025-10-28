@@ -1,15 +1,241 @@
-import { useQuery } from "@tanstack/react-query";
-import { QueryKeys } from "../../utils/queryKeys";
-import { ApiSDK } from "../../sdk";
+import { usePermissions } from "../../hooks/use-permission";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Input,
+  Pagination,
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+  Tooltip,
+  useDisclosure,
+} from "@heroui/react";
+import { SidebarRoutes } from "../../routes";
+import { MdOutlineDashboard, MdSearch } from "react-icons/md";
+import { GoPasskeyFill } from "react-icons/go";
+import { FiPlusSquare, FiTrash2 } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import { formatDateToDDMMYYYY, getChipColor } from "../../utils";
+import { useDebounce } from "../../hooks/use-debounce";
+import CreatePermissionModal from "../../components/Modals/CreatePermissionModal";
+import { PiPencilSimpleLineBold } from "react-icons/pi";
+import DeletePermModal from "../../components/Modals/DeletePermModal";
+import EditPermModal from "../../components/Modals/EditPermModal";
 
 export default function PermissionsPage() {
-  const { data: permissions } = useQuery({
-    queryKey: [QueryKeys.permissions],
-    queryFn: () =>
-      ApiSDK.PermissionsService.listPermissionsApiV1PermissionsGet(),
-  });
+  const addPerm = useDisclosure();
+  const delPerm = useDisclosure();
+  const editPerm = useDisclosure();
 
-  console.log({ permissions });
+  const [page, setPage] = useState<number>(1);
+  const [permId, setPermId] = useState<string>("");
+  const [permName, setPermName] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const pageSize = 10;
 
-  return <div>index</div>;
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchTerm]);
+
+  const { permissions, isLoading } = usePermissions();
+
+  const filteredPermissions =
+    permissions?.filter((perm) => {
+      const search = debouncedSearchTerm.toLowerCase();
+      return (
+        perm.display_name?.toLowerCase().includes(search) ||
+        perm.resource?.toLowerCase().includes(search)
+      );
+    }) || [];
+
+  const totalPermissions = filteredPermissions.length;
+  const totalPages = Math.ceil(totalPermissions / pageSize);
+
+  const paginatedPermissions = filteredPermissions.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  );
+
+  if (isLoading && !permissions) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Spinner size="lg" color="warning" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <section className="space-y-8">
+        <div className="flex justify-between items-center">
+          <Breadcrumbs variant="light" color="foreground">
+            <BreadcrumbItem
+              href={SidebarRoutes.dashboard}
+              startContent={<MdOutlineDashboard />}
+            >
+              Dashboard
+            </BreadcrumbItem>
+            <BreadcrumbItem
+              href={SidebarRoutes.permissions}
+              startContent={<GoPasskeyFill />}
+            >
+              Permissions
+            </BreadcrumbItem>
+          </Breadcrumbs>
+
+          <Button
+            className="bg-kidemia-secondary text-kidemia-white font-medium"
+            size="md"
+            radius="sm"
+            type="button"
+            startContent={<FiPlusSquare />}
+            onPress={() => addPerm.onOpen()}
+          >
+            Add New Permission
+          </Button>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex justify-end items-center">
+            <div className="md:w-1/2">
+              <Input
+                startContent={
+                  <MdSearch className="text-xl  text-kidemia-secondary" />
+                }
+                variant="flat"
+                size="lg"
+                radius="sm"
+                placeholder="Search by display name or resource"
+                fullWidth
+                isClearable
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onClear={() => setSearchTerm("")}
+              />
+            </div>
+          </div>
+          <Table
+            aria-label="permission table"
+            isStriped
+            className="pt-4"
+            bottomContent={
+              <div className="flex justify-end py-3">
+                <Pagination
+                  radius="sm"
+                  page={page}
+                  total={totalPages}
+                  onChange={setPage}
+                  showControls
+                  classNames={{
+                    cursor: "border-1 bg-transparent text-kidemia-primary",
+                    item: "bg-transparent shadow-none cursor-pointer",
+                  }}
+                />
+              </div>
+            }
+          >
+            <TableHeader>
+              <TableColumn>Display Name</TableColumn>
+              <TableColumn>Name</TableColumn>
+              <TableColumn>Description</TableColumn>
+              <TableColumn>Action</TableColumn>
+              <TableColumn>Resources</TableColumn>
+              <TableColumn>Date Created</TableColumn>
+              <TableColumn>Actions</TableColumn>
+            </TableHeader>
+            <TableBody
+              emptyContent={
+                isLoading ? (
+                  <Spinner size="lg" color="warning" />
+                ) : (
+                  "No available permissions"
+                )
+              }
+            >
+              {paginatedPermissions?.map((perm) => (
+                <TableRow key={perm?.id}>
+                  <TableCell className="capitalize whitespace-nowrap">
+                    {perm.display_name}
+                  </TableCell>
+                  <TableCell>{perm.name}</TableCell>
+                  <TableCell>{perm.description}</TableCell>
+                  <TableCell>
+                    <Chip
+                      color={getChipColor(perm?.action)}
+                      variant="flat"
+                      className="text-xs px-3 capitalize font-bold"
+                    >
+                      {perm.action}
+                    </Chip>
+                  </TableCell>
+                  <TableCell>{perm.resource}</TableCell>
+                  <TableCell className="whitespace-nowrap">
+                    {formatDateToDDMMYYYY(perm?.created_at)}
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="relative flex items-center gap-4">
+                      <Tooltip content="Update">
+                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                          <PiPencilSimpleLineBold
+                            onClick={() => {
+                              setPermId(perm?.id);
+                              setPermName(perm?.display_name);
+                              editPerm.onOpen();
+                            }}
+                          />
+                        </span>
+                      </Tooltip>
+
+                      <Tooltip color="danger" content="Delete user">
+                        <span className="text-lg text-danger cursor-pointer active:opacity-50">
+                          <FiTrash2
+                            onClick={() => {
+                              setPermId(perm?.id);
+                              setPermName(perm?.display_name);
+                              delPerm.onOpen();
+                            }}
+                          />
+                        </span>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
+
+      <CreatePermissionModal
+        isOpen={addPerm.isOpen}
+        onOpenChange={addPerm.onOpenChange}
+        onClose={addPerm.onClose}
+      />
+
+      <DeletePermModal
+        isOpen={delPerm.isOpen}
+        onClose={delPerm.onClose}
+        onOpenChange={delPerm.onOpenChange}
+        permission_id={permId}
+        name={permName}
+      />
+
+      <EditPermModal
+        isOpen={editPerm.isOpen}
+        onClose={editPerm.onClose}
+        onOpenChange={editPerm.onOpenChange}
+        permission_id={permId}
+        name={permName}
+      />
+    </>
+  );
 }

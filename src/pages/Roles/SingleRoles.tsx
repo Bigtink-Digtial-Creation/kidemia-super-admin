@@ -19,6 +19,8 @@ import { ApiSDK } from "../../sdk";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import DeleteRoleModal from "../../components/Modals/DeleteRoleModal";
 import DeleteRolePermissionModal from "../../components/Modals/DeleteRolePermissionModal";
+import AddSinglePermissionModal from "../../components/Modals/AddSinglePermissionModal";
+import AddBulkPermModal from "../../components/Modals/AddBulkPermModal";
 
 export default function SingleRoles() {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +30,8 @@ export default function SingleRoles() {
 
   const deleteRole = useDisclosure();
   const deleteRolePerm = useDisclosure();
+  const singlePerm = useDisclosure();
+  const bulkPerm = useDisclosure();
 
   const { data: singleRole, isLoading } = useQuery({
     queryKey: [QueryKeys.singleRole, id],
@@ -77,6 +81,10 @@ export default function SingleRoles() {
                 size="md"
                 radius="sm"
                 type="button"
+                onPress={() => {
+                  setRoleName(singleRole?.display_name as string);
+                  singlePerm.onOpen();
+                }}
               >
                 Add Single Permission
               </Button>
@@ -86,6 +94,10 @@ export default function SingleRoles() {
                 size="md"
                 radius="sm"
                 type="button"
+                onPress={() => {
+                  setRoleName(singleRole?.display_name as string);
+                  bulkPerm.onOpen();
+                }}
               >
                 Add Bulk Permissions
               </Button>
@@ -211,6 +223,29 @@ export default function SingleRoles() {
           permission_id={permId}
           name={roleName}
           permission={permName}
+        />
+      ) : null}
+
+      {id ? (
+        <AddSinglePermissionModal
+          isOpen={singlePerm.isOpen}
+          onOpenChange={singlePerm.onOpenChange}
+          name={roleName}
+          onClose={singlePerm.onClose}
+          role_id={id}
+        />
+      ) : null}
+
+      {id ? (
+        <AddBulkPermModal
+          isOpen={bulkPerm.isOpen}
+          onClose={bulkPerm.onClose}
+          onOpenChange={bulkPerm.onOpenChange}
+          role_id={id}
+          name={roleName}
+          existingPermissionIds={
+            singleRole?.permissions?.map((perm) => perm.id) || []
+          }
         />
       ) : null}
     </>
