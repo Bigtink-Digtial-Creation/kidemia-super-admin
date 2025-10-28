@@ -69,7 +69,13 @@ export const PermissionSchema = z.object({
   action: z.string().min(1, "Action is required"),
 });
 
+export const UpdatePermSchema = z.object({
+  display_name: z.string().min(1, "Display Name is required"),
+  description: z.string().min(1, "Description is required"),
+});
+
 export type AddRoleSchema = z.infer<typeof AddRoleSchema>;
 export type SinglePermSchema = z.infer<typeof SinglePermSchema>;
 export type BulkPermSchema = z.infer<typeof BulkPermSchema>;
 export type PermissionSchema = z.infer<typeof PermissionSchema>;
+export type UpdatePermSchema = z.infer<typeof UpdatePermSchema>;

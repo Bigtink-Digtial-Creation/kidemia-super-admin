@@ -26,10 +26,13 @@ import { useDebounce } from "../../hooks/use-debounce";
 import CreatePermissionModal from "../../components/Modals/CreatePermissionModal";
 import { PiPencilSimpleLineBold } from "react-icons/pi";
 import DeletePermModal from "../../components/Modals/DeletePermModal";
+import EditPermModal from "../../components/Modals/EditPermModal";
 
 export default function PermissionsPage() {
   const addPerm = useDisclosure();
   const delPerm = useDisclosure();
+  const editPerm = useDisclosure();
+
   const [page, setPage] = useState<number>(1);
   const [permId, setPermId] = useState<string>("");
   const [permName, setPermName] = useState<string>("");
@@ -182,7 +185,13 @@ export default function PermissionsPage() {
                     <div className="relative flex items-center gap-4">
                       <Tooltip content="Update">
                         <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                          <PiPencilSimpleLineBold />
+                          <PiPencilSimpleLineBold
+                            onClick={() => {
+                              setPermId(perm?.id);
+                              setPermName(perm?.display_name);
+                              editPerm.onOpen();
+                            }}
+                          />
                         </span>
                       </Tooltip>
 
@@ -216,6 +225,14 @@ export default function PermissionsPage() {
         isOpen={delPerm.isOpen}
         onClose={delPerm.onClose}
         onOpenChange={delPerm.onOpenChange}
+        permission_id={permId}
+        name={permName}
+      />
+
+      <EditPermModal
+        isOpen={editPerm.isOpen}
+        onClose={editPerm.onClose}
+        onOpenChange={editPerm.onOpenChange}
         permission_id={permId}
         name={permName}
       />
