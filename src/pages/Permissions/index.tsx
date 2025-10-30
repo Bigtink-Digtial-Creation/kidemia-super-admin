@@ -196,7 +196,7 @@ export default function PermissionsPage() {
                         </span>
                       </Tooltip>
 
-                      <Tooltip color="danger" content="Delete user">
+                      <Tooltip color="danger" content="Delete">
                         <span className="text-lg text-danger cursor-pointer active:opacity-50">
                           <FiTrash2
                             onClick={() => {
