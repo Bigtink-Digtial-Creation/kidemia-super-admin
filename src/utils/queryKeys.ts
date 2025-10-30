@@ -9,4 +9,5 @@ export const QueryKeys = {
   permissions: "permissions",
   permissionId: "permissionId",
   subjectTopics: "subjectTopics",
+  topicById: "topicById",
 } as const;

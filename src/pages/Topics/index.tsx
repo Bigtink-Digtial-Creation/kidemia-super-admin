@@ -81,6 +81,7 @@ export default function TopicsPage() {
                       color={sub.is_active === true ? "success" : "warning"}
                       className="text-xs px-3 capitalize font-bold"
                       variant="flat"
+                      size="sm"
                     >
                       {sub.is_active === true ? "Active" : "Inactive"}
                     </Chip>
@@ -89,6 +90,7 @@ export default function TopicsPage() {
                       color={sub.is_featured === true ? "success" : "warning"}
                       className="text-xs px-3 capitalize font-bold"
                       variant="flat"
+                      size="sm"
                     >
                       {sub.is_featured === true ? "Featured" : "Not Featured"}
                     </Chip>
@@ -96,6 +98,8 @@ export default function TopicsPage() {
                   <div>
                     <Button
                       variant="light"
+                      color="warning"
+                      radius="full"
                       size="sm"
                       className="text-sm text-kidemia-secondary font-semibold hover:underline"
                       onPress={() => {

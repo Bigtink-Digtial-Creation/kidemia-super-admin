@@ -26,6 +26,7 @@ import { subjectTitleAtom } from "../../store/subject.atom";
 import { PiPencilSimpleLineBold } from "react-icons/pi";
 import { FiTrash2 } from "react-icons/fi";
 import DeleteTopicModal from "../../components/Modals/DeleteTopicModal";
+import UpdateTopicModal from "../../components/Modals/UpdateTopicModal";
 
 export default function SingleTopic() {
   const { id } = useParams<{ id: string }>();
@@ -34,6 +35,7 @@ export default function SingleTopic() {
   const [topicId, setTopicId] = useState<string>("");
   const [topicName, setTopicName] = useState<string>("");
   const delTopic = useDisclosure();
+  const updateTopic = useDisclosure()
 
   const pageSize = 10;
 
@@ -176,11 +178,11 @@ export default function SingleTopic() {
                         <Tooltip content="Update">
                           <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                             <PiPencilSimpleLineBold
-                            // onClick={() => {
-                            //   setPermId(perm?.id);
-                            //   setPermName(perm?.display_name);
-                            //   editPerm.onOpen();
-                            // }}
+                              onClick={() => {
+                                setTopicId(topic?.id);
+                                setTopicName(topic?.name);
+                                updateTopic.onOpen();
+                              }}
                             />
                           </span>
                         </Tooltip>
@@ -213,6 +215,13 @@ export default function SingleTopic() {
         topic_id={topicId}
         name={topicName}
       />
+
+      <UpdateTopicModal
+        isOpen={updateTopic.isOpen}
+        onClose={updateTopic.onClose}
+        onOpenChange={updateTopic.onOpenChange}
+        topic_id={topicId}
+        name={topicName} />
     </>
   );
 }
