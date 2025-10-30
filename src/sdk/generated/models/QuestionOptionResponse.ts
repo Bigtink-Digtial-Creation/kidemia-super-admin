@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 /**
  * Schema for question option response
  */
@@ -12,9 +12,10 @@ export type QuestionOptionResponse = {
   option_text: string;
   option_order: number;
   is_correct?: boolean;
-  explanation?: string | null;
-  image_url?: string | null;
-  match_pair_id?: string | null;
-  correct_order?: number | null;
+  explanation?: (string | null);
+  image_url?: (string | null);
+  match_pair_id?: (string | null);
+  correct_order?: (number | null);
   question_id: string;
 };
+

@@ -1,15 +1,15 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { MessageResponse } from "../models/MessageResponse";
-import type { TopicCreate } from "../models/TopicCreate";
-import type { TopicListResponse } from "../models/TopicListResponse";
-import type { TopicResponse } from "../models/TopicResponse";
-import type { TopicUpdate } from "../models/TopicUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+/* eslint-disable */
+import type { MessageResponse } from '../models/MessageResponse';
+import type { TopicCreate } from '../models/TopicCreate';
+import type { TopicListResponse } from '../models/TopicListResponse';
+import type { TopicResponse } from '../models/TopicResponse';
+import type { TopicUpdate } from '../models/TopicUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class SubjectTopicsService {
   /**
    * Create a new topic
@@ -41,10 +41,10 @@ export class SubjectTopicsService {
     requestBody: TopicCreate,
   ): CancelablePromise<TopicResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/topics/",
+      method: 'POST',
+      url: '/api/v1/topics/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -84,10 +84,10 @@ export class SubjectTopicsService {
     requestBody: Array<TopicCreate>,
   ): CancelablePromise<Array<TopicResponse>> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/topics/bulk",
+      method: 'POST',
+      url: '/api/v1/topics/bulk',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -108,14 +108,14 @@ export class SubjectTopicsService {
     limit: number = 20,
   ): CancelablePromise<TopicListResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/subject/{subject_id}",
+      method: 'GET',
+      url: '/api/v1/topics/subject/{subject_id}',
       path: {
-        subject_id: subjectId,
+        'subject_id': subjectId,
       },
       query: {
-        skip: skip,
-        limit: limit,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -134,18 +134,18 @@ export class SubjectTopicsService {
    */
   public static searchTopicsApiV1TopicsSearchGet(
     q: string,
-    subjectId?: string | null,
+    subjectId?: (string | null),
     skip?: number,
     limit: number = 20,
   ): CancelablePromise<Array<TopicResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/search",
+      method: 'GET',
+      url: '/api/v1/topics/search',
       query: {
-        q: q,
-        subject_id: subjectId,
-        skip: skip,
-        limit: limit,
+        'q': q,
+        'subject_id': subjectId,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -163,10 +163,10 @@ export class SubjectTopicsService {
     topicId: string,
   ): CancelablePromise<TopicResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'GET',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       errors: {
         422: `Validation Error`,
@@ -188,13 +188,13 @@ export class SubjectTopicsService {
     requestBody: TopicUpdate,
   ): CancelablePromise<TopicResponse> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'PUT',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -213,10 +213,10 @@ export class SubjectTopicsService {
     topicId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'DELETE',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       errors: {
         422: `Validation Error`,

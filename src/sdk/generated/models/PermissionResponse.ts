@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
+/* eslint-disable */
 /**
  * Schema for permission response
  */
@@ -11,7 +11,8 @@ export type PermissionResponse = {
   id: string;
   name: string;
   display_name: string;
-  description?: string | null;
+  description?: (string | null);
   resource: string;
   action: string;
 };
+

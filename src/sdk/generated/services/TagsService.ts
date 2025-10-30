@@ -1,14 +1,14 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { MessageResponse } from "../models/MessageResponse";
-import type { QuestionTagCreate } from "../models/QuestionTagCreate";
-import type { QuestionTagResponse } from "../models/QuestionTagResponse";
-import type { QuestionTagUpdate } from "../models/QuestionTagUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+/* eslint-disable */
+import type { MessageResponse } from '../models/MessageResponse';
+import type { QuestionTagCreate } from '../models/QuestionTagCreate';
+import type { QuestionTagResponse } from '../models/QuestionTagResponse';
+import type { QuestionTagUpdate } from '../models/QuestionTagUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class TagsService {
   /**
    * Get all tags
@@ -16,12 +16,10 @@ export class TagsService {
    * @returns QuestionTagResponse Successful Response
    * @throws ApiError
    */
-  public static getTagsApiV1TagsGet(): CancelablePromise<
-    Array<QuestionTagResponse>
-  > {
+  public static getTagsApiV1TagsGet(): CancelablePromise<Array<QuestionTagResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/tags/",
+      method: 'GET',
+      url: '/api/v1/tags/',
     });
   }
   /**
@@ -35,10 +33,10 @@ export class TagsService {
     requestBody: QuestionTagCreate,
   ): CancelablePromise<QuestionTagResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/tags/",
+      method: 'POST',
+      url: '/api/v1/tags/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -55,10 +53,10 @@ export class TagsService {
     limit: number = 20,
   ): CancelablePromise<Array<QuestionTagResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/tags/popular",
+      method: 'GET',
+      url: '/api/v1/tags/popular',
       query: {
-        limit: limit,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -76,10 +74,10 @@ export class TagsService {
     tagId: string,
   ): CancelablePromise<QuestionTagResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/tags/{tag_id}",
+      method: 'GET',
+      url: '/api/v1/tags/{tag_id}',
       path: {
-        tag_id: tagId,
+        'tag_id': tagId,
       },
       errors: {
         422: `Validation Error`,
@@ -99,13 +97,13 @@ export class TagsService {
     requestBody: QuestionTagUpdate,
   ): CancelablePromise<QuestionTagResponse> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/v1/tags/{tag_id}",
+      method: 'PUT',
+      url: '/api/v1/tags/{tag_id}',
       path: {
-        tag_id: tagId,
+        'tag_id': tagId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -122,10 +120,10 @@ export class TagsService {
     tagId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/v1/tags/{tag_id}",
+      method: 'DELETE',
+      url: '/api/v1/tags/{tag_id}',
       path: {
-        tag_id: tagId,
+        'tag_id': tagId,
       },
       errors: {
         422: `Validation Error`,

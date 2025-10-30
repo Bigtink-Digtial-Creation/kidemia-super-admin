@@ -1,15 +1,15 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { MessageResponse } from "../models/MessageResponse";
-import type { SubjectCreate } from "../models/SubjectCreate";
-import type { SubjectListResponse } from "../models/SubjectListResponse";
-import type { SubjectResponse } from "../models/SubjectResponse";
-import type { SubjectUpdate } from "../models/SubjectUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+/* eslint-disable */
+import type { MessageResponse } from '../models/MessageResponse';
+import type { SubjectCreate } from '../models/SubjectCreate';
+import type { SubjectListResponse } from '../models/SubjectListResponse';
+import type { SubjectResponse } from '../models/SubjectResponse';
+import type { SubjectUpdate } from '../models/SubjectUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class SubjectsService {
   /**
    * Create a new subject
@@ -24,10 +24,10 @@ export class SubjectsService {
     requestBody: SubjectCreate,
   ): CancelablePromise<SubjectResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/subjects/",
+      method: 'POST',
+      url: '/api/v1/subjects/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -52,12 +52,12 @@ export class SubjectsService {
     activeOnly: boolean = false,
   ): CancelablePromise<SubjectListResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/subjects/",
+      method: 'GET',
+      url: '/api/v1/subjects/',
       query: {
-        skip: skip,
-        limit: limit,
-        active_only: activeOnly,
+        'skip': skip,
+        'limit': limit,
+        'active_only': activeOnly,
       },
       errors: {
         422: `Validation Error`,
@@ -75,10 +75,10 @@ export class SubjectsService {
     limit: number = 10,
   ): CancelablePromise<Array<SubjectResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/subjects/featured",
+      method: 'GET',
+      url: '/api/v1/subjects/featured',
       query: {
-        limit: limit,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -100,12 +100,12 @@ export class SubjectsService {
     limit: number = 20,
   ): CancelablePromise<Array<SubjectResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/subjects/search",
+      method: 'GET',
+      url: '/api/v1/subjects/search',
       query: {
-        q: q,
-        skip: skip,
-        limit: limit,
+        'q': q,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -123,10 +123,10 @@ export class SubjectsService {
     subjectId: string,
   ): CancelablePromise<SubjectResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/subjects/{subject_id}",
+      method: 'GET',
+      url: '/api/v1/subjects/{subject_id}',
       path: {
-        subject_id: subjectId,
+        'subject_id': subjectId,
       },
       errors: {
         422: `Validation Error`,
@@ -148,13 +148,13 @@ export class SubjectsService {
     requestBody: SubjectUpdate,
   ): CancelablePromise<SubjectResponse> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/v1/subjects/{subject_id}",
+      method: 'PUT',
+      url: '/api/v1/subjects/{subject_id}',
       path: {
-        subject_id: subjectId,
+        'subject_id': subjectId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -173,10 +173,10 @@ export class SubjectsService {
     subjectId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/v1/subjects/{subject_id}",
+      method: 'DELETE',
+      url: '/api/v1/subjects/{subject_id}',
       path: {
-        subject_id: subjectId,
+        'subject_id': subjectId,
       },
       errors: {
         422: `Validation Error`,
