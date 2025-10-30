@@ -12,15 +12,14 @@ export type TopicResponse = {
   subject_id: string;
   name: string;
   code: string;
-  description?: (string | null);
-  content?: (string | null);
-  video_url?: (string | null);
-  document_url?: (string | null);
-  parent_id?: (string | null);
+  description?: string | null;
+  content?: string | null;
+  video_url?: string | null;
+  document_url?: string | null;
+  parent_id?: string | null;
   order?: number;
-  estimated_time_minutes?: (number | null);
-  difficulty_level?: (string | null);
+  estimated_time_minutes?: number | null;
+  difficulty_level?: string | null;
   is_active?: boolean;
   questions_count?: number;
 };
-

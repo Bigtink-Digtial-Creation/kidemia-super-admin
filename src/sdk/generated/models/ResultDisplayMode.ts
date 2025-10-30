@@ -5,4 +5,4 @@
 /**
  * When to show results
  */
-export type ResultDisplayMode = 'immediate' | 'scheduled' | 'manual' | 'never';
+export type ResultDisplayMode = "immediate" | "scheduled" | "manual" | "never";

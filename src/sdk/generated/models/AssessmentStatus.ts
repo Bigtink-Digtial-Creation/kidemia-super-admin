@@ -5,4 +5,10 @@
 /**
  * Assessment publication status
  */
-export type AssessmentStatus = 'draft' | 'review' | 'published' | 'scheduled' | 'archived' | 'suspended';
+export type AssessmentStatus =
+  | "draft"
+  | "review"
+  | "published"
+  | "scheduled"
+  | "archived"
+  | "suspended";

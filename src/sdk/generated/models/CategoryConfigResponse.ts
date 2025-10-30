@@ -11,15 +11,14 @@ export type CategoryConfigResponse = {
   id: string;
   category_name: string;
   display_name: string;
-  description?: (string | null);
-  icon_url?: (string | null);
-  color_code?: (string | null);
-  banner_url?: (string | null);
+  description?: string | null;
+  icon_url?: string | null;
+  color_code?: string | null;
+  banner_url?: string | null;
   is_active?: boolean;
   requires_payment?: boolean;
   order?: number;
-  exam_body?: (string | null);
-  target_level?: (string | null);
+  exam_body?: string | null;
+  target_level?: string | null;
   assessments_count?: number;
 };
-

@@ -12,8 +12,7 @@ export type AttemptStartResponse = {
   duration_minutes: number;
   must_submit_by: string;
   total_questions: number;
-  instructions?: (string | null);
+  instructions?: string | null;
   proctoring_required?: boolean;
-  proctoring_config?: (Record<string, any> | null);
+  proctoring_config?: Record<string, any> | null;
 };
-

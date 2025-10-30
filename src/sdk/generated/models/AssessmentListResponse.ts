@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AssessmentSummaryResponse } from './AssessmentSummaryResponse';
+import type { AssessmentSummaryResponse } from "./AssessmentSummaryResponse";
 /**
  * Paginated assessment list
  */
@@ -12,4 +12,3 @@ export type AssessmentListResponse = {
   page: number;
   page_size: number;
 };
-

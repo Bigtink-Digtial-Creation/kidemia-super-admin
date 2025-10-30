@@ -147,7 +147,7 @@ export default function ProfilePage() {
             <BreadcrumbItem
               href={SidebarRoutes.profile}
               startContent={<FaUser />}
-                          color="warning"
+              color="warning"
             >
               Profile
             </BreadcrumbItem>

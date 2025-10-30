@@ -11,14 +11,13 @@ export type SubjectResponse = {
   id: string;
   name: string;
   code: string;
-  description?: (string | null);
-  icon_url?: (string | null);
-  color_code?: (string | null);
-  parent_id?: (string | null);
+  description?: string | null;
+  icon_url?: string | null;
+  color_code?: string | null;
+  parent_id?: string | null;
   order?: number;
   is_active?: boolean;
   is_featured?: boolean;
   topics_count?: number;
   questions_count?: number;
 };
-

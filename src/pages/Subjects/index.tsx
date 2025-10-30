@@ -35,7 +35,7 @@ import { FiPlusSquare } from "react-icons/fi";
 import AddSubjectModal from "../../components/Modals/AddSubjectModal";
 
 export default function SubjectsPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [subjectId, setSubjectId] = useState<string>("");
@@ -57,7 +57,6 @@ export default function SubjectsPage() {
     queryFn: () => ApiSDK.SubjectsService.getSubjectsApiV1SubjectsGet(),
     placeholderData: keepPreviousData,
   });
-
 
   const filteredSubjects = useMemo(() => {
     if (!debouncedSearchTerm) return subjects?.items ?? [];
@@ -106,24 +105,23 @@ export default function SubjectsPage() {
 
         <div className="space-y-3 w-full-">
           <div className="flex justify-end">
-
             <div className="flex justify-between items-center space-x-6">
               <div className="w-full">
-              <Input
-                startContent={
-                  <MdSearch className="text-xl  text-kidemia-secondary" />
-                }
-                variant="flat"
+                <Input
+                  startContent={
+                    <MdSearch className="text-xl  text-kidemia-secondary" />
+                  }
+                  variant="flat"
                   size="md"
-                radius="sm"
-                placeholder="Search by subject name or code"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onClear={() => setSearchTerm("")}
-                fullWidth
-                isClearable
-              />
-            </div>
+                  radius="sm"
+                  placeholder="Search by subject name or code"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onClear={() => setSearchTerm("")}
+                  fullWidth
+                  isClearable
+                />
+              </div>
 
               <Button
                 className="bg-kidemia-secondary text-kidemia-white font-medium  px-8"
@@ -221,12 +219,17 @@ export default function SubjectsPage() {
                         <DropdownTrigger>
                           <HiDotsHorizontal className="text-kidemia-secondary text-xl cursor-pointer shrink-0" />
                         </DropdownTrigger>
-                        <DropdownMenu aria-label="Actions" className="space-y-4">
+                        <DropdownMenu
+                          aria-label="Actions"
+                          className="space-y-4"
+                        >
                           <DropdownItem
                             key="question"
                             className="text-kidemia-black"
                             color="success"
-                            onPress={() => navigate(`/dashboard/subjects/${subject.id}`)}
+                            onPress={() =>
+                              navigate(`/dashboard/subjects/${subject.id}`)
+                            }
                           >
                             Questions
                           </DropdownItem>
@@ -242,7 +245,7 @@ export default function SubjectsPage() {
                               }
                             }}
                           >
-                            Update Subject 
+                            Update Subject
                           </DropdownItem>
                           <DropdownItem
                             key="delete"
@@ -268,7 +271,6 @@ export default function SubjectsPage() {
           </div>
         </div>
       </section>
-
 
       <AddSubjectModal
         isOpen={addSubject.isOpen}

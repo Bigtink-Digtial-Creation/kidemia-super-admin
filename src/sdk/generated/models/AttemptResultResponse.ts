@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AttemptStatus } from './AttemptStatus';
+import type { AttemptStatus } from "./AttemptStatus";
 /**
  * Response showing attempt results
  */
@@ -11,22 +11,21 @@ export type AttemptResultResponse = {
   assessment_id: string;
   attempt_number: number;
   status: AttemptStatus;
-  submitted_at: (string | null);
+  submitted_at: string | null;
   score: string;
   percentage: string;
   points_earned: string;
   points_possible: string;
   passed: boolean;
-  grade: (string | null);
+  grade: string | null;
   total_questions: number;
   correct_answers: number;
   incorrect_answers: number;
   partially_correct: number;
-  rank: (number | null);
-  percentile: (string | null);
+  rank: number | null;
+  percentile: string | null;
   time_spent_seconds: number;
-  feedback: (string | null);
+  feedback: string | null;
   certificate_issued: boolean;
-  certificate_url: (string | null);
+  certificate_url: string | null;
 };
-

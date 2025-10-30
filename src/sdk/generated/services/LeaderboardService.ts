@@ -2,10 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { LeaderboardResponse } from '../models/LeaderboardResponse';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { LeaderboardResponse } from "../models/LeaderboardResponse";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class LeaderboardService {
   /**
    * Get assessment leaderboard
@@ -26,13 +26,13 @@ export class LeaderboardService {
     limit: number = 100,
   ): CancelablePromise<LeaderboardResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/leaderboard/assessments/{assessment_id}',
+      method: "GET",
+      url: "/api/v1/leaderboard/assessments/{assessment_id}",
       path: {
-        'assessment_id': assessmentId,
+        assessment_id: assessmentId,
       },
       query: {
-        'limit': limit,
+        limit: limit,
       },
       errors: {
         422: `Validation Error`,
@@ -55,13 +55,13 @@ export class LeaderboardService {
     limit: number = 100,
   ): CancelablePromise<Array<Record<string, any>>> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/leaderboard/subjects/{subject_id}',
+      method: "GET",
+      url: "/api/v1/leaderboard/subjects/{subject_id}",
       path: {
-        'subject_id': subjectId,
+        subject_id: subjectId,
       },
       query: {
-        'limit': limit,
+        limit: limit,
       },
       errors: {
         422: `Validation Error`,
@@ -85,10 +85,10 @@ export class LeaderboardService {
     userId: string,
   ): CancelablePromise<Record<string, any>> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/leaderboard/users/{user_id}/statistics',
+      method: "GET",
+      url: "/api/v1/leaderboard/users/{user_id}/statistics",
       path: {
-        'user_id': userId,
+        user_id: userId,
       },
       errors: {
         422: `Validation Error`,
@@ -101,10 +101,12 @@ export class LeaderboardService {
    * @returns any Successful Response
    * @throws ApiError
    */
-  public static getMyStatisticsApiV1LeaderboardMeStatisticsGet(): CancelablePromise<Record<string, any>> {
+  public static getMyStatisticsApiV1LeaderboardMeStatisticsGet(): CancelablePromise<
+    Record<string, any>
+  > {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/leaderboard/me/statistics',
+      method: "GET",
+      url: "/api/v1/leaderboard/me/statistics",
     });
   }
 }

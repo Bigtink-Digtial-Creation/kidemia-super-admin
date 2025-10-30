@@ -64,7 +64,8 @@ export default function SingleRoles() {
             >
               Roles
             </BreadcrumbItem>
-            <BreadcrumbItem startContent={<SiPrivateinternetaccess />}
+            <BreadcrumbItem
+              startContent={<SiPrivateinternetaccess />}
               color="warning"
             >
               Role Detail

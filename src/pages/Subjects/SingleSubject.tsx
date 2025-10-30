@@ -1,6 +1,3 @@
-
 export default function SingleSubject() {
-  return (
-    <div>SingleSubject</div>
-  )
+  return <div>SingleSubject</div>;
 }

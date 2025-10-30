@@ -6,7 +6,6 @@
  * Request to start an assessment attempt
  */
 export type AttemptStartRequest = {
-  access_code?: (string | null);
-  device_info?: (Record<string, any> | null);
+  access_code?: string | null;
+  device_info?: Record<string, any> | null;
 };
-

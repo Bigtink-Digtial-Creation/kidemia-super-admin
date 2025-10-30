@@ -23,4 +23,3 @@ export type AssessmentStatistics = {
   most_difficult_questions: Array<Record<string, any>>;
   easiest_questions: Array<Record<string, any>>;
 };
-

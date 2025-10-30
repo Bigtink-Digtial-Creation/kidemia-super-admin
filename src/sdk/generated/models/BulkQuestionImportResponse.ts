@@ -11,4 +11,3 @@ export type BulkQuestionImportResponse = {
   failed: number;
   errors?: Array<Record<string, any>>;
 };
-

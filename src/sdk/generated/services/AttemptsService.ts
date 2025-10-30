@@ -2,15 +2,15 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AttemptListResponse } from '../models/AttemptListResponse';
-import type { AttemptProgressResponse } from '../models/AttemptProgressResponse';
-import type { AttemptResultResponse } from '../models/AttemptResultResponse';
-import type { AttemptStartRequest } from '../models/AttemptStartRequest';
-import type { AttemptStartResponse } from '../models/AttemptStartResponse';
-import type { SaveAnswerRequest } from '../models/SaveAnswerRequest';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { AttemptListResponse } from "../models/AttemptListResponse";
+import type { AttemptProgressResponse } from "../models/AttemptProgressResponse";
+import type { AttemptResultResponse } from "../models/AttemptResultResponse";
+import type { AttemptStartRequest } from "../models/AttemptStartRequest";
+import type { AttemptStartResponse } from "../models/AttemptStartResponse";
+import type { SaveAnswerRequest } from "../models/SaveAnswerRequest";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class AttemptsService {
   /**
    * Start an assessment attempt
@@ -30,13 +30,13 @@ export class AttemptsService {
     requestBody: AttemptStartRequest,
   ): CancelablePromise<AttemptStartResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/attempts/{assessment_id}/start',
+      method: "POST",
+      url: "/api/v1/attempts/{assessment_id}/start",
       path: {
-        'assessment_id': assessmentId,
+        assessment_id: assessmentId,
       },
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -59,13 +59,13 @@ export class AttemptsService {
     requestBody: SaveAnswerRequest,
   ): CancelablePromise<Record<string, any>> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/attempts/{attempt_id}/answer',
+      method: "POST",
+      url: "/api/v1/attempts/{attempt_id}/answer",
       path: {
-        'attempt_id': attemptId,
+        attempt_id: attemptId,
       },
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -87,10 +87,10 @@ export class AttemptsService {
     attemptId: string,
   ): CancelablePromise<AttemptResultResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/attempts/{attempt_id}/submit',
+      method: "POST",
+      url: "/api/v1/attempts/{attempt_id}/submit",
       path: {
-        'attempt_id': attemptId,
+        attempt_id: attemptId,
       },
       errors: {
         422: `Validation Error`,
@@ -114,10 +114,10 @@ export class AttemptsService {
     attemptId: string,
   ): CancelablePromise<AttemptProgressResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/attempts/{attempt_id}/progress',
+      method: "GET",
+      url: "/api/v1/attempts/{attempt_id}/progress",
       path: {
-        'attempt_id': attemptId,
+        attempt_id: attemptId,
       },
       errors: {
         422: `Validation Error`,
@@ -139,13 +139,13 @@ export class AttemptsService {
     includeAnswers: boolean = false,
   ): CancelablePromise<AttemptResultResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/attempts/{attempt_id}/result',
+      method: "GET",
+      url: "/api/v1/attempts/{attempt_id}/result",
       path: {
-        'attempt_id': attemptId,
+        attempt_id: attemptId,
       },
       query: {
-        'include_answers': includeAnswers,
+        include_answers: includeAnswers,
       },
       errors: {
         422: `Validation Error`,
@@ -165,11 +165,11 @@ export class AttemptsService {
     limit: number = 20,
   ): CancelablePromise<AttemptListResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/attempts/my-attempts',
+      method: "GET",
+      url: "/api/v1/attempts/my-attempts",
       query: {
-        'skip': skip,
-        'limit': limit,
+        skip: skip,
+        limit: limit,
       },
       errors: {
         422: `Validation Error`,
@@ -188,10 +188,10 @@ export class AttemptsService {
     attemptId: string,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/attempts/delete-attempt',
+      method: "GET",
+      url: "/api/v1/attempts/delete-attempt",
       query: {
-        'attempt_id': attemptId,
+        attempt_id: attemptId,
       },
       errors: {
         422: `Validation Error`,

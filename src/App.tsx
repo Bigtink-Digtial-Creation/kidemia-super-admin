@@ -55,7 +55,7 @@ export const router = createBrowserRouter([
       },
       {
         path: SidebarRoutes.singleSubject,
-        element: <SingleSubject />
+        element: <SingleSubject />,
       },
       {
         path: SidebarRoutes.profile,
@@ -79,12 +79,12 @@ export const router = createBrowserRouter([
       },
       {
         path: SidebarRoutes.topics,
-        element: <TopicsPage />
+        element: <TopicsPage />,
       },
       {
         path: SidebarRoutes.singleTopic,
-        element: <SingleTopic />
-      }
+        element: <SingleTopic />,
+      },
     ],
   },
 ]);

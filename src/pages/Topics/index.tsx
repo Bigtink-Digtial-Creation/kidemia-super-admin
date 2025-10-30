@@ -1,16 +1,22 @@
-import { useNavigate } from 'react-router';
-import { useSetAtom } from 'jotai';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { BreadcrumbItem, Breadcrumbs, Button, Chip, Spinner } from '@heroui/react'
-import { SidebarRoutes } from '../../routes'
-import { MdOutlineDashboard, MdOutlineTopic } from 'react-icons/md'
-import { QueryKeys } from '../../utils/queryKeys';
-import { ApiSDK } from '../../sdk';
-import { subectTitleAtom } from '../../store/subject.atom';
+import { useNavigate } from "react-router";
+import { useSetAtom } from "jotai";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  Chip,
+  Spinner,
+} from "@heroui/react";
+import { SidebarRoutes } from "../../routes";
+import { MdOutlineDashboard, MdOutlineTopic } from "react-icons/md";
+import { QueryKeys } from "../../utils/queryKeys";
+import { ApiSDK } from "../../sdk";
+import { subjectTitleAtom } from "../../store/subject.atom";
 
 export default function TopicsPage() {
-  const navigate = useNavigate()
-  const setSubjectTitle = useSetAtom(subectTitleAtom)
+  const navigate = useNavigate();
+  const setSubjectTitle = useSetAtom(subjectTitleAtom);
 
   const { data: subjects, isLoading } = useQuery({
     queryKey: [QueryKeys.subjects],
@@ -18,7 +24,7 @@ export default function TopicsPage() {
     placeholderData: keepPreviousData,
   });
 
-  const subject = subjects?.items || []
+  const subject = subjects?.items || [];
 
   if (isLoading && !subjects) {
     return (
@@ -29,7 +35,7 @@ export default function TopicsPage() {
   }
 
   return (
-    <section className='space-y-8'>
+    <section className="space-y-8">
       <div>
         <Breadcrumbs variant="light" color="foreground">
           <BreadcrumbItem
@@ -47,14 +53,21 @@ export default function TopicsPage() {
         </Breadcrumbs>
       </div>
 
-      <div className='space-y-3'>
-        <p className='text-base text-kidemia-grey'>Explore Topics Organized by Subject</p>
+      <div className="space-y-3">
+        <p className="text-base text-kidemia-grey">
+          Explore Topics Organized by Subject
+        </p>
         {subject?.length === 0 ? (
-          <p className='text-kidemia-grey/70 text-center'>No Available Subjects</p>
+          <p className="text-kidemia-grey/70 text-center">
+            No Available Subjects
+          </p>
         ) : (
-          <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3'>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {subject?.map((sub) => (
-              <div key={sub.id} className='bg-kidemia-biege/25 p-4 shadow rounded-xl text-sm space-y-2'>
+              <div
+                key={sub.id}
+                className="bg-kidemia-biege/25 p-4 shadow rounded-xl text-sm space-y-2"
+              >
                 <p className="font-semibold text-kidemia-secondary capitalize">
                   {sub?.name} ({sub?.code})
                 </p>
@@ -62,13 +75,10 @@ export default function TopicsPage() {
                   {sub?.description}
                 </p>
 
-                <div className='flex  justify-between items-center'>
-
-                  <div className='py-2 flex gap-2'>
+                <div className="flex  justify-between items-center">
+                  <div className="py-2 flex gap-2">
                     <Chip
-                      color={
-                        sub.is_active === true ? "success" : "warning"
-                      }
+                      color={sub.is_active === true ? "success" : "warning"}
                       className="text-xs px-3 capitalize font-bold"
                       variant="flat"
                     >
@@ -76,23 +86,21 @@ export default function TopicsPage() {
                     </Chip>
 
                     <Chip
-                      color={
-                        sub.is_featured === true ? "success" : "warning"
-                      }
+                      color={sub.is_featured === true ? "success" : "warning"}
                       className="text-xs px-3 capitalize font-bold"
                       variant="flat"
                     >
-                      {sub.is_featured === true
-                        ? "Featured"
-                        : "Not Featured"}
+                      {sub.is_featured === true ? "Featured" : "Not Featured"}
                     </Chip>
                   </div>
                   <div>
-                    <Button variant='light' size='sm'
-                      className='text-sm text-kidemia-secondary font-semibold hover:underline'
+                    <Button
+                      variant="light"
+                      size="sm"
+                      className="text-sm text-kidemia-secondary font-semibold hover:underline"
                       onPress={() => {
-                        setSubjectTitle(sub?.name)
-                        navigate(`/dashboard/topics/${sub.id}`)
+                        setSubjectTitle(sub?.name);
+                        navigate(`/dashboard/topics/${sub.id}`);
                       }}
                     >
                       View Topics
@@ -105,5 +113,5 @@ export default function TopicsPage() {
         )}
       </div>
     </section>
-  )
+  );
 }

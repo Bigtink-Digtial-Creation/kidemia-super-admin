@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { LeaderboardEntry } from './LeaderboardEntry';
+import type { LeaderboardEntry } from "./LeaderboardEntry";
 /**
  * Leaderboard response
  */
@@ -11,6 +11,5 @@ export type LeaderboardResponse = {
   assessment_title: string;
   entries: Array<LeaderboardEntry>;
   total_participants: number;
-  user_rank?: (number | null);
+  user_rank?: number | null;
 };
-

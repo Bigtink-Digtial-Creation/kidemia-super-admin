@@ -6,7 +6,6 @@
  * Schema for updating a permission
  */
 export type PermissionUpdate = {
-  display_name?: (string | null);
-  description?: (string | null);
+  display_name?: string | null;
+  description?: string | null;
 };
-

@@ -5,4 +5,4 @@
 /**
  * Type of assessment
  */
-export type AssessmentType = 'test' | 'exam';
+export type AssessmentType = "test" | "exam";

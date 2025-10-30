@@ -1,3 +1,6 @@
-import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
-export const subectTitleAtom  = atom<string |  null>(null)
+export const subjectTitleAtom = atomWithStorage<string | null>(
+  "subjectTitle",
+  null,
+);

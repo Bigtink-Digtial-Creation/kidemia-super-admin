@@ -2,9 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AssessmentCategory } from './AssessmentCategory';
-import type { AssessmentStatus } from './AssessmentStatus';
-import type { AssessmentType } from './AssessmentType';
+import type { AssessmentCategory } from "./AssessmentCategory";
+import type { AssessmentStatus } from "./AssessmentStatus";
+import type { AssessmentType } from "./AssessmentType";
 /**
  * Lightweight assessment response for listings
  */
@@ -23,4 +23,3 @@ export type AssessmentSummaryResponse = {
   total_attempts: number;
   average_score: string;
 };
-

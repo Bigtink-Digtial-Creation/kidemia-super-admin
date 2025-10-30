@@ -5,4 +5,10 @@
 /**
  * Types of questions
  */
-export type QuestionType = 'multiple_choice' | 'true_false' | 'fill_in_blank' | 'essay' | 'matching' | 'ordering';
+export type QuestionType =
+  | "multiple_choice"
+  | "true_false"
+  | "fill_in_blank"
+  | "essay"
+  | "matching"
+  | "ordering";

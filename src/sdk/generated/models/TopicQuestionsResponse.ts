@@ -2,9 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { QuestionResponseTrim } from './QuestionResponseTrim';
+import type { QuestionResponseTrim } from "./QuestionResponseTrim";
 export type TopicQuestionsResponse = {
   topic_name: string;
   questions: Array<QuestionResponseTrim>;
 };
-

@@ -2,22 +2,22 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ChangePasswordRequest } from '../models/ChangePasswordRequest';
-import type { ForgotPasswordRequest } from '../models/ForgotPasswordRequest';
-import type { LoginRequest } from '../models/LoginRequest';
-import type { LoginResponse } from '../models/LoginResponse';
-import type { MessageResponse } from '../models/MessageResponse';
-import type { RefreshTokenRequest } from '../models/RefreshTokenRequest';
-import type { RegisterRequest } from '../models/RegisterRequest';
-import type { RegisterResponse } from '../models/RegisterResponse';
-import type { ResetPasswordRequest } from '../models/ResetPasswordRequest';
-import type { SuccessResponse } from '../models/SuccessResponse';
-import type { TokenResponse } from '../models/TokenResponse';
-import type { UserResponse } from '../models/UserResponse';
-import type { VerifyEmailRequest } from '../models/VerifyEmailRequest';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type { ChangePasswordRequest } from "../models/ChangePasswordRequest";
+import type { ForgotPasswordRequest } from "../models/ForgotPasswordRequest";
+import type { LoginRequest } from "../models/LoginRequest";
+import type { LoginResponse } from "../models/LoginResponse";
+import type { MessageResponse } from "../models/MessageResponse";
+import type { RefreshTokenRequest } from "../models/RefreshTokenRequest";
+import type { RegisterRequest } from "../models/RegisterRequest";
+import type { RegisterResponse } from "../models/RegisterResponse";
+import type { ResetPasswordRequest } from "../models/ResetPasswordRequest";
+import type { SuccessResponse } from "../models/SuccessResponse";
+import type { TokenResponse } from "../models/TokenResponse";
+import type { UserResponse } from "../models/UserResponse";
+import type { VerifyEmailRequest } from "../models/VerifyEmailRequest";
+import type { CancelablePromise } from "../core/CancelablePromise";
+import { OpenAPI } from "../core/OpenAPI";
+import { request as __request } from "../core/request";
 export class AuthenticationService {
   /**
    * Register a new user
@@ -36,10 +36,10 @@ export class AuthenticationService {
     requestBody: RegisterRequest,
   ): CancelablePromise<RegisterResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/register',
+      method: "POST",
+      url: "/api/v1/auth/register",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -60,10 +60,10 @@ export class AuthenticationService {
     requestBody: LoginRequest,
   ): CancelablePromise<LoginResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/login',
+      method: "POST",
+      url: "/api/v1/auth/login",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -82,10 +82,10 @@ export class AuthenticationService {
     requestBody: RefreshTokenRequest,
   ): CancelablePromise<TokenResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/refresh',
+      method: "POST",
+      url: "/api/v1/auth/refresh",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -104,10 +104,10 @@ export class AuthenticationService {
     requestBody: RefreshTokenRequest,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/logout',
+      method: "POST",
+      url: "/api/v1/auth/logout",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -121,8 +121,8 @@ export class AuthenticationService {
    */
   public static logoutAllDevicesApiV1AuthLogoutAllPost(): CancelablePromise<SuccessResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/logout-all',
+      method: "POST",
+      url: "/api/v1/auth/logout-all",
     });
   }
   /**
@@ -139,10 +139,10 @@ export class AuthenticationService {
     requestBody: ChangePasswordRequest,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/change-password',
+      method: "POST",
+      url: "/api/v1/auth/change-password",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -156,8 +156,8 @@ export class AuthenticationService {
    */
   public static getCurrentUserApiV1AuthMeGet(): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/auth/me',
+      method: "GET",
+      url: "/api/v1/auth/me",
     });
   }
   /**
@@ -173,10 +173,10 @@ export class AuthenticationService {
     requestBody: ForgotPasswordRequest,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/forgot-password',
+      method: "POST",
+      url: "/api/v1/auth/forgot-password",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -196,10 +196,10 @@ export class AuthenticationService {
     requestBody: ResetPasswordRequest,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/reset-password',
+      method: "POST",
+      url: "/api/v1/auth/reset-password",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -218,10 +218,10 @@ export class AuthenticationService {
     requestBody: VerifyEmailRequest,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/verify-email',
+      method: "POST",
+      url: "/api/v1/auth/verify-email",
       body: requestBody,
-      mediaType: 'application/json',
+      mediaType: "application/json",
       errors: {
         422: `Validation Error`,
       },
@@ -235,8 +235,8 @@ export class AuthenticationService {
    */
   public static resendVerificationApiV1AuthResendVerificationPost(): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: 'POST',
-      url: '/api/v1/auth/resend-verification',
+      method: "POST",
+      url: "/api/v1/auth/resend-verification",
     });
   }
 }

@@ -10,14 +10,13 @@ export type SectionResponse = {
   updated_at: string;
   id: string;
   title: string;
-  description?: (string | null);
-  instructions?: (string | null);
+  description?: string | null;
+  instructions?: string | null;
   order: number;
-  time_limit_minutes?: (number | null);
+  time_limit_minutes?: number | null;
   shuffle_questions?: boolean;
   is_optional?: boolean;
   assessment_id: string;
   total_questions: number;
   total_points: number;
 };
-

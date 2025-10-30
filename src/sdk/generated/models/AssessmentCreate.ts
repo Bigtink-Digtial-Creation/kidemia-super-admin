@@ -2,33 +2,33 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AssessmentCategory } from './AssessmentCategory';
-import type { AssessmentType } from './AssessmentType';
-import type { QuestionSelectionMode } from './QuestionSelectionMode';
-import type { ResultDisplayMode } from './ResultDisplayMode';
-import type { SectionCreate } from './SectionCreate';
+import type { AssessmentCategory } from "./AssessmentCategory";
+import type { AssessmentType } from "./AssessmentType";
+import type { QuestionSelectionMode } from "./QuestionSelectionMode";
+import type { ResultDisplayMode } from "./ResultDisplayMode";
+import type { SectionCreate } from "./SectionCreate";
 /**
  * Schema for creating assessment
  */
 export type AssessmentCreate = {
   title: string;
   code: string;
-  description?: (string | null);
-  instructions?: (string | null);
+  description?: string | null;
+  instructions?: string | null;
   assessment_type: AssessmentType;
   category: AssessmentCategory;
   subject_id: string;
-  topic_ids?: (Array<string> | null);
-  exam_year?: (number | null);
-  exam_session?: (string | null);
-  price?: (number | string);
+  topic_ids?: Array<string> | null;
+  exam_year?: number | null;
+  exam_session?: string | null;
+  price?: number | string;
   currency?: string;
-  discount_price?: (number | string | null);
+  discount_price?: number | string | null;
   duration_minutes: number;
-  available_from?: (string | null);
-  available_until?: (string | null);
+  available_from?: string | null;
+  available_until?: string | null;
   question_selection_mode?: QuestionSelectionMode;
-  passing_percentage?: (number | string);
+  passing_percentage?: number | string;
   shuffle_questions?: boolean;
   shuffle_options?: boolean;
   allow_question_navigation?: boolean;
@@ -44,9 +44,8 @@ export type AssessmentCreate = {
   max_tab_switches?: number;
   is_public?: boolean;
   require_enrollment?: boolean;
-  category_config_id?: (string | null);
-  institution_id?: (string | null);
-  question_ids?: (Array<string> | null);
-  sections?: (Array<SectionCreate> | null);
+  category_config_id?: string | null;
+  institution_id?: string | null;
+  question_ids?: Array<string> | null;
+  sections?: Array<SectionCreate> | null;
 };
-

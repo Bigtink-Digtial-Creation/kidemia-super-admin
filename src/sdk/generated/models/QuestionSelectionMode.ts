@@ -5,4 +5,4 @@
 /**
  * How questions are selected for assessment
  */
-export type QuestionSelectionMode = 'manual' | 'random' | 'adaptive';
+export type QuestionSelectionMode = "manual" | "random" | "adaptive";
