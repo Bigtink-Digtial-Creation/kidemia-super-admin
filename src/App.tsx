@@ -19,6 +19,7 @@ import SettingsPage from "./pages/Settings";
 import RolesPage from "./pages/Roles";
 import SingleRoles from "./pages/Roles/SingleRoles";
 import PermissionsPage from "./pages/Permissions";
+import SingleSubject from "./pages/Subjects/SingleSubject";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -49,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.subjects,
         element: <SubjectsPage />,
+      },
+      {
+        path: SidebarRoutes.singleSubject,
+        element: <SingleSubject />
       },
       {
         path: SidebarRoutes.profile,

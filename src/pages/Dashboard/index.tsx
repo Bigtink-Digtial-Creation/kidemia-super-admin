@@ -1,12 +1,11 @@
-import { Button, Select, SelectItem, useDisclosure } from "@heroui/react";
+import { Select, SelectItem } from "@heroui/react";
 import StatCard from "../../components/Dashboard/StatCard";
-import { FiPlusSquare, FiUsers } from "react-icons/fi";
+import { FiUsers } from "react-icons/fi";
 import { PiBooksBold } from "react-icons/pi";
 import { MdTopic } from "react-icons/md";
 import { FaQuestionCircle } from "react-icons/fa";
 import AnalyticsChart from "../../components/Dashboard/AnalyticsChart";
 import { categoriesData, dataSeries } from "../../staticData";
-import AddSubjectModal from "../../components/Modals/AddSubjectModal";
 
 const categories = [
   { key: "ce", label: "Common Entrance" },
@@ -15,7 +14,6 @@ const categories = [
 ];
 
 export default function DashboardPage() {
-  const addSubject = useDisclosure();
   return (
     <>
       <div className="space-y-12">
@@ -39,17 +37,7 @@ export default function DashboardPage() {
               </Select>
             </div>
 
-            <Button
-              className="bg-kidemia-secondary text-kidemia-white font-medium"
-              size="md"
-              radius="sm"
-              type="button"
-              startContent={<FiPlusSquare />}
-              fullWidth
-              onPress={() => addSubject.onOpen()}
-            >
-              Add Subject
-            </Button>
+
           </div>
         </div>
 
@@ -78,11 +66,6 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <AddSubjectModal
-        isOpen={addSubject.isOpen}
-        onOpenChange={addSubject.onOpenChange}
-        onClose={addSubject.onClose}
-      />
     </>
   );
 }

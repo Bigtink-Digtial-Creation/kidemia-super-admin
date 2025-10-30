@@ -9,6 +9,7 @@ export const SidebarRoutes = {
   dashboard: "/dashboard",
   settings: "/dashboard/settings",
   subjects: "/dashboard/subjects",
+  singleSubject: "/dashboard/subjects/:id",
   roles: "/dashboard/roles",
   singleRole: "/dashboard/roles/:id",
   profile: "/dashboard/profile",
