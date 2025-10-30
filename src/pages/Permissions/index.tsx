@@ -86,6 +86,7 @@ export default function PermissionsPage() {
             <BreadcrumbItem
               href={SidebarRoutes.permissions}
               startContent={<GoPasskeyFill />}
+              color="warning"
             >
               Permissions
             </BreadcrumbItem>

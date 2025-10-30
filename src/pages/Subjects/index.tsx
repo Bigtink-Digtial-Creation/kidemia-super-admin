@@ -97,6 +97,7 @@ export default function SubjectsPage() {
             <BreadcrumbItem
               href={SidebarRoutes.subjects}
               startContent={<PiBooksBold />}
+              color="warning"
             >
               Subjects
             </BreadcrumbItem>

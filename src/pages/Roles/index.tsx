@@ -31,6 +31,8 @@ export default function RolesPage() {
             <BreadcrumbItem
               href={SidebarRoutes.roles}
               startContent={<SiPrivateinternetaccess />}
+              color="warning"
+
             >
               Roles
             </BreadcrumbItem>

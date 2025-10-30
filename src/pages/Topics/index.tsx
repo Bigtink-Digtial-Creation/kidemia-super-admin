@@ -1,12 +1,16 @@
-import { BreadcrumbItem, Breadcrumbs, Chip, Spinner } from '@heroui/react'
+import { useNavigate } from 'react-router';
+import { useSetAtom } from 'jotai';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { BreadcrumbItem, Breadcrumbs, Button, Chip, Spinner } from '@heroui/react'
 import { SidebarRoutes } from '../../routes'
 import { MdOutlineDashboard, MdOutlineTopic } from 'react-icons/md'
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { QueryKeys } from '../../utils/queryKeys';
 import { ApiSDK } from '../../sdk';
-import { Link } from 'react-router';
+import { subectTitleAtom } from '../../store/subject.atom';
 
 export default function TopicsPage() {
+  const navigate = useNavigate()
+  const setSubjectTitle = useSetAtom(subectTitleAtom)
 
   const { data: subjects, isLoading } = useQuery({
     queryKey: [QueryKeys.subjects],
@@ -35,7 +39,7 @@ export default function TopicsPage() {
             Dashboard
           </BreadcrumbItem>
           <BreadcrumbItem
-            href={SidebarRoutes.roles}
+            href={SidebarRoutes.topics}
             startContent={<MdOutlineTopic />}
           >
             Topics
@@ -44,7 +48,7 @@ export default function TopicsPage() {
       </div>
 
       <div className='space-y-3'>
-        <p>All Topics based on subjects</p>
+        <p className='text-base text-kidemia-grey'>Explore Topics Organized by Subject</p>
         {subject?.length === 0 ? (
           <p className='text-kidemia-grey/70 text-center'>No Available Subjects</p>
         ) : (
@@ -84,7 +88,15 @@ export default function TopicsPage() {
                     </Chip>
                   </div>
                   <div>
-                    <Link to={`/dashboard/topics/${sub.id}`} className='text-sm text-kidemia-secondary font-semibold hover:underline'>View Topics</Link>
+                    <Button variant='light' size='sm'
+                      className='text-sm text-kidemia-secondary font-semibold hover:underline'
+                      onPress={() => {
+                        setSubjectTitle(sub?.name)
+                        navigate(`/dashboard/topics/${sub.id}`)
+                      }}
+                    >
+                      View Topics
+                    </Button>
                   </div>
                 </div>
               </div>

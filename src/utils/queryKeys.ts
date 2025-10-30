@@ -8,4 +8,5 @@ export const QueryKeys = {
   systemRole: "sytemRole",
   permissions: "permissions",
   permissionId: "permissionId",
+  subjectTopics: "subjectTopics",
 } as const;
