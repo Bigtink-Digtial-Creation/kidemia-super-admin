@@ -14,6 +14,8 @@ export const SidebarRoutes = {
   singleRole: "/dashboard/roles/:id",
   profile: "/dashboard/profile",
   permissions: "/dashboard/permissions",
+  topics: "/dashboard/topics",
+  singleTopic: "/dashboard/topics/:id",
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];

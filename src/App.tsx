@@ -20,8 +20,10 @@ import RolesPage from "./pages/Roles";
 import SingleRoles from "./pages/Roles/SingleRoles";
 import PermissionsPage from "./pages/Permissions";
 import SingleSubject from "./pages/Subjects/SingleSubject";
+import TopicsPage from "./pages/Topics";
 
 import ErrorPage from "./pages/ErrorPage";
+import SingleTopic from "./pages/Topics/SingleTopic";
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +77,14 @@ export const router = createBrowserRouter([
         path: SidebarRoutes.permissions,
         element: <PermissionsPage />,
       },
+      {
+        path: SidebarRoutes.topics,
+        element: <TopicsPage />
+      },
+      {
+        path: SidebarRoutes.singleTopic,
+        element: <SingleTopic />
+      }
     ],
   },
 ]);

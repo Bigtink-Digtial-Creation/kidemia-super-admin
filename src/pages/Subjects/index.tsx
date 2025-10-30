@@ -58,8 +58,6 @@ export default function SubjectsPage() {
     placeholderData: keepPreviousData,
   });
 
-  console.log({ subjects });
-
 
   const filteredSubjects = useMemo(() => {
     if (!debouncedSearchTerm) return subjects?.items ?? [];
