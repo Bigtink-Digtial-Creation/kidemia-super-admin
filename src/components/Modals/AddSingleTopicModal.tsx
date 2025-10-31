@@ -200,7 +200,6 @@ export default function AddSingleTopicModal({
                   label="Active Status"
                   orientation="horizontal"
                   color="warning"
-                  // value={String(watch("is_active"))}
                   value={watch("is_active") ? "true" : "false"}
                   onValueChange={(val) => setValue("is_active", val === "true")}
                   isDisabled={addTopicMutation.isPending}
