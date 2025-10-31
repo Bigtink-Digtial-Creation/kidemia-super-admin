@@ -1,6 +1,6 @@
 import type { IconType } from "react-icons";
 import { SidebarRoutes } from "../../routes";
-import { MdOutlineDashboard } from "react-icons/md";
+import { MdOutlineDashboard, MdOutlineTopic } from "react-icons/md";
 import { PiBooksBold } from "react-icons/pi";
 import { SiPrivateinternetaccess } from "react-icons/si";
 import { GoPasskeyFill } from "react-icons/go";
@@ -21,6 +21,11 @@ export const sidebarLinks: SidebarLinkT[] = [
     title: "Subjects",
     icon: PiBooksBold,
     pathname: SidebarRoutes.subjects,
+  },
+  {
+    title: "Topics",
+    icon: MdOutlineTopic,
+    pathname: SidebarRoutes.topics,
   },
   {
     title: "Roles",

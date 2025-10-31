@@ -35,3 +35,18 @@ export const getChipColor = (action: string) => {
       return "secondary";
   }
 };
+
+export const getDifficultyColor = (action: string) => {
+  switch (action?.toLowerCase()) {
+    case "easy":
+      return "success";
+    case "medium":
+      return "primary";
+    case "expert":
+      return "warning";
+    case "hard":
+      return "danger";
+    default:
+      return "secondary";
+  }
+};

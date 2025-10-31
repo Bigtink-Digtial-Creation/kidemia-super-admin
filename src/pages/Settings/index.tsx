@@ -26,6 +26,7 @@ export default function SettingsPage() {
             <BreadcrumbItem
               href={SidebarRoutes.settings}
               startContent={<FiSettings />}
+              color="warning"
             >
               Settings
             </BreadcrumbItem>

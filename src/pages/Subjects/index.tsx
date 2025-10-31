@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   BreadcrumbItem,
   Breadcrumbs,
+  Button,
   Chip,
   Dropdown,
   DropdownItem,
@@ -29,8 +30,12 @@ import { useDebounce } from "../../hooks/use-debounce";
 import { HiDotsHorizontal } from "react-icons/hi";
 import DeleteSubjectModal from "../../components/Modals/DeleteSubjectModal";
 import UpdateSubjectModal from "../../components/Modals/UpdateSubjectModal";
+import { useNavigate } from "react-router";
+import { FiPlusSquare } from "react-icons/fi";
+import AddSubjectModal from "../../components/Modals/AddSubjectModal";
 
 export default function SubjectsPage() {
+  const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [subjectId, setSubjectId] = useState<string>("");
@@ -38,6 +43,7 @@ export default function SubjectsPage() {
 
   const delectSubject = useDisclosure();
   const updateSubject = useDisclosure();
+  const addSubject = useDisclosure();
 
   const pageSize = 10;
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -90,29 +96,43 @@ export default function SubjectsPage() {
             <BreadcrumbItem
               href={SidebarRoutes.subjects}
               startContent={<PiBooksBold />}
+              color="warning"
             >
               Subjects
             </BreadcrumbItem>
           </Breadcrumbs>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex justify-end items-center">
-            <div>
-              <Input
-                startContent={
-                  <MdSearch className="text-xl  text-kidemia-secondary" />
-                }
-                variant="flat"
-                size="lg"
+        <div className="space-y-3 w-full-">
+          <div className="flex justify-end">
+            <div className="flex justify-between items-center space-x-6">
+              <div className="w-full">
+                <Input
+                  startContent={
+                    <MdSearch className="text-xl  text-kidemia-secondary" />
+                  }
+                  variant="flat"
+                  size="md"
+                  radius="sm"
+                  placeholder="Search by subject name or code"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onClear={() => setSearchTerm("")}
+                  fullWidth
+                  isClearable
+                />
+              </div>
+
+              <Button
+                className="bg-kidemia-secondary text-kidemia-white font-medium  px-8"
+                size="md"
                 radius="sm"
-                placeholder="Search by subject name or code"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onClear={() => setSearchTerm("")}
-                fullWidth
-                isClearable
-              />
+                type="button"
+                startContent={<FiPlusSquare className="text-lg shrink-0" />}
+                onPress={() => addSubject.onOpen()}
+              >
+                Add a Subject
+              </Button>
             </div>
           </div>
 
@@ -199,9 +219,23 @@ export default function SubjectsPage() {
                         <DropdownTrigger>
                           <HiDotsHorizontal className="text-kidemia-secondary text-xl cursor-pointer shrink-0" />
                         </DropdownTrigger>
-                        <DropdownMenu aria-label="Static Actions">
+                        <DropdownMenu
+                          aria-label="Actions"
+                          className="space-y-4"
+                        >
                           <DropdownItem
-                            key="view"
+                            key="question"
+                            className="text-kidemia-black"
+                            color="success"
+                            onPress={() =>
+                              navigate(`/dashboard/subjects/${subject.id}`)
+                            }
+                          >
+                            Questions
+                          </DropdownItem>
+
+                          <DropdownItem
+                            key="update"
                             className="text-kidemia-secondary"
                             color="warning"
                             onPress={() => {
@@ -211,7 +245,7 @@ export default function SubjectsPage() {
                               }
                             }}
                           >
-                            View Subject
+                            Update Subject
                           </DropdownItem>
                           <DropdownItem
                             key="delete"
@@ -237,6 +271,12 @@ export default function SubjectsPage() {
           </div>
         </div>
       </section>
+
+      <AddSubjectModal
+        isOpen={addSubject.isOpen}
+        onOpenChange={addSubject.onOpenChange}
+        onClose={addSubject.onClose}
+      />
 
       <UpdateSubjectModal
         isOpen={updateSubject.isOpen}

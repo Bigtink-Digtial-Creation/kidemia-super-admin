@@ -19,6 +19,10 @@ import SettingsPage from "./pages/Settings";
 import RolesPage from "./pages/Roles";
 import SingleRoles from "./pages/Roles/SingleRoles";
 import PermissionsPage from "./pages/Permissions";
+import SingleSubject from "./pages/Subjects/SingleSubject";
+import TopicsPage from "./pages/Topics";
+import SingleTopic from "./pages/Topics/SingleTopic";
+import BulkTopic from "./pages/Topics/BulkTopic";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -51,6 +55,10 @@ export const router = createBrowserRouter([
         element: <SubjectsPage />,
       },
       {
+        path: SidebarRoutes.singleSubject,
+        element: <SingleSubject />,
+      },
+      {
         path: SidebarRoutes.profile,
         element: <ProfilePage />,
       },
@@ -69,6 +77,18 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.permissions,
         element: <PermissionsPage />,
+      },
+      {
+        path: SidebarRoutes.topics,
+        element: <TopicsPage />,
+      },
+      {
+        path: SidebarRoutes.singleTopic,
+        element: <SingleTopic />,
+      },
+      {
+        path: SidebarRoutes.bulkTopic,
+        element: <BulkTopic />,
       },
     ],
   },

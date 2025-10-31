@@ -3231,6 +3231,1491 @@
         }
       }
     },
+    "/api/v1/assessments/": {
+      "post": {
+        "tags": ["Assessments"],
+        "summary": "Create a new assessment",
+        "description": "Create a new assessment (test or exam).\n\nRequires `assessment:create` permission.\n\n- **assessment_type**: TEST (free) or EXAM (paid)\n- **category**: JAMB, WAEC, NECO, Common Entrance, etc.\n- **question_selection_mode**: MANUAL, RANDOM, or ADAPTIVE",
+        "operationId": "create_assessment_api_v1_assessments__post",
+        "security": [{ "HTTPBearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AssessmentCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssessmentResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Assessments"],
+        "summary": "Get all assessments",
+        "description": "Get assessments with filters.\n\n- **assessment_type**: Filter by TEST or EXAM\n- **category**: Filter by JAMB, WAEC, NECO, etc.\n- **subject_id**: Filter by subject\n- **exam_year**: Filter by year (e.g., 2024, 2023)\n- **search**: Search by title, code, or description",
+        "operationId": "get_assessments_api_v1_assessments__get",
+        "parameters": [
+          {
+            "name": "assessment_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/AssessmentType" },
+                { "type": "null" }
+              ],
+              "title": "Assessment Type"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/AssessmentCategory" },
+                { "type": "null" }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "subject_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "type": "string", "format": "uuid" },
+                { "type": "null" }
+              ],
+              "title": "Subject Id"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/AssessmentStatus" },
+                { "type": "null" }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "exam_year",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "title": "Exam Year"
+            }
+          },
+          {
+            "name": "min_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "number" }, { "type": "null" }],
+              "title": "Min Price"
+            }
+          },
+          {
+            "name": "max_price",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "number" }, { "type": "null" }],
+              "title": "Max Price"
+            }
+          },
+          {
+            "name": "is_public",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+              "title": "Is Public"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/auto-generate": {
+      "post": {
+        "tags": ["Assessments"],
+        "summary": "Auto-generate assessment from topics",
+        "description": "Automatically generate a practice assessment from selected topics.\n\nThis endpoint allows students to create personalized practice tests by:\n- Selecting a subject\n- Choosing specific topics they want to practice\n- Setting number of questions and duration\n- Optionally filtering by difficulty and question types\n\nThe system will:\n1. Find approved questions from selected topics\n2. Randomly select the requested number of questions\n3. Create and publish the assessment immediately\n4. Return assessment details for the student to start\n\n**Use Case:** Student wants to practice specific topics before an exam\n\nExample:\n```json\n{\n    \"subject_id\": \"uuid-mathematics\",\n    \"topic_ids\": [\"uuid-algebra\", \"uuid-geometry\"],\n    \"number_of_questions\": 20,\n    \"duration_minutes\": 30,\n    \"difficulty_level\": \"MEDIUM\"\n}\n```",
+        "operationId": "auto_generate_assessment_api_v1_assessments_auto_generate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AutoAssessmentRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AutoAssessmentResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/api/v1/assessments/available": {
+      "get": {
+        "tags": ["Assessments"],
+        "summary": "Get currently available assessments",
+        "description": "Get assessments that are currently available for taking.",
+        "operationId": "get_available_assessments_api_v1_assessments_available_get",
+        "parameters": [
+          {
+            "name": "assessment_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/AssessmentType" },
+                { "type": "null" }
+              ],
+              "title": "Assessment Type"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/AssessmentCategory" },
+                { "type": "null" }
+              ],
+              "title": "Category"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AssessmentSummaryResponse"
+                  },
+                  "title": "Response Get Available Assessments Api V1 Assessments Available Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/popular": {
+      "get": {
+        "tags": ["Assessments"],
+        "summary": "Get popular assessments",
+        "description": "Get popular assessments based on attempt count.",
+        "operationId": "get_popular_assessments_api_v1_assessments_popular_get",
+        "parameters": [
+          {
+            "name": "assessment_type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                { "$ref": "#/components/schemas/AssessmentType" },
+                { "type": "null" }
+              ],
+              "title": "Assessment Type"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "default": 10,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AssessmentSummaryResponse"
+                  },
+                  "title": "Response Get Popular Assessments Api V1 Assessments Popular Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/categories/{category}/years": {
+      "get": {
+        "tags": ["Assessments"],
+        "summary": "Get available years for a category",
+        "description": "Get list of years with assessments for a specific category (e.g., JAMB 2024, 2023, etc.).",
+        "operationId": "get_category_years_api_v1_assessments_categories__category__years_get",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/AssessmentCategory" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "integer" },
+                  "title": "Response Get Category Years Api V1 Assessments Categories  Category  Years Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/{assessment_id}": {
+      "get": {
+        "tags": ["Assessments"],
+        "summary": "Get assessment by ID",
+        "description": "Get a specific assessment by ID.\n\n- **include_questions**: Include full question details",
+        "operationId": "get_assessment_api_v1_assessments__assessment_id__get",
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Assessment Id"
+            }
+          },
+          {
+            "name": "include_questions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Questions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssessmentResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Assessments"],
+        "summary": "Update an assessment",
+        "description": "Update an assessment.\n\nRequires `assessment:update` permission.\nNote: Published assessments must be archived before updating.",
+        "operationId": "update_assessment_api_v1_assessments__assessment_id__put",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Assessment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AssessmentUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssessmentResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Assessments"],
+        "summary": "Delete an assessment",
+        "description": "Delete an assessment (soft delete).\n\nRequires `assessment:delete` permission.\nCannot delete assessments with active attempts.",
+        "operationId": "delete_assessment_api_v1_assessments__assessment_id__delete",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Assessment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/{assessment_id}/publish": {
+      "post": {
+        "tags": ["Assessments"],
+        "summary": "Publish an assessment",
+        "description": "Publish an assessment to make it available to students.\n\nRequires `assessment:publish` permission.",
+        "operationId": "publish_assessment_api_v1_assessments__assessment_id__publish_post",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Assessment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AssessmentResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/assessments/{assessment_id}/statistics": {
+      "get": {
+        "tags": ["Assessments"],
+        "summary": "Get assessment statistics",
+        "description": "Get detailed statistics for an assessment.",
+        "operationId": "get_assessment_statistics_api_v1_assessments__assessment_id__statistics_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Assessment Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssessmentStatistics"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attempts/{assessment_id}/start": {
+      "post": {
+        "tags": ["Attempts"],
+        "summary": "Start an assessment attempt",
+        "description": "Start a new assessment attempt.\n\n- Validates assessment availability\n- Checks attempt limits\n- Verifies payment for exams\n- Creates or resumes attempt",
+        "operationId": "start_attempt_api_v1_attempts__assessment_id__start_post",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Assessment Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AttemptStartRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptStartResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attempts/{attempt_id}/answer": {
+      "post": {
+        "tags": ["Attempts"],
+        "summary": "Save an answer",
+        "description": "Save or update an answer for a question.\n\n- Can be called multiple times for the same question\n- Tracks time spent and edit count\n- Supports flagging for review",
+        "operationId": "save_answer_api_v1_attempts__attempt_id__answer_post",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SaveAnswerRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Save Answer Api V1 Attempts  Attempt Id  Answer Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attempts/{attempt_id}/submit": {
+      "post": {
+        "tags": ["Attempts"],
+        "summary": "Submit an attempt",
+        "description": "Submit an assessment attempt for grading.\n\n- Auto-grades objective questions\n- Marks essays for manual grading\n- Calculates scores and ranking\n- Updates assessment statistics",
+        "operationId": "submit_attempt_api_v1_attempts__attempt_id__submit_post",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptResultResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attempts/{attempt_id}/progress": {
+      "get": {
+        "tags": ["Attempts"],
+        "summary": "Get attempt progress",
+        "description": "Get current progress of an ongoing attempt.\n\nReturns:\n- Time spent and remaining\n- Questions answered/unanswered\n- Flagged questions count\n- Submission eligibility",
+        "operationId": "get_attempt_progress_api_v1_attempts__attempt_id__progress_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptProgressResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attempts/{attempt_id}/result": {
+      "get": {
+        "tags": ["Attempts"],
+        "summary": "Get attempt result",
+        "description": "Get result of a completed attempt.\n\n- **include_answers**: Include detailed answer breakdown with correct answers",
+        "operationId": "get_attempt_result_api_v1_attempts__attempt_id__result_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          },
+          {
+            "name": "include_answers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": false,
+              "title": "Include Answers"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttemptResultResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attempts/my-attempts": {
+      "get": {
+        "tags": ["Attempts"],
+        "summary": "Get my attempts",
+        "description": "Get all attempts for the current user.",
+        "operationId": "get_my_attempts_api_v1_attempts_my_attempts_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AttemptListResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/attempts/delete-attempt": {
+      "get": {
+        "tags": ["Attempts"],
+        "summary": "Delete attempts",
+        "description": "Delete attempt for the current user.\nThis is for development purpose only",
+        "operationId": "delete_attempts_api_v1_attempts_delete_attempt_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grading/attempts/{attempt_id}/auto-grade": {
+      "post": {
+        "tags": ["Grading"],
+        "summary": "Auto-grade an attempt",
+        "description": "Auto-grade an assessment attempt.\n\n- Grades objective questions automatically\n- Identifies essays requiring manual grading\n- Calculates scores and pass/fail status",
+        "operationId": "auto_grade_attempt_api_v1_grading_attempts__attempt_id__auto_grade_post",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "attempt_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Attempt Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Auto Grade Attempt Api V1 Grading Attempts  Attempt Id  Auto Grade Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grading/answers/{answer_id}/manual-grade": {
+      "post": {
+        "tags": ["Grading"],
+        "summary": "Manually grade an answer",
+        "description": "Manually grade an answer (typically for essays).\n\nRequires `grading:manual` permission.",
+        "operationId": "manual_grade_answer_api_v1_grading_answers__answer_id__manual_grade_post",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "answer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Answer Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ManualGradeRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Manual Grade Answer Api V1 Grading Answers  Answer Id  Manual Grade Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/grading/answers/bulk-grade": {
+      "post": {
+        "tags": ["Grading"],
+        "summary": "Bulk grade multiple answers",
+        "description": "Bulk grade multiple answers at once.\n\nRequires `grading:manual` permission.\n\nExpected format:\n```json\n[\n    {\n        \"answer_id\": \"uuid\",\n        \"points_earned\": 8.5,\n        \"feedback\": \"Good work\"\n    }\n]\n```",
+        "operationId": "bulk_grade_answers_api_v1_grading_answers_bulk_grade_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "items": { "additionalProperties": true, "type": "object" },
+                "type": "array",
+                "title": "Grading Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Bulk Grade Answers Api V1 Grading Answers Bulk Grade Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/api/v1/grading/pending": {
+      "get": {
+        "tags": ["Grading"],
+        "summary": "Get attempts pending grading",
+        "description": "Get list of attempts pending manual grading.\n\nReturns attempts with essays or subjective questions awaiting grading.",
+        "operationId": "get_pending_grading_api_v1_grading_pending_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Skip"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "object", "additionalProperties": true },
+                  "title": "Response Get Pending Grading Api V1 Grading Pending Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/leaderboard/assessments/{assessment_id}": {
+      "get": {
+        "tags": ["Leaderboard"],
+        "summary": "Get assessment leaderboard",
+        "description": "Get leaderboard for a specific assessment.\n\nShows top performers ranked by:\n1. Score (highest first)\n2. Time taken (fastest first for ties)\n\nIf authenticated, includes current user's rank.",
+        "operationId": "get_assessment_leaderboard_api_v1_leaderboard_assessments__assessment_id__get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "assessment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Assessment Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LeaderboardResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/leaderboard/subjects/{subject_id}": {
+      "get": {
+        "tags": ["Leaderboard"],
+        "summary": "Get subject leaderboard",
+        "description": "Get leaderboard for a specific subject.\n\nAggregates performance across all assessments in the subject.\nRanks by average score and total points earned.",
+        "operationId": "get_subject_leaderboard_api_v1_leaderboard_subjects__subject_id__get",
+        "parameters": [
+          {
+            "name": "subject_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Subject Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "object", "additionalProperties": true },
+                  "title": "Response Get Subject Leaderboard Api V1 Leaderboard Subjects  Subject Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/leaderboard/users/{user_id}/statistics": {
+      "get": {
+        "tags": ["Leaderboard"],
+        "summary": "Get user statistics",
+        "description": "Get comprehensive statistics for a user.\n\nIncludes:\n- Total attempts and completions\n- Pass rate and average score\n- Recent performance\n- Subject-wise breakdown",
+        "operationId": "get_user_statistics_api_v1_leaderboard_users__user_id__statistics_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid", "title": "User Id" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Get User Statistics Api V1 Leaderboard Users  User Id  Statistics Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/leaderboard/me/statistics": {
+      "get": {
+        "tags": ["Leaderboard"],
+        "summary": "Get my statistics",
+        "description": "Get statistics for the current user.",
+        "operationId": "get_my_statistics_api_v1_leaderboard_me_statistics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Get My Statistics Api V1 Leaderboard Me Statistics Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/api/v1/categories/": {
+      "post": {
+        "tags": ["Assessment Categories"],
+        "summary": "Create category configuration",
+        "description": "Create a new assessment category configuration.\n\nRequires `assessment:manage` permission.",
+        "operationId": "create_category_config_api_v1_categories__post",
+        "security": [{ "HTTPBearer": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryConfigCreate" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Assessment Categories"],
+        "summary": "Get all category configurations",
+        "description": "Get all assessment category configurations.",
+        "operationId": "get_category_configs_api_v1_categories__get",
+        "parameters": [
+          {
+            "name": "active_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Active Only"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CategoryConfigResponse"
+                  },
+                  "title": "Response Get Category Configs Api V1 Categories  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories/{config_id}": {
+      "get": {
+        "tags": ["Assessment Categories"],
+        "summary": "Get category configuration by ID",
+        "description": "Get a specific category configuration.",
+        "operationId": "get_category_config_api_v1_categories__config_id__get",
+        "parameters": [
+          {
+            "name": "config_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Config Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Assessment Categories"],
+        "summary": "Update category configuration",
+        "description": "Update a category configuration.",
+        "operationId": "update_category_config_api_v1_categories__config_id__put",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "config_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Config Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryConfigUpdate" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryConfigResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Assessment Categories"],
+        "summary": "Delete category configuration",
+        "description": "Delete a category configuration.",
+        "operationId": "delete_category_config_api_v1_categories__config_id__delete",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "config_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Config Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MessageResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "tags": ["Root"],
@@ -3262,6 +4747,761 @@
   },
   "components": {
     "schemas": {
+      "AssessmentCategory": {
+        "type": "string",
+        "enum": [
+          "common_entrance",
+          "primary_school",
+          "junior_waec",
+          "bece",
+          "senior_waec",
+          "neco",
+          "nabteb",
+          "gce",
+          "jamb",
+          "post_utme",
+          "professional",
+          "scholarship",
+          "aptitude",
+          "mock",
+          "custom",
+          "general"
+        ],
+        "title": "AssessmentCategory",
+        "description": "Assessment categories - Nigerian examination systems"
+      },
+      "AssessmentCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Code"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "instructions": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Instructions"
+          },
+          "assessment_type": { "$ref": "#/components/schemas/AssessmentType" },
+          "category": { "$ref": "#/components/schemas/AssessmentCategory" },
+          "subject_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Subject Id"
+          },
+          "topic_ids": {
+            "anyOf": [
+              {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Topic Ids"
+          },
+          "exam_year": {
+            "anyOf": [
+              { "type": "integer", "maximum": 2100.0, "minimum": 1900.0 },
+              { "type": "null" }
+            ],
+            "title": "Exam Year"
+          },
+          "exam_session": {
+            "anyOf": [
+              { "type": "string", "maxLength": 50 },
+              { "type": "null" }
+            ],
+            "title": "Exam Session"
+          },
+          "price": {
+            "anyOf": [
+              { "type": "number", "minimum": 0.0 },
+              { "type": "string" }
+            ],
+            "title": "Price",
+            "default": "0.00"
+          },
+          "currency": {
+            "type": "string",
+            "maxLength": 3,
+            "title": "Currency",
+            "default": "NGN"
+          },
+          "discount_price": {
+            "anyOf": [
+              { "type": "number", "minimum": 0.0 },
+              { "type": "string" },
+              { "type": "null" }
+            ],
+            "title": "Discount Price"
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "maximum": 600.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Duration Minutes"
+          },
+          "available_from": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Available From"
+          },
+          "available_until": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Available Until"
+          },
+          "question_selection_mode": {
+            "$ref": "#/components/schemas/QuestionSelectionMode",
+            "default": "manual"
+          },
+          "passing_percentage": {
+            "anyOf": [
+              { "type": "number", "maximum": 100.0, "minimum": 0.0 },
+              { "type": "string" }
+            ],
+            "title": "Passing Percentage",
+            "default": "50.00"
+          },
+          "shuffle_questions": {
+            "type": "boolean",
+            "title": "Shuffle Questions",
+            "default": true
+          },
+          "shuffle_options": {
+            "type": "boolean",
+            "title": "Shuffle Options",
+            "default": true
+          },
+          "allow_question_navigation": {
+            "type": "boolean",
+            "title": "Allow Question Navigation",
+            "default": true
+          },
+          "allow_backward_navigation": {
+            "type": "boolean",
+            "title": "Allow Backward Navigation",
+            "default": true
+          },
+          "max_attempts": {
+            "type": "integer",
+            "maximum": 10.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Max Attempts",
+            "default": 3
+          },
+          "result_display_mode": {
+            "$ref": "#/components/schemas/ResultDisplayMode",
+            "default": "immediate"
+          },
+          "show_correct_answers": {
+            "type": "boolean",
+            "title": "Show Correct Answers",
+            "default": true
+          },
+          "show_explanations": {
+            "type": "boolean",
+            "title": "Show Explanations",
+            "default": true
+          },
+          "proctoring_enabled": {
+            "type": "boolean",
+            "title": "Proctoring Enabled",
+            "default": false
+          },
+          "require_webcam": {
+            "type": "boolean",
+            "title": "Require Webcam",
+            "default": false
+          },
+          "fullscreen_required": {
+            "type": "boolean",
+            "title": "Fullscreen Required",
+            "default": true
+          },
+          "detect_tab_switching": {
+            "type": "boolean",
+            "title": "Detect Tab Switching",
+            "default": true
+          },
+          "max_tab_switches": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Max Tab Switches",
+            "default": 3
+          },
+          "is_public": {
+            "type": "boolean",
+            "title": "Is Public",
+            "default": true
+          },
+          "require_enrollment": {
+            "type": "boolean",
+            "title": "Require Enrollment",
+            "default": false
+          },
+          "category_config_id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Category Config Id"
+          },
+          "institution_id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Institution Id"
+          },
+          "question_ids": {
+            "anyOf": [
+              {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Question Ids"
+          },
+          "sections": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/SectionCreate" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Sections"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "code",
+          "assessment_type",
+          "category",
+          "subject_id",
+          "duration_minutes"
+        ],
+        "title": "AssessmentCreate",
+        "description": "Schema for creating assessment",
+        "example": {}
+      },
+      "AssessmentListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AssessmentSummaryResponse"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": { "type": "integer", "title": "Total" },
+          "page": { "type": "integer", "title": "Page" },
+          "page_size": { "type": "integer", "title": "Page Size" }
+        },
+        "type": "object",
+        "required": ["items", "total", "page", "page_size"],
+        "title": "AssessmentListResponse",
+        "description": "Paginated assessment list",
+        "example": {}
+      },
+      "AssessmentResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "title": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "code": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Code"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "instructions": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Instructions"
+          },
+          "assessment_type": { "$ref": "#/components/schemas/AssessmentType" },
+          "category": { "$ref": "#/components/schemas/AssessmentCategory" },
+          "subject_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Subject Id"
+          },
+          "topic_ids": {
+            "anyOf": [
+              {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Topic Ids"
+          },
+          "exam_year": {
+            "anyOf": [
+              { "type": "integer", "maximum": 2100.0, "minimum": 1900.0 },
+              { "type": "null" }
+            ],
+            "title": "Exam Year"
+          },
+          "exam_session": {
+            "anyOf": [
+              { "type": "string", "maxLength": 50 },
+              { "type": "null" }
+            ],
+            "title": "Exam Session"
+          },
+          "price": { "type": "string", "title": "Price", "default": "0.00" },
+          "currency": {
+            "type": "string",
+            "maxLength": 3,
+            "title": "Currency",
+            "default": "NGN"
+          },
+          "discount_price": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Discount Price"
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "maximum": 600.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Duration Minutes"
+          },
+          "available_from": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Available From"
+          },
+          "available_until": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Available Until"
+          },
+          "question_selection_mode": {
+            "$ref": "#/components/schemas/QuestionSelectionMode",
+            "default": "manual"
+          },
+          "passing_percentage": {
+            "type": "string",
+            "title": "Passing Percentage",
+            "default": "50.00"
+          },
+          "shuffle_questions": {
+            "type": "boolean",
+            "title": "Shuffle Questions",
+            "default": true
+          },
+          "shuffle_options": {
+            "type": "boolean",
+            "title": "Shuffle Options",
+            "default": true
+          },
+          "allow_question_navigation": {
+            "type": "boolean",
+            "title": "Allow Question Navigation",
+            "default": true
+          },
+          "allow_backward_navigation": {
+            "type": "boolean",
+            "title": "Allow Backward Navigation",
+            "default": true
+          },
+          "max_attempts": {
+            "type": "integer",
+            "maximum": 10.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Max Attempts",
+            "default": 3
+          },
+          "result_display_mode": {
+            "$ref": "#/components/schemas/ResultDisplayMode",
+            "default": "immediate"
+          },
+          "show_correct_answers": {
+            "type": "boolean",
+            "title": "Show Correct Answers",
+            "default": true
+          },
+          "show_explanations": {
+            "type": "boolean",
+            "title": "Show Explanations",
+            "default": true
+          },
+          "proctoring_enabled": {
+            "type": "boolean",
+            "title": "Proctoring Enabled",
+            "default": false
+          },
+          "require_webcam": {
+            "type": "boolean",
+            "title": "Require Webcam",
+            "default": false
+          },
+          "fullscreen_required": {
+            "type": "boolean",
+            "title": "Fullscreen Required",
+            "default": true
+          },
+          "detect_tab_switching": {
+            "type": "boolean",
+            "title": "Detect Tab Switching",
+            "default": true
+          },
+          "max_tab_switches": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Max Tab Switches",
+            "default": 3
+          },
+          "is_public": {
+            "type": "boolean",
+            "title": "Is Public",
+            "default": true
+          },
+          "require_enrollment": {
+            "type": "boolean",
+            "title": "Require Enrollment",
+            "default": false
+          },
+          "category_config_id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Category Config Id"
+          },
+          "institution_id": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Institution Id"
+          },
+          "status": { "$ref": "#/components/schemas/AssessmentStatus" },
+          "total_questions": { "type": "integer", "title": "Total Questions" },
+          "total_points": { "type": "integer", "title": "Total Points" },
+          "total_attempts": { "type": "integer", "title": "Total Attempts" },
+          "total_completions": {
+            "type": "integer",
+            "title": "Total Completions"
+          },
+          "total_passes": { "type": "integer", "title": "Total Passes" },
+          "total_fails": { "type": "integer", "title": "Total Fails" },
+          "average_score": { "type": "string", "title": "Average Score" },
+          "highest_score": { "type": "string", "title": "Highest Score" },
+          "lowest_score": { "type": "string", "title": "Lowest Score" },
+          "sections": {
+            "items": { "$ref": "#/components/schemas/SectionResponse" },
+            "type": "array",
+            "title": "Sections",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "title",
+          "code",
+          "assessment_type",
+          "category",
+          "subject_id",
+          "duration_minutes",
+          "status",
+          "total_questions",
+          "total_points",
+          "total_attempts",
+          "total_completions",
+          "total_passes",
+          "total_fails",
+          "average_score",
+          "highest_score",
+          "lowest_score"
+        ],
+        "title": "AssessmentResponse",
+        "description": "Schema for assessment response",
+        "example": {}
+      },
+      "AssessmentStatistics": {
+        "properties": {
+          "assessment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Assessment Id"
+          },
+          "total_attempts": { "type": "integer", "title": "Total Attempts" },
+          "total_completions": {
+            "type": "integer",
+            "title": "Total Completions"
+          },
+          "completion_rate": { "type": "string", "title": "Completion Rate" },
+          "total_passes": { "type": "integer", "title": "Total Passes" },
+          "total_fails": { "type": "integer", "title": "Total Fails" },
+          "pass_rate": { "type": "string", "title": "Pass Rate" },
+          "average_score": { "type": "string", "title": "Average Score" },
+          "median_score": { "type": "string", "title": "Median Score" },
+          "highest_score": { "type": "string", "title": "Highest Score" },
+          "lowest_score": { "type": "string", "title": "Lowest Score" },
+          "score_distribution": {
+            "additionalProperties": { "type": "integer" },
+            "type": "object",
+            "title": "Score Distribution"
+          },
+          "average_completion_time": {
+            "type": "integer",
+            "title": "Average Completion Time"
+          },
+          "median_completion_time": {
+            "type": "integer",
+            "title": "Median Completion Time"
+          },
+          "most_difficult_questions": {
+            "items": { "additionalProperties": true, "type": "object" },
+            "type": "array",
+            "title": "Most Difficult Questions"
+          },
+          "easiest_questions": {
+            "items": { "additionalProperties": true, "type": "object" },
+            "type": "array",
+            "title": "Easiest Questions"
+          }
+        },
+        "type": "object",
+        "required": [
+          "assessment_id",
+          "total_attempts",
+          "total_completions",
+          "completion_rate",
+          "total_passes",
+          "total_fails",
+          "pass_rate",
+          "average_score",
+          "median_score",
+          "highest_score",
+          "lowest_score",
+          "score_distribution",
+          "average_completion_time",
+          "median_completion_time",
+          "most_difficult_questions",
+          "easiest_questions"
+        ],
+        "title": "AssessmentStatistics",
+        "description": "Detailed assessment statistics",
+        "example": {}
+      },
+      "AssessmentStatus": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "review",
+          "published",
+          "scheduled",
+          "archived",
+          "suspended"
+        ],
+        "title": "AssessmentStatus",
+        "description": "Assessment publication status"
+      },
+      "AssessmentSummaryResponse": {
+        "properties": {
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "title": { "type": "string", "title": "Title" },
+          "code": { "type": "string", "title": "Code" },
+          "assessment_type": { "$ref": "#/components/schemas/AssessmentType" },
+          "category": { "$ref": "#/components/schemas/AssessmentCategory" },
+          "subject_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Subject Id"
+          },
+          "price": { "type": "string", "title": "Price" },
+          "duration_minutes": {
+            "type": "integer",
+            "title": "Duration Minutes"
+          },
+          "total_questions": { "type": "integer", "title": "Total Questions" },
+          "status": { "$ref": "#/components/schemas/AssessmentStatus" },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "total_attempts": { "type": "integer", "title": "Total Attempts" },
+          "average_score": { "type": "string", "title": "Average Score" }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "code",
+          "assessment_type",
+          "category",
+          "subject_id",
+          "price",
+          "duration_minutes",
+          "total_questions",
+          "status",
+          "created_at",
+          "total_attempts",
+          "average_score"
+        ],
+        "title": "AssessmentSummaryResponse",
+        "description": "Lightweight assessment response for listings",
+        "example": {}
+      },
+      "AssessmentType": {
+        "type": "string",
+        "enum": ["test", "exam"],
+        "title": "AssessmentType",
+        "description": "Type of assessment"
+      },
+      "AssessmentUpdate": {
+        "properties": {
+          "title": {
+            "anyOf": [
+              { "type": "string", "maxLength": 300, "minLength": 1 },
+              { "type": "null" }
+            ],
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "instructions": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Instructions"
+          },
+          "status": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/AssessmentStatus" },
+              { "type": "null" }
+            ]
+          },
+          "exam_year": {
+            "anyOf": [
+              { "type": "integer", "maximum": 2100.0, "minimum": 1900.0 },
+              { "type": "null" }
+            ],
+            "title": "Exam Year"
+          },
+          "exam_session": {
+            "anyOf": [
+              { "type": "string", "maxLength": 50 },
+              { "type": "null" }
+            ],
+            "title": "Exam Session"
+          },
+          "price": {
+            "anyOf": [
+              { "type": "number", "minimum": 0.0 },
+              { "type": "string" },
+              { "type": "null" }
+            ],
+            "title": "Price"
+          },
+          "discount_price": {
+            "anyOf": [
+              { "type": "number", "minimum": 0.0 },
+              { "type": "string" },
+              { "type": "null" }
+            ],
+            "title": "Discount Price"
+          },
+          "duration_minutes": {
+            "anyOf": [
+              { "type": "integer", "maximum": 600.0, "exclusiveMinimum": 0.0 },
+              { "type": "null" }
+            ],
+            "title": "Duration Minutes"
+          },
+          "available_from": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Available From"
+          },
+          "available_until": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Available Until"
+          },
+          "passing_percentage": {
+            "anyOf": [
+              { "type": "number", "maximum": 100.0, "minimum": 0.0 },
+              { "type": "string" },
+              { "type": "null" }
+            ],
+            "title": "Passing Percentage"
+          },
+          "shuffle_questions": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Shuffle Questions"
+          },
+          "shuffle_options": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Shuffle Options"
+          },
+          "max_attempts": {
+            "anyOf": [
+              { "type": "integer", "maximum": 10.0, "exclusiveMinimum": 0.0 },
+              { "type": "null" }
+            ],
+            "title": "Max Attempts"
+          },
+          "result_display_mode": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ResultDisplayMode" },
+              { "type": "null" }
+            ]
+          },
+          "show_correct_answers": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Show Correct Answers"
+          },
+          "show_explanations": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Show Explanations"
+          },
+          "proctoring_enabled": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Proctoring Enabled"
+          },
+          "is_public": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Is Public"
+          }
+        },
+        "type": "object",
+        "title": "AssessmentUpdate",
+        "description": "Schema for updating assessment",
+        "example": {}
+      },
       "AssignPermissionsToRoleRequest": {
         "properties": {
           "permission_ids": {
@@ -3290,6 +5530,340 @@
         "required": ["role_ids"],
         "title": "AssignRolesToUserRequest",
         "description": "Schema for assigning roles to user",
+        "example": {}
+      },
+      "AttemptListResponse": {
+        "properties": {
+          "items": {
+            "items": { "$ref": "#/components/schemas/AttemptResultResponse" },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": { "type": "integer", "title": "Total" },
+          "page": { "type": "integer", "title": "Page" },
+          "page_size": { "type": "integer", "title": "Page Size" }
+        },
+        "type": "object",
+        "required": ["items", "total", "page", "page_size"],
+        "title": "AttemptListResponse",
+        "description": "Paginated attempt list",
+        "example": {}
+      },
+      "AttemptProgressResponse": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Attempt Id"
+          },
+          "status": { "$ref": "#/components/schemas/AttemptStatus" },
+          "time_spent_seconds": {
+            "type": "integer",
+            "title": "Time Spent Seconds"
+          },
+          "time_remaining_seconds": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Time Remaining Seconds"
+          },
+          "total_questions": { "type": "integer", "title": "Total Questions" },
+          "questions_attempted": {
+            "type": "integer",
+            "title": "Questions Attempted"
+          },
+          "questions_unanswered": {
+            "type": "integer",
+            "title": "Questions Unanswered"
+          },
+          "questions_flagged": {
+            "type": "integer",
+            "title": "Questions Flagged"
+          },
+          "can_submit": { "type": "boolean", "title": "Can Submit" }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "status",
+          "time_spent_seconds",
+          "time_remaining_seconds",
+          "total_questions",
+          "questions_attempted",
+          "questions_unanswered",
+          "questions_flagged",
+          "can_submit"
+        ],
+        "title": "AttemptProgressResponse",
+        "description": "Response showing attempt progress",
+        "example": {}
+      },
+      "AttemptResultResponse": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Attempt Id"
+          },
+          "assessment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Assessment Id"
+          },
+          "attempt_number": { "type": "integer", "title": "Attempt Number" },
+          "status": { "$ref": "#/components/schemas/AttemptStatus" },
+          "submitted_at": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Submitted At"
+          },
+          "score": { "type": "string", "title": "Score" },
+          "percentage": { "type": "string", "title": "Percentage" },
+          "points_earned": { "type": "string", "title": "Points Earned" },
+          "points_possible": { "type": "string", "title": "Points Possible" },
+          "passed": { "type": "boolean", "title": "Passed" },
+          "grade": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Grade"
+          },
+          "total_questions": { "type": "integer", "title": "Total Questions" },
+          "correct_answers": { "type": "integer", "title": "Correct Answers" },
+          "incorrect_answers": {
+            "type": "integer",
+            "title": "Incorrect Answers"
+          },
+          "partially_correct": {
+            "type": "integer",
+            "title": "Partially Correct"
+          },
+          "rank": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Rank"
+          },
+          "percentile": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Percentile"
+          },
+          "time_spent_seconds": {
+            "type": "integer",
+            "title": "Time Spent Seconds"
+          },
+          "feedback": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Feedback"
+          },
+          "certificate_issued": {
+            "type": "boolean",
+            "title": "Certificate Issued"
+          },
+          "certificate_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Certificate Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "assessment_id",
+          "attempt_number",
+          "status",
+          "submitted_at",
+          "score",
+          "percentage",
+          "points_earned",
+          "points_possible",
+          "passed",
+          "grade",
+          "total_questions",
+          "correct_answers",
+          "incorrect_answers",
+          "partially_correct",
+          "rank",
+          "percentile",
+          "time_spent_seconds",
+          "feedback",
+          "certificate_issued",
+          "certificate_url"
+        ],
+        "title": "AttemptResultResponse",
+        "description": "Response showing attempt results",
+        "example": {}
+      },
+      "AttemptStartRequest": {
+        "properties": {
+          "access_code": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Access Code"
+          },
+          "device_info": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Device Info"
+          }
+        },
+        "type": "object",
+        "title": "AttemptStartRequest",
+        "description": "Request to start an assessment attempt",
+        "example": {}
+      },
+      "AttemptStartResponse": {
+        "properties": {
+          "attempt_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Attempt Id"
+          },
+          "assessment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Assessment Id"
+          },
+          "attempt_number": { "type": "integer", "title": "Attempt Number" },
+          "duration_minutes": {
+            "type": "integer",
+            "title": "Duration Minutes"
+          },
+          "must_submit_by": { "type": "string", "title": "Must Submit By" },
+          "total_questions": { "type": "integer", "title": "Total Questions" },
+          "instructions": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Instructions"
+          },
+          "proctoring_required": {
+            "type": "boolean",
+            "title": "Proctoring Required",
+            "default": false
+          },
+          "proctoring_config": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Proctoring Config"
+          }
+        },
+        "type": "object",
+        "required": [
+          "attempt_id",
+          "assessment_id",
+          "attempt_number",
+          "duration_minutes",
+          "must_submit_by",
+          "total_questions"
+        ],
+        "title": "AttemptStartResponse",
+        "description": "Response when starting an attempt",
+        "example": {}
+      },
+      "AttemptStatus": {
+        "type": "string",
+        "enum": [
+          "not_started",
+          "in_progress",
+          "paused",
+          "submitted",
+          "graded",
+          "abandoned",
+          "expired"
+        ],
+        "title": "AttemptStatus",
+        "description": "Status of an assessment attempt"
+      },
+      "AutoAssessmentRequest": {
+        "properties": {
+          "subject_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Subject Id"
+          },
+          "topic_ids": {
+            "items": { "type": "string", "format": "uuid" },
+            "type": "array",
+            "maxItems": 10,
+            "minItems": 1,
+            "title": "Topic Ids"
+          },
+          "assessment_type": {
+            "$ref": "#/components/schemas/AssessmentType",
+            "default": "test"
+          },
+          "number_of_questions": {
+            "type": "integer",
+            "maximum": 100.0,
+            "minimum": 5.0,
+            "title": "Number Of Questions",
+            "default": 20
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "maximum": 180.0,
+            "minimum": 10.0,
+            "title": "Duration Minutes",
+            "default": 30
+          },
+          "difficulty_level": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Difficulty Level"
+          },
+          "question_types": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Question Types"
+          },
+          "shuffle_questions": {
+            "type": "boolean",
+            "title": "Shuffle Questions",
+            "default": true
+          },
+          "shuffle_options": {
+            "type": "boolean",
+            "title": "Shuffle Options",
+            "default": true
+          },
+          "allow_review": {
+            "type": "boolean",
+            "title": "Allow Review",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": ["subject_id", "topic_ids"],
+        "title": "AutoAssessmentRequest",
+        "description": "Schema for auto-generating assessment from topics",
+        "example": {}
+      },
+      "AutoAssessmentResponse": {
+        "properties": {
+          "assessment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Assessment Id"
+          },
+          "title": { "type": "string", "title": "Title" },
+          "total_questions": { "type": "integer", "title": "Total Questions" },
+          "duration_minutes": {
+            "type": "integer",
+            "title": "Duration Minutes"
+          },
+          "topics_covered": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Topics Covered"
+          },
+          "message": { "type": "string", "title": "Message" }
+        },
+        "type": "object",
+        "required": [
+          "assessment_id",
+          "title",
+          "total_questions",
+          "duration_minutes",
+          "topics_covered",
+          "message"
+        ],
+        "title": "AutoAssessmentResponse",
+        "description": "Response after auto-generating assessment",
         "example": {}
       },
       "BulkQuestionImportRequest": {
@@ -3332,6 +5906,231 @@
         "required": ["total", "success", "failed"],
         "title": "BulkQuestionImportResponse",
         "description": "Bulk question import response",
+        "example": {}
+      },
+      "CategoryConfigCreate": {
+        "properties": {
+          "category_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Category Name"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Display Name"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "icon_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Icon Url"
+          },
+          "color_code": {
+            "anyOf": [
+              { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+              { "type": "null" }
+            ],
+            "title": "Color Code"
+          },
+          "banner_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Banner Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "requires_payment": {
+            "type": "boolean",
+            "title": "Requires Payment",
+            "default": false
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Order",
+            "default": 0
+          },
+          "exam_body": {
+            "anyOf": [
+              { "type": "string", "maxLength": 200 },
+              { "type": "null" }
+            ],
+            "title": "Exam Body"
+          },
+          "target_level": {
+            "anyOf": [
+              { "type": "string", "maxLength": 100 },
+              { "type": "null" }
+            ],
+            "title": "Target Level"
+          }
+        },
+        "type": "object",
+        "required": ["category_name", "display_name"],
+        "title": "CategoryConfigCreate",
+        "description": "Schema for creating category configuration",
+        "example": {}
+      },
+      "CategoryConfigResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "category_name": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Category Name"
+          },
+          "display_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Display Name"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "icon_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Icon Url"
+          },
+          "color_code": {
+            "anyOf": [
+              { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+              { "type": "null" }
+            ],
+            "title": "Color Code"
+          },
+          "banner_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Banner Url"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active",
+            "default": true
+          },
+          "requires_payment": {
+            "type": "boolean",
+            "title": "Requires Payment",
+            "default": false
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Order",
+            "default": 0
+          },
+          "exam_body": {
+            "anyOf": [
+              { "type": "string", "maxLength": 200 },
+              { "type": "null" }
+            ],
+            "title": "Exam Body"
+          },
+          "target_level": {
+            "anyOf": [
+              { "type": "string", "maxLength": 100 },
+              { "type": "null" }
+            ],
+            "title": "Target Level"
+          },
+          "assessments_count": {
+            "type": "integer",
+            "title": "Assessments Count",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "category_name",
+          "display_name"
+        ],
+        "title": "CategoryConfigResponse",
+        "description": "Schema for category configuration response",
+        "example": {}
+      },
+      "CategoryConfigUpdate": {
+        "properties": {
+          "display_name": {
+            "anyOf": [
+              { "type": "string", "maxLength": 200, "minLength": 1 },
+              { "type": "null" }
+            ],
+            "title": "Display Name"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "icon_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Icon Url"
+          },
+          "color_code": {
+            "anyOf": [
+              { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+              { "type": "null" }
+            ],
+            "title": "Color Code"
+          },
+          "banner_url": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Banner Url"
+          },
+          "is_active": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Is Active"
+          },
+          "requires_payment": {
+            "anyOf": [{ "type": "boolean" }, { "type": "null" }],
+            "title": "Requires Payment"
+          },
+          "order": {
+            "anyOf": [
+              { "type": "integer", "minimum": 0.0 },
+              { "type": "null" }
+            ],
+            "title": "Order"
+          },
+          "exam_body": {
+            "anyOf": [
+              { "type": "string", "maxLength": 200 },
+              { "type": "null" }
+            ],
+            "title": "Exam Body"
+          },
+          "target_level": {
+            "anyOf": [
+              { "type": "string", "maxLength": 100 },
+              { "type": "null" }
+            ],
+            "title": "Target Level"
+          }
+        },
+        "type": "object",
+        "title": "CategoryConfigUpdate",
+        "description": "Schema for updating category configuration",
         "example": {}
       },
       "ChangePasswordRequest": {
@@ -3377,6 +6176,66 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
+      "LeaderboardEntry": {
+        "properties": {
+          "rank": { "type": "integer", "title": "Rank" },
+          "user_id": { "type": "string", "format": "uuid", "title": "User Id" },
+          "user_name": { "type": "string", "title": "User Name" },
+          "score": { "type": "string", "title": "Score" },
+          "percentage": { "type": "string", "title": "Percentage" },
+          "time_spent_seconds": {
+            "type": "integer",
+            "title": "Time Spent Seconds"
+          },
+          "submitted_at": { "type": "string", "title": "Submitted At" }
+        },
+        "type": "object",
+        "required": [
+          "rank",
+          "user_id",
+          "user_name",
+          "score",
+          "percentage",
+          "time_spent_seconds",
+          "submitted_at"
+        ],
+        "title": "LeaderboardEntry",
+        "description": "Leaderboard entry",
+        "example": {}
+      },
+      "LeaderboardResponse": {
+        "properties": {
+          "assessment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Assessment Id"
+          },
+          "assessment_title": { "type": "string", "title": "Assessment Title" },
+          "entries": {
+            "items": { "$ref": "#/components/schemas/LeaderboardEntry" },
+            "type": "array",
+            "title": "Entries"
+          },
+          "total_participants": {
+            "type": "integer",
+            "title": "Total Participants"
+          },
+          "user_rank": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "User Rank"
+          }
+        },
+        "type": "object",
+        "required": [
+          "assessment_id",
+          "assessment_title",
+          "entries",
+          "total_participants"
+        ],
+        "title": "LeaderboardResponse",
+        "description": "Leaderboard response",
+        "example": {}
+      },
       "LoginRequest": {
         "properties": {
           "email": { "type": "string", "format": "email", "title": "Email" },
@@ -3409,6 +6268,26 @@
         "required": ["access_token", "refresh_token", "expires_in", "user"],
         "title": "LoginResponse",
         "description": "Schema for login response",
+        "example": {}
+      },
+      "ManualGradeRequest": {
+        "properties": {
+          "points_earned": {
+            "anyOf": [
+              { "type": "number", "minimum": 0.0 },
+              { "type": "string" }
+            ],
+            "title": "Points Earned"
+          },
+          "feedback": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Feedback"
+          }
+        },
+        "type": "object",
+        "required": ["points_earned"],
+        "title": "ManualGradeRequest",
+        "description": "Request to manually grade an answer",
         "example": {}
       },
       "MessageResponse": {
@@ -4020,6 +6899,12 @@
         "description": "Question review request",
         "example": {}
       },
+      "QuestionSelectionMode": {
+        "type": "string",
+        "enum": ["manual", "random", "adaptive"],
+        "title": "QuestionSelectionMode",
+        "description": "How questions are selected for assessment"
+      },
       "QuestionStatus": {
         "type": "string",
         "enum": ["draft", "review", "approved", "rejected", "archived"],
@@ -4309,6 +7194,12 @@
         "description": "Schema for password reset request",
         "example": {}
       },
+      "ResultDisplayMode": {
+        "type": "string",
+        "enum": ["immediate", "scheduled", "manual", "never"],
+        "title": "ResultDisplayMode",
+        "description": "When to show results"
+      },
       "RoleCreate": {
         "properties": {
           "name": {
@@ -4435,6 +7326,170 @@
         "type": "object",
         "title": "RoleUpdate",
         "description": "Schema for updating a role",
+        "example": {}
+      },
+      "SaveAnswerRequest": {
+        "properties": {
+          "question_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Question Id"
+          },
+          "selected_option_ids": {
+            "anyOf": [
+              {
+                "items": { "type": "string", "format": "uuid" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Selected Option Ids"
+          },
+          "text_answer": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Text Answer"
+          },
+          "matching_pairs": {
+            "anyOf": [
+              {
+                "additionalProperties": { "type": "string" },
+                "type": "object"
+              },
+              { "type": "null" }
+            ],
+            "title": "Matching Pairs"
+          },
+          "ordered_items": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Ordered Items"
+          },
+          "flagged_for_review": {
+            "type": "boolean",
+            "title": "Flagged For Review",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": ["question_id"],
+        "title": "SaveAnswerRequest",
+        "description": "Request to save an answer",
+        "example": {}
+      },
+      "SectionCreate": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "instructions": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Instructions"
+          },
+          "order": { "type": "integer", "minimum": 0.0, "title": "Order" },
+          "time_limit_minutes": {
+            "anyOf": [
+              { "type": "integer", "minimum": 0.0 },
+              { "type": "null" }
+            ],
+            "title": "Time Limit Minutes"
+          },
+          "shuffle_questions": {
+            "type": "boolean",
+            "title": "Shuffle Questions",
+            "default": true
+          },
+          "is_optional": {
+            "type": "boolean",
+            "title": "Is Optional",
+            "default": false
+          },
+          "question_ids": {
+            "items": { "type": "string", "format": "uuid" },
+            "type": "array",
+            "title": "Question Ids"
+          }
+        },
+        "type": "object",
+        "required": ["title", "order"],
+        "title": "SectionCreate",
+        "description": "Schema for creating section",
+        "example": {}
+      },
+      "SectionResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "id": { "type": "string", "format": "uuid", "title": "Id" },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Title"
+          },
+          "description": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Description"
+          },
+          "instructions": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Instructions"
+          },
+          "order": { "type": "integer", "minimum": 0.0, "title": "Order" },
+          "time_limit_minutes": {
+            "anyOf": [
+              { "type": "integer", "minimum": 0.0 },
+              { "type": "null" }
+            ],
+            "title": "Time Limit Minutes"
+          },
+          "shuffle_questions": {
+            "type": "boolean",
+            "title": "Shuffle Questions",
+            "default": true
+          },
+          "is_optional": {
+            "type": "boolean",
+            "title": "Is Optional",
+            "default": false
+          },
+          "assessment_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Assessment Id"
+          },
+          "total_questions": { "type": "integer", "title": "Total Questions" },
+          "total_points": { "type": "integer", "title": "Total Points" }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "title",
+          "order",
+          "assessment_id",
+          "total_questions",
+          "total_points"
+        ],
+        "title": "SectionResponse",
+        "description": "Schema for section response",
         "example": {}
       },
       "SubjectCreate": {
