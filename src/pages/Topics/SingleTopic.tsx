@@ -28,6 +28,7 @@ import { PiPencilSimpleLineBold } from "react-icons/pi";
 import { FiPlusSquare, FiTrash2 } from "react-icons/fi";
 import DeleteTopicModal from "../../components/Modals/DeleteTopicModal";
 import UpdateTopicModal from "../../components/Modals/UpdateTopicModal";
+import AddSingleTopicModal from "../../components/Modals/AddSingleTopicModal";
 
 export default function SingleTopic() {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +38,7 @@ export default function SingleTopic() {
   const [topicName, setTopicName] = useState<string>("");
   const delTopic = useDisclosure();
   const updateTopic = useDisclosure();
+  const addTopic = useDisclosure();
 
   const pageSize = 10;
 
@@ -97,6 +99,7 @@ export default function SingleTopic() {
                 radius="sm"
                 type="button"
                 startContent={<FiPlusSquare />}
+                onPress={() => addTopic.onOpen()}
               >
                 Add New Topic
               </Button>
@@ -246,6 +249,13 @@ export default function SingleTopic() {
         onOpenChange={updateTopic.onOpenChange}
         topic_id={topicId}
         name={topicName}
+      />
+
+      <AddSingleTopicModal
+        isOpen={addTopic.isOpen}
+        onOpenChange={addTopic.onOpenChange}
+        onClose={addTopic.onClose}
+        topic_id={id as string}
       />
     </>
   );

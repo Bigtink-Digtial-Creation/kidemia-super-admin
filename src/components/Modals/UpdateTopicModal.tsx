@@ -305,6 +305,7 @@ export default function UpdateTopicModal({
                   >
                     No, Cancel
                   </Button>
+
                   <Button
                     className="bg-kidemia-secondary text-kidemia-white font-medium"
                     size="md"
