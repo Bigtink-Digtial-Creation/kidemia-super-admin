@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   BreadcrumbItem,
   Breadcrumbs,
+  Button,
   Chip,
   Pagination,
   Spinner,
@@ -24,7 +25,7 @@ import { useAtomValue } from "jotai";
 import { formatDateToDDMMYYYY, getDifficultyColor } from "../../utils";
 import { subjectTitleAtom } from "../../store/subject.atom";
 import { PiPencilSimpleLineBold } from "react-icons/pi";
-import { FiTrash2 } from "react-icons/fi";
+import { FiPlusSquare, FiTrash2 } from "react-icons/fi";
 import DeleteTopicModal from "../../components/Modals/DeleteTopicModal";
 import UpdateTopicModal from "../../components/Modals/UpdateTopicModal";
 
@@ -86,7 +87,30 @@ export default function SingleTopic() {
         </div>
 
         <div className="space-y-3">
-          <p className="text-base text-kidemia-grey">Explore All Topics</p>
+          <div className="flex justify-between items-center">
+            <p className="text-base text-kidemia-grey">Explore All Topics</p>
+            <div className="flex justify-between items-center gap-6">
+              <Button
+                className="bg-kidemia-biege border border-enita-black2 font-medium text-kidemia-primary"
+                variant="faded"
+                size="md"
+                radius="sm"
+                type="button"
+                startContent={<FiPlusSquare />}
+              >
+                Add New Topic
+              </Button>
+              <Button
+                className="bg-kidemia-secondary text-kidemia-white font-medium"
+                size="md"
+                radius="sm"
+                type="submit"
+                startContent={<FiPlusSquare />}
+              >
+                Add Bulk Topic
+              </Button>
+            </div>
+          </div>
 
           <div>
             <Table
