@@ -24,5 +24,20 @@ export const updateSubjectSchema = z.object({
   is_featured: z.boolean(),
 });
 
+export const UpdateTopicSchema = z.object({
+  name: z.string().min(1, "Topic name is required"),
+  code: z.string().min(1, "Code is required"),
+  estimated_time_minutes: z
+    .number()
+    .positive({ message: "Estimated time must be greater than zero" }),
+  video_url: z.url().optional().or(z.literal("")),
+  document_url: z.url().optional().or(z.literal("")),
+  is_active: z.boolean(),
+  difficulty_level: z.enum(["easy", "medium", "hard", "expert"]),
+  description: z.string().min(1, "Description is required"),
+  content: z.string().min(1, "Content is required"),
+});
+
 export type AddSubjectSchema = z.infer<typeof AddSubjectSchema>;
 export type UpdateSubjectFormData = z.infer<typeof updateSubjectSchema>;
+export type UpdateTopicSchema = z.infer<typeof UpdateTopicSchema>;

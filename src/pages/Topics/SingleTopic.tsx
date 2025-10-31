@@ -35,7 +35,7 @@ export default function SingleTopic() {
   const [topicId, setTopicId] = useState<string>("");
   const [topicName, setTopicName] = useState<string>("");
   const delTopic = useDisclosure();
-  const updateTopic = useDisclosure()
+  const updateTopic = useDisclosure();
 
   const pageSize = 10;
 
@@ -221,7 +221,8 @@ export default function SingleTopic() {
         onClose={updateTopic.onClose}
         onOpenChange={updateTopic.onOpenChange}
         topic_id={topicId}
-        name={topicName} />
+        name={topicName}
+      />
     </>
   );
 }
