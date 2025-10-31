@@ -17,7 +17,7 @@ import {
 } from "@heroui/react";
 import { SidebarRoutes } from "../../routes";
 import { MdOutlineDashboard, MdOutlineTopic } from "react-icons/md";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
@@ -32,6 +32,7 @@ import AddSingleTopicModal from "../../components/Modals/AddSingleTopicModal";
 
 export default function SingleTopic() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate()
   const title = useAtomValue(subjectTitleAtom);
   const [page, setPage] = useState<number>(1);
   const [topicId, setTopicId] = useState<string>("");
@@ -109,6 +110,9 @@ export default function SingleTopic() {
                 radius="sm"
                 type="submit"
                 startContent={<FiPlusSquare />}
+                onPress={() => {
+                  navigate(`/dashboard/topics/bulk/${id}`)
+                }}
               >
                 Add Bulk Topic
               </Button>

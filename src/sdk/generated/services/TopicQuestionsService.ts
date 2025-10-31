@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { BulkQuestionImportRequest } from "../models/BulkQuestionImportRequest";
 import type { BulkQuestionImportResponse } from "../models/BulkQuestionImportResponse";
 import type { DifficultyLevel } from "../models/DifficultyLevel";

@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { AssignPermissionsToRoleRequest } from "../models/AssignPermissionsToRoleRequest";
 import type { MessageResponse } from "../models/MessageResponse";
 import type { RoleCreate } from "../models/RoleCreate";

@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { CategoryConfigCreate } from "../models/CategoryConfigCreate";
 import type { CategoryConfigResponse } from "../models/CategoryConfigResponse";
 import type { CategoryConfigUpdate } from "../models/CategoryConfigUpdate";

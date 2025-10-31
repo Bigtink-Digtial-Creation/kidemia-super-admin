@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-/* eslint-disable */
+ 
 import type { AssessmentCategory } from "../models/AssessmentCategory";
 import type { AssessmentCreate } from "../models/AssessmentCreate";
 import type { AssessmentListResponse } from "../models/AssessmentListResponse";
