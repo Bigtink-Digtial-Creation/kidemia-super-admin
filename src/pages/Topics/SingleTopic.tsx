@@ -32,7 +32,7 @@ import AddSingleTopicModal from "../../components/Modals/AddSingleTopicModal";
 
 export default function SingleTopic() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const title = useAtomValue(subjectTitleAtom);
   const [page, setPage] = useState<number>(1);
   const [topicId, setTopicId] = useState<string>("");
@@ -111,7 +111,7 @@ export default function SingleTopic() {
                 type="submit"
                 startContent={<FiPlusSquare />}
                 onPress={() => {
-                  navigate(`/dashboard/topics/bulk/${id}`)
+                  navigate(`/dashboard/topics/bulk/${id}`);
                 }}
               >
                 Add Bulk Topic

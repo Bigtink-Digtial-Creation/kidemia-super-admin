@@ -1,7 +1,7 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
- 
+
 import type { AssessmentCategory } from "./AssessmentCategory";
 import type { AssessmentType } from "./AssessmentType";
 import type { QuestionSelectionMode } from "./QuestionSelectionMode";

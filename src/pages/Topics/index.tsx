@@ -47,6 +47,7 @@ export default function TopicsPage() {
           <BreadcrumbItem
             href={SidebarRoutes.topics}
             startContent={<MdOutlineTopic />}
+            color="warning"
           >
             Topics
           </BreadcrumbItem>

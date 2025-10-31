@@ -88,8 +88,8 @@ export const router = createBrowserRouter([
       },
       {
         path: SidebarRoutes.bulkTopic,
-        element: <BulkTopic />
-      }
+        element: <BulkTopic />,
+      },
     ],
   },
 ]);
