@@ -23,6 +23,7 @@ import SingleSubject from "./pages/Subjects/SingleSubject";
 import TopicsPage from "./pages/Topics";
 import SingleTopic from "./pages/Topics/SingleTopic";
 import BulkTopic from "./pages/Topics/BulkTopic";
+import AddQuestions from "./pages/Subjects/AddQuestions";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -89,6 +90,10 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.bulkTopic,
         element: <BulkTopic />,
+      },
+      {
+        path: SidebarRoutes.addQuestionsSubject,
+        element: <AddQuestions />,
       },
     ],
   },

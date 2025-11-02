@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import {
   BreadcrumbItem,
   Breadcrumbs,
+  Button,
   Chip,
   Pagination,
   Spinner,
@@ -27,7 +28,7 @@ import {
   getDifficultyColor,
   toTitleCase,
 } from "../../utils";
-import { FiEye, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiPlusSquare, FiTrash2 } from "react-icons/fi";
 import DeleteQuestionModal from "../../components/Modals/DeleteQuestionModal";
 import SingleSubjectDrawer from "./SingleSubjectDrawer";
 
@@ -40,6 +41,7 @@ export default function SingleSubject() {
   const openDrawer = useDisclosure();
 
   const pageSize = 10;
+  const navigate = useNavigate();
 
   const { data: questionsData, isLoading } = useQuery({
     queryKey: [QueryKeys.questionsById, id],
@@ -89,10 +91,23 @@ export default function SingleSubject() {
         </div>
 
         <div className="space-y-3">
-          <div>
+          <div className="flex justify-between items-center">
             <p className="text-base text-kidemia-grey">
               Explore All {title} Questions
             </p>
+
+            <Button
+              className="bg-kidemia-secondary text-kidemia-white font-medium"
+              size="md"
+              radius="sm"
+              type="submit"
+              startContent={<FiPlusSquare />}
+              onPress={() => {
+                navigate(`/dashboard/subjects/${id}/add-questions`);
+              }}
+            >
+              Add Questions
+            </Button>
           </div>
 
           <div>

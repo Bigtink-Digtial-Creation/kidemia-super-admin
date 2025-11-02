@@ -10,6 +10,7 @@ export const SidebarRoutes = {
   settings: "/dashboard/settings",
   subjects: "/dashboard/subjects",
   singleSubject: "/dashboard/subjects/:id",
+  addQuestionsSubject: "/dashboard/subjects/:id/add-questions",
   roles: "/dashboard/roles",
   singleRole: "/dashboard/roles/:id",
   profile: "/dashboard/profile",
