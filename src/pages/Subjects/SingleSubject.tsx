@@ -29,6 +29,7 @@ import {
 } from "../../utils";
 import { FiEye, FiTrash2 } from "react-icons/fi";
 import DeleteQuestionModal from "../../components/Modals/DeleteQuestionModal";
+import SingleSubjectDrawer from "./SingleSubjectDrawer";
 
 export default function SingleSubject() {
   const { id } = useParams<{ id: string }>();
@@ -36,6 +37,7 @@ export default function SingleSubject() {
   const [questionId, setQuestionId] = useState<string>("");
   const title = useAtomValue(subjectQuestonTitleAtom);
   const delQuestion = useDisclosure();
+  const openDrawer = useDisclosure();
 
   const pageSize = 10;
 
@@ -177,11 +179,10 @@ export default function SingleSubject() {
                         <Tooltip content="View Details">
                           <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
                             <FiEye
-                            // onClick={() => {
-                            //   setTopicId(topic?.id);
-                            //   setTopicName(topic?.name);
-                            //   updateTopic.onOpen();
-                            // }}
+                              onClick={() => {
+                                setQuestionId(questions?.id);
+                                openDrawer.onOpen();
+                              }}
                             />
                           </span>
                         </Tooltip>
@@ -212,6 +213,14 @@ export default function SingleSubject() {
         onOpenChange={delQuestion.onOpenChange}
         question_id={questionId}
       />
+
+      {questionId ? (
+        <SingleSubjectDrawer
+          isOpen={openDrawer.isOpen}
+          onOpenChange={openDrawer.onOpenChange}
+          id={questionId}
+        />
+      ) : null}
     </>
   );
 }
