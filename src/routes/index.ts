@@ -19,6 +19,7 @@ export const SidebarRoutes = {
   singleTopic: "/dashboard/topics/:id",
   bulkTopic: "/dashboard/topics/bulk/:id",
   assessment: "/dashboard/assessment",
+  createAssessment: "/dashboard/assessment/create",
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];

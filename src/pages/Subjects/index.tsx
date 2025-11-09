@@ -106,7 +106,7 @@ export default function SubjectsPage() {
           </Breadcrumbs>
         </div>
 
-        <div className="space-y-3 w-full-">
+        <div className="space-y-3">
           <div className="flex justify-end">
             <div className="flex justify-between items-center space-x-6">
               <div className="w-full">
