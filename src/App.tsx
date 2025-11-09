@@ -24,6 +24,7 @@ import TopicsPage from "./pages/Topics";
 import SingleTopic from "./pages/Topics/SingleTopic";
 import BulkTopic from "./pages/Topics/BulkTopic";
 import AddQuestions from "./pages/Subjects/AddQuestions";
+import AssessmentPage from "./pages/Assessment";
 
 import ErrorPage from "./pages/ErrorPage";
 
@@ -95,6 +96,10 @@ export const router = createBrowserRouter([
         path: SidebarRoutes.addQuestionsSubject,
         element: <AddQuestions />,
       },
+      {
+        path: SidebarRoutes.assessment,
+        element: <AssessmentPage />
+      }
     ],
   },
 ]);
