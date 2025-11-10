@@ -13,4 +13,5 @@ export const QueryKeys = {
   questionsById: "questionsById",
   questionDetails: "questionDetails",
   allAssessment: "allAssessment",
+  singleAssement: "singleAssement",
 } as const;

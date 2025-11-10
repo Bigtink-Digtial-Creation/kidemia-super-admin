@@ -62,8 +62,6 @@ export default function AssessmentPage() {
       ),
   });
 
-  console.log({ assessmentData });
-
   const totalAssessment = assessmentData?.items.length ?? 0;
   const totalPages = Math.ceil(totalAssessment / pageSize);
 
@@ -205,7 +203,9 @@ export default function AssessmentPage() {
                     <div className="relative flex items-center gap-4">
                       <Tooltip content="View Details">
                         <FaEye
-                          // onClick={() => navigate(`/dashboard/roles/${role.id}`)}
+                          onClick={() =>
+                            navigate(`/dashboard/assessment/${asst?.id}`)
+                          }
                           className="text-kidemia-secondary text-lg cursor-pointer shrink-0 hover:text-kidemia-primary transition-colors duration-200"
                         />
                       </Tooltip>
