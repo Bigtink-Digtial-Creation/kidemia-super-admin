@@ -10,6 +10,8 @@ import { BsFillQuestionSquareFill, BsHandThumbsDownFill } from "react-icons/bs";
 import { LiaFilePowerpointSolid } from "react-icons/lia";
 import { FaCheck, FaCheckDouble } from "react-icons/fa";
 import { SiSpeedtest } from "react-icons/si";
+import { HiMiniArrowTrendingDown, HiOutlineArrowTrendingUp } from "react-icons/hi2";
+
 
 export default function SingleAssessment() {
   const { id } = useParams<{ id: string }>();
@@ -88,6 +90,17 @@ export default function SingleAssessment() {
               icon={SiSpeedtest}
               title="Total Attempts"
               figure={singleAssessment?.total_attempts || "00"}
+            />
+
+            <StatCard
+              icon={HiOutlineArrowTrendingUp}
+              title="Highest Score"
+              figure={singleAssessment?.highest_score || "00"}
+            />
+            <StatCard
+              icon={HiMiniArrowTrendingDown}
+              title="Lowest Score"
+              figure={singleAssessment?.lowest_score || "00"}
             />
           </div>
 
