@@ -1,8 +1,18 @@
-import { BreadcrumbItem, Breadcrumbs, Input, Radio, RadioGroup, Spinner, Textarea } from "@heroui/react";
+import {
+  addToast,
+  BreadcrumbItem,
+  Breadcrumbs,
+  Button,
+  Input,
+  Radio,
+  RadioGroup,
+  Spinner,
+  Textarea,
+} from "@heroui/react";
 import { useParams } from "react-router";
 import { SidebarRoutes } from "../../routes";
 import { MdAssessment, MdOutlineDashboard } from "react-icons/md";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
 import StatCard from "../../components/Dashboard/StatCard";
@@ -10,11 +20,15 @@ import { BsFillQuestionSquareFill, BsHandThumbsDownFill } from "react-icons/bs";
 import { LiaFilePowerpointSolid } from "react-icons/lia";
 import { FaCheck, FaCheckDouble } from "react-icons/fa";
 import { SiSpeedtest } from "react-icons/si";
-import { HiMiniArrowTrendingDown, HiOutlineArrowTrendingUp } from "react-icons/hi2";
-
+import {
+  HiMiniArrowTrendingDown,
+  HiOutlineArrowTrendingUp,
+} from "react-icons/hi2";
+import { apiErrorParser } from "../../utils/errorParser";
 
 export default function SingleAssessment() {
   const { id } = useParams<{ id: string }>();
+  const queryClient = useQueryClient();
   console.log({ id });
 
   const { data: singleAssessment, isLoading } = useQuery({
@@ -27,6 +41,27 @@ export default function SingleAssessment() {
     enabled: !!id,
   });
 
+  const publishMutation = useMutation({
+    mutationFn: (assessment_id: string) =>
+      ApiSDK.AssessmentsService.publishAssessmentApiV1AssessmentsAssessmentIdPublishPost(
+        assessment_id,
+      ),
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.singleAssement] });
+      addToast({
+        title: "Assessment Published Successfully",
+        color: "success",
+      });
+    },
+    onError(error) {
+      const parsedError = apiErrorParser(error);
+      addToast({
+        title: "An Error Occured",
+        description: parsedError.message,
+        color: "danger",
+      });
+    },
+  });
   console.log({ singleAssessment });
 
   if (isLoading && !singleAssessment) {
@@ -36,10 +71,11 @@ export default function SingleAssessment() {
       </div>
     );
   }
+
   return (
     <>
       <section className="space-y-8">
-        <div>
+        <div className="flex justify-between items-center">
           <Breadcrumbs variant="light" color="foreground">
             <BreadcrumbItem
               href={SidebarRoutes.dashboard}
@@ -57,6 +93,25 @@ export default function SingleAssessment() {
               Assessment Detail
             </BreadcrumbItem>
           </Breadcrumbs>
+
+          {singleAssessment?.status !== "published" ? (
+            <div>
+              <Button
+                type="submit"
+                variant="solid"
+                size="md"
+                className="bg-kidemia-secondary text-kidemia-white font-semibold w-full-"
+                radius="sm"
+                onPress={() =>
+                  publishMutation.mutate(singleAssessment?.id as string)
+                }
+                isLoading={publishMutation.isPending}
+                isDisabled={publishMutation.isPending}
+              >
+                Publish Assessment
+              </Button>
+            </div>
+          ) : null}
         </div>
 
         <div className="space-y-4">
@@ -627,8 +682,18 @@ export default function SingleAssessment() {
               </div>
             </div>
 
-
-            SingleAssessment form here</div>
+            <div className="flex justify-end items-center">
+              <Button
+                type="submit"
+                variant="solid"
+                size="lg"
+                className="bg-kidemia-secondary text-kidemia-white font-semibold w-full-"
+                radius="sm"
+              >
+                Update Assessment
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
     </>
