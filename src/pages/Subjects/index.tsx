@@ -33,6 +33,8 @@ import UpdateSubjectModal from "../../components/Modals/UpdateSubjectModal";
 import { useNavigate } from "react-router";
 import { FiPlusSquare } from "react-icons/fi";
 import AddSubjectModal from "../../components/Modals/AddSubjectModal";
+import { useSetAtom } from "jotai";
+import { subjectQuestonTitleAtom } from "../../store/subject.atom";
 
 export default function SubjectsPage() {
   const navigate = useNavigate();
@@ -40,6 +42,7 @@ export default function SubjectsPage() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [subjectId, setSubjectId] = useState<string>("");
   const [subjectName, setSubjectName] = useState<string>("");
+  const setSubjectTitle = useSetAtom(subjectQuestonTitleAtom);
 
   const delectSubject = useDisclosure();
   const updateSubject = useDisclosure();
@@ -103,7 +106,7 @@ export default function SubjectsPage() {
           </Breadcrumbs>
         </div>
 
-        <div className="space-y-3 w-full-">
+        <div className="space-y-3">
           <div className="flex justify-end">
             <div className="flex justify-between items-center space-x-6">
               <div className="w-full">
@@ -227,11 +230,12 @@ export default function SubjectsPage() {
                             key="question"
                             className="text-kidemia-black"
                             color="success"
-                            onPress={() =>
-                              navigate(`/dashboard/subjects/${subject.id}`)
-                            }
+                            onPress={() => {
+                              setSubjectTitle(subject?.name);
+                              navigate(`/dashboard/subjects/${subject.id}`);
+                            }}
                           >
-                            Questions
+                            View Questions
                           </DropdownItem>
 
                           <DropdownItem

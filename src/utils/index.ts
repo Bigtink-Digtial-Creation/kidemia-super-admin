@@ -50,3 +50,6 @@ export const getDifficultyColor = (action: string) => {
       return "secondary";
   }
 };
+
+export const toTitleCase = (str: string) =>
+  str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());

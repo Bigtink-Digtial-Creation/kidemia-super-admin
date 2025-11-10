@@ -10,6 +10,7 @@ export const SidebarRoutes = {
   settings: "/dashboard/settings",
   subjects: "/dashboard/subjects",
   singleSubject: "/dashboard/subjects/:id",
+  addQuestionsSubject: "/dashboard/subjects/:id/add-questions",
   roles: "/dashboard/roles",
   singleRole: "/dashboard/roles/:id",
   profile: "/dashboard/profile",
@@ -17,6 +18,9 @@ export const SidebarRoutes = {
   topics: "/dashboard/topics",
   singleTopic: "/dashboard/topics/:id",
   bulkTopic: "/dashboard/topics/bulk/:id",
+  assessment: "/dashboard/assessment",
+  createAssessment: "/dashboard/assessment/create",
+  singleAssessment: "/dashboard/assessment/:id",
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];

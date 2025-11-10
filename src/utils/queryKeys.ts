@@ -10,4 +10,8 @@ export const QueryKeys = {
   permissionId: "permissionId",
   subjectTopics: "subjectTopics",
   topicById: "topicById",
+  questionsById: "questionsById",
+  questionDetails: "questionDetails",
+  allAssessment: "allAssessment",
+  singleAssement: "singleAssement",
 } as const;
