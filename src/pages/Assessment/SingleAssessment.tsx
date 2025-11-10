@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs, Input, Spinner, Textarea } from "@heroui/react";
+import { BreadcrumbItem, Breadcrumbs, Input, Radio, RadioGroup, Spinner, Textarea } from "@heroui/react";
 import { useParams } from "react-router";
 import { SidebarRoutes } from "../../routes";
 import { MdAssessment, MdOutlineDashboard } from "react-icons/md";
@@ -295,6 +295,30 @@ export default function SingleAssessment() {
               </div>
             </div>
 
+            <div className="flex justify-between items-center gap-2 md:gap-4 flex-col md:flex-row pb-2">
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Result Display Mode"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Question Selection Mode"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+            </div>
+
             <div className="pb-2 w-full">
               <Input
                 variant="flat"
@@ -305,6 +329,305 @@ export default function SingleAssessment() {
                 type="text"
               />
             </div>
+            <div className="space-y-2 py-3 grid grid-cols-1 md:grid-cols-4 gap-2">
+              <div className="py-1">
+                <RadioGroup
+                  label="Allow Backward Navigation"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Allow Question Navigation"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Detect Tab Switching"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Full Screen Required"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Is Public"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+              <div className="py-1">
+                <RadioGroup
+                  label="Protoring Enabled"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Require Enrollment"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Require Webcam"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Show Correct Answers"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Show Explanation"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+              <div className="py-1">
+                <RadioGroup
+                  label="Shuffle Question"
+                  orientation="horizontal"
+                  classNames={{
+                    wrapper: "space-x-4",
+                    label: "text-base font-medium text-kidemia-black",
+                  }}
+                >
+                  <Radio
+                    value="by-subject"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    True
+                  </Radio>
+
+                  <Radio
+                    value="by-topic"
+                    className="text-kidemia-grey font-medium"
+                    color="warning"
+                  >
+                    False
+                  </Radio>
+                </RadioGroup>
+              </div>
+            </div>
+
+
             SingleAssessment form here</div>
         </div>
       </section>
