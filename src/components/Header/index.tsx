@@ -34,7 +34,7 @@ export default function Header(props: HeaderT) {
 
   return (
     <>
-      <header className="sticky top-0 z-20 flex w-full bg-kidemia-white drop-shadow-1">
+      <header className="sticky top-0 z-50 flex w-full bg-kidemia-white drop-shadow-1">
         {isUserLoading ? null : (
           <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
             <div className="flex items-center gap-2 sm:gap-4 lg:hidden">
