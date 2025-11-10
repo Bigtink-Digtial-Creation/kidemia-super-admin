@@ -1,6 +1,8 @@
 import {
   BreadcrumbItem,
   Breadcrumbs,
+  Button,
+  DatePicker,
   Divider,
   Input,
   Radio,
@@ -12,6 +14,7 @@ import {
 import { SidebarRoutes } from "../../routes";
 import { MdAssessment, MdOutlineDashboard } from "react-icons/md";
 import { FiSearch } from "react-icons/fi";
+import QuestionsTable from "./QuestionsTable";
 
 const dum = [
   { key: "yoo", label: "yooo" },
@@ -189,10 +192,209 @@ export default function CreateAssessment() {
                   </div>
                 </div>
 
-                <div className="py-6">Table here </div>
+                <div className="py-4">
+                  <QuestionsTable />
+                </div>
               </div>
             </div>
-            <div>jeje</div>
+            <div className="space-y-4">
+              {/* assessment behaviour */}
+              <div className="p-4 border border-kidemia-grey/30 rounded-xl space-y-3">
+                <h3 className="text-xl font-semibold text-kidemia-black">
+                  Assessment Behaviour
+                </h3>
+                <div>
+                  <RadioGroup
+                    classNames={{
+                      wrapper: "space-y-4",
+                    }}
+                  >
+                    <Radio
+                      value="shuffle-questions"
+                      className="text-kidemia-grey font-medium"
+                      color="warning"
+                    >
+                      Shuffle Questions
+                    </Radio>
+
+                    <Radio
+                      value="shuffle-options"
+                      className="text-kidemia-grey font-medium"
+                      color="warning"
+                    >
+                      Shuffle Options
+                    </Radio>
+                    <Radio
+                      value="allow-question-navigation"
+                      className="text-kidemia-grey font-medium"
+                      color="warning"
+                    >
+                      Allow Question Navigation
+                    </Radio>
+
+                    <Radio
+                      value="allow-backward-navigation"
+                      className="text-kidemia-grey font-medium"
+                      color="warning"
+                    >
+                      Allow Backward Navigation
+                    </Radio>
+                  </RadioGroup>
+                </div>
+              </div>
+              {/* result display and feedback */}
+              <div className="p-4 border border-kidemia-grey/30 rounded-xl space-y-3">
+                <h3 className="text-xl font-semibold text-kidemia-black">
+                  Result Display & Feedback
+                </h3>
+
+                <div className="py-2 space-y-4">
+                  <div className="pb-2 w-full">
+                    <Select
+                      variant="flat"
+                      size="lg"
+                      radius="sm"
+                      label="Result Display Mode"
+                      labelPlacement="outside"
+                      placeholder="Result Display Mode"
+                    >
+                      {dum.map((d) => (
+                        <SelectItem key={d.key}>{d.label}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+
+                  <RadioGroup
+                    classNames={{
+                      wrapper: "space-y-4",
+                    }}
+                  >
+                    <Radio
+                      value="correct-answers"
+                      className="text-kidemia-grey font-medium"
+                      color="warning"
+                    >
+                      Show Correct Answers
+                    </Radio>
+
+                    <Radio
+                      value="explanation"
+                      className="text-kidemia-grey font-medium"
+                      color="warning"
+                    >
+                      Show Explanation
+                    </Radio>
+                  </RadioGroup>
+                </div>
+              </div>
+              {/* availability and pricing  */}
+              <div className="p-4 border border-kidemia-grey/30 rounded-xl space-y-3">
+                <h3 className="text-xl font-semibold text-kidemia-black">
+                  Availability & Pricing
+                </h3>
+
+                <div className="flex justify-between flex-col md:flex-row gap-3">
+                  <div className="w-full pb-2">
+                    <DatePicker
+                      variant="flat"
+                      size="lg"
+                      radius="sm"
+                      label="Available From"
+                      labelPlacement="outside"
+                    />
+                  </div>
+                  <div className="w-full pb-2">
+                    <DatePicker
+                      variant="flat"
+                      size="lg"
+                      radius="sm"
+                      label="Available Until"
+                      labelPlacement="outside"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-between flex-col md:flex-row gap-3">
+                  <div className="pb-2 w-full">
+                    <Input
+                      variant="flat"
+                      size="lg"
+                      radius="sm"
+                      label="Price"
+                      labelPlacement="outside"
+                      type="text"
+                      placeholder="0.00"
+                    />
+                  </div>
+
+                  <div className="pb-2 w-full">
+                    <Select
+                      variant="flat"
+                      size="lg"
+                      radius="sm"
+                      label="Currency"
+                      labelPlacement="outside"
+                      placeholder="Currency"
+                    >
+                      {dum.map((d) => (
+                        <SelectItem key={d.key}>{d.label}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+                <div>
+                  <RadioGroup
+                    orientation="horizontal"
+                    classNames={{
+                      wrapper: "space-x-4",
+                    }}
+                  >
+                    <Radio
+                      value="public-assessment"
+                      className="text-kidemia-grey font-medium"
+                      color="warning"
+                    >
+                      Public Assessment
+                    </Radio>
+
+                    <Radio
+                      value="require-enrollment"
+                      className="text-kidemia-grey font-medium"
+                      color="warning"
+                    >
+                      Require Enrollment
+                    </Radio>
+                  </RadioGroup>
+                </div>
+
+                <div className="pb-2 w-full pt-4">
+                  <Select
+                    variant="flat"
+                    size="lg"
+                    radius="sm"
+                    label="Status"
+                    labelPlacement="outside"
+                    placeholder="Status"
+                  >
+                    {dum.map((d) => (
+                      <SelectItem key={d.key}>{d.label}</SelectItem>
+                    ))}
+                  </Select>
+                </div>
+
+                <div className="py-2 w-full">
+                  <Button
+                    type="submit"
+                    variant="solid"
+                    size="lg"
+                    className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
+                    radius="sm"
+                  >
+                    Publish Assessment
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
