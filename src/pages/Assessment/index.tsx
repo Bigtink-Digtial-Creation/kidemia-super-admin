@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
   Tooltip,
+  useDisclosure,
 } from "@heroui/react";
 import { FiPlusSquare, FiTrash2 } from "react-icons/fi";
 import { useNavigate } from "react-router";
@@ -23,13 +24,18 @@ import { ApiSDK } from "../../sdk";
 import { useEffect, useState } from "react";
 import { formatDateToDDMMYYYY } from "../../utils";
 import { FaEye } from "react-icons/fa";
+import DeleteAssessmentModal from "../../components/Modals/DeleteAssessment";
 
 export default function AssessmentPage() {
   const navigate = useNavigate();
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [asstId, setAsstId] = useState<string>("");
+  const [asstName, setAsstName] = useState("");
+
   const pageSize = 10;
+  const delAsst = useDisclosure();
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -206,8 +212,12 @@ export default function AssessmentPage() {
 
                       <Tooltip color="danger" content="Delete">
                         <FiTrash2
-                          // onClick={() => navigate(`/dashboard/roles/${role.id}`)}
                           className="text-danger text-lg cursor-pointer shrink-0 hover:text-kidemia-primary transition-colors duration-200"
+                          onClick={() => {
+                            setAsstId(asst?.id);
+                            setAsstName(asst?.title);
+                            delAsst.onOpen();
+                          }}
                         />
                       </Tooltip>
                     </div>
@@ -218,6 +228,14 @@ export default function AssessmentPage() {
           </Table>
         </div>
       </section>
+
+      <DeleteAssessmentModal
+        isOpen={delAsst.isOpen}
+        onClose={delAsst.onClose}
+        onOpenChange={delAsst.onOpenChange}
+        assessment_id={asstId}
+        name={asstName}
+      />
     </>
   );
 }
