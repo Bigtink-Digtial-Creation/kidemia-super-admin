@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs, Spinner } from "@heroui/react";
+import { BreadcrumbItem, Breadcrumbs, Input, Spinner, Textarea } from "@heroui/react";
 import { useParams } from "react-router";
 import { SidebarRoutes } from "../../routes";
 import { MdAssessment, MdOutlineDashboard } from "react-icons/md";
@@ -91,7 +91,208 @@ export default function SingleAssessment() {
             />
           </div>
 
-          <div className="py-2">SingleAssessment form here</div>
+          <div className="py-2 px-3">
+            {/* form wrapper here */}
+
+            <div className="flex justify-between items-center gap-2 md:gap-4 flex-col md:flex-row pb-2">
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Title"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Code"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="pb-2 w-full">
+              <Textarea
+                variant="flat"
+                size="lg"
+                radius="sm"
+                label="Description"
+                labelPlacement="outside"
+              />
+            </div>
+
+            <div className="pb-2 w-full">
+              <Textarea
+                variant="flat"
+                size="lg"
+                radius="sm"
+                label="Intructions"
+                labelPlacement="outside"
+              />
+            </div>
+
+            <div className="flex justify-between items-center gap-2 md:gap-4 flex-col md:flex-row pb-2">
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Exam Session"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Exam Year"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center gap-2 md:gap-4 flex-col md:flex-row pb-2">
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Currency"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Price"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center gap-2 md:gap-4 flex-col md:flex-row pb-2">
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Avialable From"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Available Until"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center gap-2 md:gap-4 flex-col md:flex-row pb-2">
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Category"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Assessment Type"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center gap-2 md:gap-4 flex-col md:flex-row pb-2">
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Discount Price"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Passing Percentage"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center gap-2 md:gap-4 flex-col md:flex-row pb-2">
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Max Attempt"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+
+              <div className="pb-1 w-full">
+                <Input
+                  variant="flat"
+                  size="lg"
+                  radius="sm"
+                  label="Max Tab Switches"
+                  labelPlacement="outside"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div className="pb-2 w-full">
+              <Input
+                variant="flat"
+                size="lg"
+                radius="sm"
+                label="Time (mins)"
+                labelPlacement="outside"
+                type="text"
+              />
+            </div>
+            SingleAssessment form here</div>
         </div>
       </section>
     </>
