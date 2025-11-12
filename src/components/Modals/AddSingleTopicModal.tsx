@@ -56,6 +56,7 @@ export default function AddSingleTopicModal({
     },
   });
 
+
   const addTopicMutation = useMutation({
     mutationFn: (data: TopicCreate) =>
       ApiSDK.SubjectTopicsService.createTopicApiV1TopicsPost(data),

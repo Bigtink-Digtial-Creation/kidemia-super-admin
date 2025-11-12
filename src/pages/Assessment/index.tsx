@@ -48,7 +48,7 @@ export default function AssessmentPage() {
     queryKey: [QueryKeys.allAssessment, debouncedSearch],
     queryFn: () =>
       ApiSDK.AssessmentsService.getAssessmentsApiV1AssessmentsGet(
-        undefined, // assessmentType
+        'exam', // assessmentType
         undefined, // category
         undefined, // subjectId
         undefined, // status
