@@ -64,11 +64,8 @@ export default function LoginPage() {
     <div className="py-4 w-full md:w-2xl space-y-6 md:px-12">
       <div className="space-y-3">
         <h2 className="text-3xl text-kidemia-black font-semibold text-center">
-          Welcome Back
+          Welcome to Kidemia Admin Dashboard
         </h2>
-        <p className="text-lg text-kidemia-black2 text-center font-medium">
-          Sign In to continue
-        </p>
       </div>
 
       <Form className="py-6 space-y-2" onSubmit={handleSubmit(onSubmit)}>
