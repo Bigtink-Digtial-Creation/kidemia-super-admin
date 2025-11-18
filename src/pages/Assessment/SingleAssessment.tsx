@@ -16,7 +16,7 @@ export default function SingleAssessment() {
   console.log({ id });
 
   const { data: singleAssessment, isLoading } = useQuery({
-    queryKey: [QueryKeys.singleAssement, id],
+    queryKey: [QueryKeys.singleAssessment, id],
     queryFn: () =>
       ApiSDK.AssessmentsService.getAssessmentApiV1AssessmentsAssessmentIdGet(
         id!,
