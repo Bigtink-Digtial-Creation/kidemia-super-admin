@@ -22,7 +22,7 @@ import PreviewModal from "./components/PreviewModal";
 import SectionCard from "./components/SectionCard";
 import AdaptiveModeConfig from "./components/AdaptiveModConfig";
 import RandomModeConfig from "./components/RandomModeConfig";
-
+import { addToast } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { type AssessmentCreate } from "../../sdk/generated";
@@ -185,7 +185,7 @@ export default function CreateAssessment() {
       navigate(SidebarRoutes.assessment);
     },
     onError: (err) => {
-      console.error("Failed to create assessment", err);
+      console.error("Failed to create assessment", err?.message);
       showToastMessage("Failed to create assessment. Please check and try again.", "error");
     },
   });
@@ -411,8 +411,8 @@ export default function CreateAssessment() {
                     onSelectionChange={(keys) => setCategory(Array.from(keys)[0] as string)}
                   >
                     {categories.map((c: any) => (
-                      <SelectItem key={c.category_name ?? c.category_name}>
-                        {c.display_name ?? c.display_name ?? c.category_name}
+                      <SelectItem key={c.category_name.toLowerCase() ?? c.category_name.toLowerCase()}>
+                        {c.display_name.toUpperCase() ?? c.display_name.toUpperCase() ?? c.toUpperCase()}
                       </SelectItem>
                     ))}
                   </Select>
@@ -885,9 +885,9 @@ export default function CreateAssessment() {
 
 
 function showToastMessage(message: string, type: "success" | "error") {
-  // Replace with your toast system
-  // e.g. toast[type](message)
-  // For now console
-  // eslint-disable-next-line no-console
+  addToast({
+    title: message,
+    color: type === "success" ? "success" : "danger",
+  });
   console.log(`[${type.toUpperCase()}] ${message}`);
 }
