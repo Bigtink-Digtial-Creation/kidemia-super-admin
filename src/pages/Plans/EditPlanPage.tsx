@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit2, ArrowLeft } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 
 import { useFeatures, useUpdatePlan, usePlans } from "../../hooks/usePlans";
 import type { PlanConfigUpdate } from "../../sdk/generated";

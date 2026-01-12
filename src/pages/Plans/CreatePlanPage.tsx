@@ -1,7 +1,7 @@
 import { Button, Card, CardBody, addToast } from "@heroui/react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { Plus, ArrowLeft } from "lucide-react"; // Icons for consistency
 
 import { useCreatePlan, useFeatures } from "../../hooks/usePlans";
