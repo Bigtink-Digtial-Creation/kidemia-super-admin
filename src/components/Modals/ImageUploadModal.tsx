@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, Image as ImageIcon } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
+import { ApiSDK } from '../../sdk';
+import { addToast } from '@heroui/react';
 // import { ApiSDK } from '../../sdk';
 
 interface ImageUploadModalProps {
@@ -19,30 +21,31 @@ export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
     const [preview, setPreview] = useState<string | null>(null);
 
 
-    const UploadService = {
-        async uploadImageApiV1UploadImagePost(file: File) {
-            console.log('[Mock UploadService] uploading:', file.name);
-            await new Promise((r) => setTimeout(r, 1500));
-            return {
-                url: URL.createObjectURL(file),
-                message: 'Upload successful',
-            };
-        },
-    };
-
     const uploadMutation = useMutation({
-        // mutationFn: (file: File) => ApiSDK.UploadService.uploadImageApiV1UploadImagePost(file),
-        mutationFn: (file: File) => UploadService.uploadImageApiV1UploadImagePost(file),
-        onSuccess: (response: any) => {
-            onUpload(response.url);
+        mutationFn: async (file: File) => {
+            return ApiSDK.UploadService.uploadQuestionImageApiV1ApiUploadQuestionsPost({ file });
+        },
+        onSuccess: (res) => {
+            onUpload(res.url);
             onClose();
             setSelectedFile(null);
             setPreview(null);
+            addToast({
+                title: 'Uploaded',
+                description: 'Question image uploaded successfully',
+                color: 'success',
+            });
         },
         onError: (err) => {
-            console.error('Upload failed', err);
+            addToast({
+                title: 'Uploaded',
+                description: err?.message || 'Failed to upload image',
+                color: 'success',
+            });
         }
     });
+
+
 
     const handleDrag = (e: React.DragEvent) => {
         e.preventDefault();

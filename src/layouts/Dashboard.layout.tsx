@@ -3,7 +3,7 @@ import { Outlet } from "react-router";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { useAuthRedirect } from "../hooks/use-auth-redirect";
-import { Spinner } from "@heroui/react";
+import BallSpinner from "../components/Spinner/BallSpinner";
 
 export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -12,7 +12,7 @@ export default function DashboardLayout() {
   if (!loggedInUser || !authToken) {
     return (
       <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+        <BallSpinner />
       </div>
     );
   }
@@ -31,7 +31,7 @@ export default function DashboardLayout() {
               setSidebarOpen={setIsSidebarOpen}
             />
             <main>
-              <div className="mx-auto max-w-screen-2xl px-3 py-4">
+              <div className="mx-auto max-w-screen-2xl  px-3 py-4">
                 <Outlet />
               </div>
             </main>

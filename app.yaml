@@ -1,0 +1,44 @@
+runtime: nodejs22
+
+# Environment variables (replace with your actual Cloud Run URL)
+env_variables:
+  VITE_BASE_URL: "https://kidemia-service-1007453817746.europe-west1.run.app"
+
+# Handlers for serving the Vite build
+handlers:
+  # Serve static assets with long cache
+  - url: /assets
+    static_dir: dist/assets
+    secure: always
+    expiration: 1y
+    http_headers:
+      Cache-Control: "public, max-age=31536000, immutable"
+
+  # Serve other static files (images, fonts, etc.)
+  - url: /(.*\.(ico|png|jpg|jpeg|svg|webp|gif|woff|woff2|ttf|eot))$
+    static_files: dist/\1
+    upload: dist/.*\.(ico|png|jpg|jpeg|svg|webp|gif|woff|woff2|ttf|eot)$
+    secure: always
+    expiration: 1d
+
+  # Catch-all for React Router (SPA fallback)
+  - url: /.*
+    static_files: dist/index.html
+    upload: dist/index.html
+    secure: always
+    http_headers:
+      Cache-Control: "no-cache, no-store, must-revalidate"
+
+# Skip files that shouldn't be uploaded
+skip_files:
+  - ^(.*/)?#.*#$
+  - ^(.*/)?.*~$
+  - ^(.*/)?.*\.py[co]$
+  - ^(.*/)?.*/RCS/.*$
+  - ^(.*/)?\..*$
+  - ^(.*/)?.*\.ts$
+  - ^(.*/)?.*\.tsx$
+  - node_modules/
+  - src/
+  - public/
+  - ^(.*/)?\.git.*$

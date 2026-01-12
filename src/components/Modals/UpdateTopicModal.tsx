@@ -8,7 +8,6 @@ import {
   ModalContent,
   Radio,
   RadioGroup,
-  Spinner,
   Textarea,
 } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,6 +20,7 @@ import { UpdateTopicSchema } from "../../schema/subject.schema";
 import { useEffect } from "react";
 import type { TopicUpdate } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
+import BallSpinner from "../Spinner/BallSpinner";
 
 interface UpdateTopicModalI {
   isOpen: boolean;
@@ -132,8 +132,8 @@ export default function UpdateTopicModal({
               </h3>
             </div>
             {isLoading ? (
-              <div className="flex justify-center items-center">
-                <Spinner size="lg" color="warning" />
+              <div className="h-screen flex justify-center items-center">
+                <BallSpinner />
               </div>
             ) : (
               <Form

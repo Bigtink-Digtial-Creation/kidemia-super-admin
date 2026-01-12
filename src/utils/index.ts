@@ -1,3 +1,5 @@
+import type { RoleType, UserListResponse, } from "../sdk/generated";
+
 export const getNameIntials = (name: string) => {
   if (!name) return null;
 
@@ -11,6 +13,38 @@ export const getNameIntials = (name: string) => {
       .slice(0, 2);
   }
 };
+
+export const getFullName = (user: UserListResponse) => {
+  return [user.first_name, user.middle_name, user.last_name]
+    .filter(Boolean)
+    .join(" ");
+};
+
+export const getUserStatus = (isActive: boolean) => {
+  return isActive ? "active" : "suspended";
+};
+
+export const getStatusBadgeColor = (isActive: boolean) => {
+  return isActive
+    ? "bg-green-100 text-green-800"
+    : "bg-red-100 text-red-800";
+};
+
+
+
+export const getRoleBadgeColor = (roleType?: RoleType) => {
+  switch (roleType) {
+    case "system":
+      return "bg-purple-100 text-purple-800";
+    case "institution":
+      return "bg-blue-100 text-blue-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+};
+
+
+
 
 export const formatDateToDDMMYYYY = (isoDate: string | Date): string => {
   // date to dd-mm-yyy

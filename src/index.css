@@ -15,12 +15,12 @@
   --color-kidemia-primary: #BF4C20;
   --color-kidemia-secondary: #F28729;
   --color-kidemia-success: #16732D;
-  --color-kidemia-biege:#F1E2C3;
-  --color-kidemia-biege2:#f1d9b4,
-  --color-kidemia-black2:#000000;
-  --color-kidemia-black3:#10101080,
-  --color-kidemia-completed:"#EAFFF5"
-  --color-kidemia-failed:"#FFEAEB",
-  --color-kidemia-pending:"#EAE68B"
+  --color-kidemia-biege: #F1E2C3;
+  --color-kidemia-biege2: #f1d9b4,
+    --color-kidemia-black2:#000000;
+  --color-kidemia-black3: #10101080,
+    --color-kidemia-completed:"#EAFFF5"
+    --color-kidemia-failed:"#FFEAEB",
+    --color-kidemia-pending:"#EAE68B"
 
 }

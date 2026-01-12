@@ -1,13 +1,14 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { AssessmentCategory } from "./AssessmentCategory";
-import type { AssessmentStatus } from "./AssessmentStatus";
-import type { AssessmentType } from "./AssessmentType";
-import type { QuestionSelectionMode } from "./QuestionSelectionMode";
-import type { ResultDisplayMode } from "./ResultDisplayMode";
-import type { SectionResponse } from "./SectionResponse";
+/* eslint-disable */
+import type { AssessmentCategory } from './AssessmentCategory';
+import type { AssessmentStatus } from './AssessmentStatus';
+import type { AssessmentType } from './AssessmentType';
+import type { QuestionPublicResponse } from './QuestionPublicResponse';
+import type { QuestionSelectionMode } from './QuestionSelectionMode';
+import type { ResultDisplayMode } from './ResultDisplayMode';
+import type { SectionResponse } from './SectionResponse';
 /**
  * Schema for assessment response
  */
@@ -17,20 +18,20 @@ export type AssessmentResponse = {
   id: string;
   title: string;
   code: string;
-  description?: string | null;
-  instructions?: string | null;
+  description?: (string | null);
+  instructions?: (string | null);
   assessment_type: AssessmentType;
   category: AssessmentCategory;
   subject_id: string;
-  topic_ids?: Array<string> | null;
-  exam_year?: number | null;
-  exam_session?: string | null;
+  topic_ids?: (Array<string> | null);
+  exam_year?: (number | null);
+  exam_session?: (string | null);
   price?: string;
   currency?: string;
-  discount_price?: string | null;
+  discount_price?: (string | null);
   duration_minutes: number;
-  available_from?: string | null;
-  available_until?: string | null;
+  available_from?: (string | null);
+  available_until?: (string | null);
   question_selection_mode?: QuestionSelectionMode;
   passing_percentage?: string;
   shuffle_questions?: boolean;
@@ -48,8 +49,8 @@ export type AssessmentResponse = {
   max_tab_switches?: number;
   is_public?: boolean;
   require_enrollment?: boolean;
-  category_config_id?: string | null;
-  institution_id?: string | null;
+  category_config_id?: (string | null);
+  institution_id?: (string | null);
   status: AssessmentStatus;
   total_questions: number;
   total_points: number;
@@ -61,4 +62,6 @@ export type AssessmentResponse = {
   highest_score: string;
   lowest_score: string;
   sections?: Array<SectionResponse>;
+  questions?: (Array<QuestionPublicResponse> | null);
 };
+

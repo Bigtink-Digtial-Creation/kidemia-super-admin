@@ -12,7 +12,6 @@ import {
   RadioGroup,
   Select,
   SelectItem,
-  Spinner,
   Textarea,
 } from "@heroui/react";
 import {
@@ -31,6 +30,7 @@ import {
 } from "../../schema/subject.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { apiErrorParser } from "../../utils/errorParser";
+import BallSpinner from "../Spinner/BallSpinner";
 
 interface UpdateSubjectModalI {
   isOpen: boolean;
@@ -124,8 +124,8 @@ export default function UpdateSubjectModal({
           </ModalHeader>
           <ModalBody>
             {isLoading ? (
-              <div className="flex justify-center items-center">
-                <Spinner size="lg" color="warning" />
+              <div className="h-screen flex justify-center items-center">
+                <BallSpinner />
               </div>
             ) : (
               <>

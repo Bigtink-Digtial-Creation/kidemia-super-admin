@@ -1,73 +1,220 @@
-# React + TypeScript + Vite
+# Kidemia Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Kidemia is a modern, user-friendly web application designed to deliver engaging educational and interactive experiences for children, parents, and educators. This repository contains the **frontend** codebase for the Kidemia platform.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Overview
 
-## React Compiler
+The Kidemia frontend focuses on:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* Clean, intuitive UI/UX suitable for children and parents
+* High performance and responsiveness across devices
+* Scalable, component-driven architecture
+* Seamless integration with backend APIs
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🧱 Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* **Framework:** React / tailwind
+* **Language:** TypeScript
+* **Styling:** Tailwind CSS
+* **State Management:** Tanstack & Jotail
+* **Data Fetching:** Axios by OpenAPI
+* **Form Handling:** React Hook Form
+* **Validation:** Zod 
+* **Icons:** Lucide & Heroicons
+* **Linting & Formatting:** ESLint, Prettier
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📁 Project Structure
+
+```text
+kidemia-frontend/
+├─ public/                 # Static assets
+├─ src/
+│  ├─ components/          # Reusable UI components
+│  ├─ layouts/             # App layouts
+│  ├─ pages/ or app/       # Pages / routes
+│  ├─ features/            # Feature-based modules
+│  ├─ hooks/               # Custom React hooks
+│  ├─ services/            # API & external services
+│  ├─ store/               # Global state management
+│  ├─ styles/              # Global styles
+│  ├─ utils/               # Utility functions
+│  └─ types/               # Type definitions
+├─ .env.example            # Environment variables sample
+├─ README.md
+└─ package.json
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## ⚙️ Environment Variables
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Create a `.env.local` (or `.env`) file based on `.env.example`:
+
+```env
+API_BASE_URL=https://api.kidemia.com
 ```
+
+> ⚠️ Never commit real environment variables to version control.
+
+---
+
+## 🛠️ Installation
+
+### Prerequisites
+
+* Node.js >= 18
+* npm / yarn / pnpm
+
+### Steps
+
+```bash
+# Clone repository
+git clone https://github.com/Bigtink-Digtial-Creation/kidemiafrontend
+
+# Enter directory
+cd kidemiafrontend
+
+# Install dependencies
+npm install
+# or
+yarn install
+
+# Start development server
+npm run dev
+```
+
+The app will be available at: **[http://localhost:5173](http://localhost:5173)**
+
+---
+
+## 📦 Available Scripts
+
+```bash
+npm run dev        # Start development server
+npm run build      # Build for production
+npm run start      # Start production server
+npm run lint       # Run ESLint
+npm run format     # Format code with Prettier
+```
+
+```bash
+ curl http://localhost:8080/api/openapi.json -o ./src/sdk/openapi.json
+
+ npm run gen-sdk 
+```
+
+---
+
+## 🎨 UI & Design Principles
+
+* Child-friendly colors and spacing
+* Large tap targets for mobile
+* Clear visual hierarchy
+* Accessible contrast and typography
+* Consistent design system
+
+---
+
+## 🔐 Authentication & Authorization
+
+* Token-based authentication (JWT)
+* Role-based UI rendering (e.g., Parent, Child, Admin)
+* Secure storage via HTTP-only cookies or secure storage
+
+---
+
+## 🌐 API Integration
+
+* Centralized API service layer
+* Automatic token attachment
+* Global error handling
+* Loading & empty states
+
+ 
+
+---
+
+## 🧪 Testing (Optional / Recommended)
+
+* Unit Tests: Jest / Vitest
+* Component Tests: React Testing Library
+* E2E Tests: Playwright / Cypress
+
+```bash
+npm run test
+```
+
+---
+
+## 🚀 Deployment
+
+Kidemia frontend can be deployed on:
+
+* GCP (recommended)
+* Vercel 
+* Netlify
+* AWS 
+
+```bash
+npm run build
+```
+
+---
+
+## 📈 Performance & Optimization
+
+* Code splitting & lazy loading
+* Image optimization
+* Memoized components
+* Minimal re-renders
+
+---
+
+## 🧩 Contribution Guidelines
+
+1. Fork the repository
+2. Create a feature branch
+3. Follow coding standards
+4. Write clear commit messages
+5. Submit a pull request
+
+---
+
+## 🐛 Bug Reporting
+
+* Use GitHub Issues
+* Provide clear steps to reproduce
+* Include screenshots if applicable
+
+---
+
+## 📄 License
+
+This project is proprietary and owned by **Kidemia**.
+Unauthorized copying, distribution, or use is prohibited unless explicitly permitted.
+
+---
+
+## 👥 Team & Ownership
+
+* Product: Kidemia
+* Frontend Architecture: Kidemia Engineering Team
+
+---
+
+## 📞 Support
+
+For support or inquiries:
+
+* Email: [support@kidemia.com](mailto:support@kidemia.com)
+* Website: [https://kidemia.com](https://kidemia.com)
+
+---
+
+**Kidemia – Learning made joyful.** 🌈

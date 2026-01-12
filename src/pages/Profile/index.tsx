@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import {
   addToast,
@@ -8,12 +7,11 @@ import {
   Button,
   Form,
   Input,
-  Spinner,
   Textarea,
 } from "@heroui/react";
 import { SidebarRoutes } from "../../routes";
 import { MdOutlineDashboard, MdOutlineEmail } from "react-icons/md";
-import { FaCamera, FaUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
@@ -29,10 +27,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { UserUpdate } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import { ProfileSchema } from "../../schema/auth.schema";
+import BallSpinner from "../../components/Spinner/BallSpinner";
 
 export default function ProfilePage() {
   const queryClient = useQueryClient();
   const storedUser = useAtomValue(loggedinUserAtom);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   const form = useForm<ProfileSchema>({
     resolver: zodResolver(ProfileSchema),
@@ -45,39 +45,22 @@ export default function ProfilePage() {
         storedUser?.user?.id as string,
       ),
   });
-  const [avatarUrl, setAvatarUrl] = useState<string>(
-    user?.profile_picture_url as string,
-  );
-
-  const fullName = [user?.first_name, user?.last_name]
-    .filter(Boolean)
-    .join(" ");
 
   useEffect(() => {
     if (user) {
+      setAvatarUrl(user.profile_picture_url ?? null);
       form.reset({
         first_name: user.first_name || "",
         last_name: user.last_name || "",
         middle_name: user.middle_name || "",
-        profile_picture_url: user.profile_picture_url || avatarUrl,
+        profile_picture_url: user.profile_picture_url || "",
         phone_number: user.phone_number || "",
         date_of_birth: user.date_of_birth || "",
         email: user.email || "",
         bio: user.bio || "",
       });
     }
-  }, [avatarUrl, form, user]);
-
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append("profilepicture", file);
-
-    // create a preview from uploaded file
-    const previewUrl = URL.createObjectURL(file);
-    setAvatarUrl(previewUrl);
-  };
+  }, [user, form]);
 
   const updateProfileMutation = useMutation({
     mutationFn: (userData: UserUpdate) =>
@@ -85,42 +68,59 @@ export default function ProfilePage() {
         user?.id as string,
         userData,
       ),
-    async onMutate(updatedUser) {
-      await queryClient.cancelQueries({ queryKey: [QueryKeys.user] });
-      const previousUser = queryClient.getQueryData([QueryKeys.user]);
-
-      queryClient.setQueryData([QueryKeys.user], (old: any) => ({
-        ...old,
-        ...updatedUser,
-      }));
-
-      return { previousUser };
-    },
-
-    onSuccess(data) {
+    onSuccess() {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.user] });
       addToast({
-        description: `${data.first_name} profile updated successfully`,
+        description: "Profile updated successfully",
         color: "success",
       });
     },
-
-    onError(error, _, context) {
-      const parsedError = apiErrorParser(error);
+    onError(error) {
       addToast({
-        title: "An Error Occurred",
-        description: parsedError.message,
+        title: "Update Failed",
+        description: apiErrorParser(error).message,
         color: "danger",
       });
-
-      if (context?.previousUser) {
-        queryClient.setQueryData([QueryKeys.user], context.previousUser);
-      }
-    },
-    onSettled() {
-      queryClient.invalidateQueries({ queryKey: [QueryKeys.user] });
     },
   });
+
+  const uploadAvatarMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = { file };
+      return await ApiSDK.UploadService.updateAvatarApiV1ApiUploadAccountAvatarPatch(formData);
+    },
+    onSuccess: (response) => {
+      updateProfileMutation.mutate({
+        profile_picture_url: response.url
+      });
+      setAvatarUrl(response.url);
+      addToast({ color: "success", description: "Avatar uploaded!" });
+    },
+    onError: (error) => {
+      addToast({
+        color: "danger",
+        description: apiErrorParser(error).message || "Upload failed"
+      });
+    },
+  });
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validation
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      addToast({ color: "danger", description: "Invalid file type (JPG, PNG, WEBP only)" });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      addToast({ color: "danger", description: "File size must be under 10MB" });
+      return;
+    }
+
+    await uploadAvatarMutation.mutateAsync(file);
+  };
 
   const onSubmit = (profileData: ProfileSchema) => {
     updateProfileMutation.mutate(profileData);
@@ -129,214 +129,147 @@ export default function ProfilePage() {
   if (isUserLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
-        <Spinner size="lg" color="warning" />
+        <BallSpinner />
       </div>
     );
   }
+
+  const fullName = [user?.first_name, user?.last_name].filter(Boolean).join(" ");
+
   return (
-    <>
-      <div className="space-y-6">
-        <div>
-          <Breadcrumbs variant="light" color="foreground">
-            <BreadcrumbItem
-              href={SidebarRoutes.dashboard}
-              startContent={<MdOutlineDashboard />}
-            >
-              Dashboard
-            </BreadcrumbItem>
-            <BreadcrumbItem
-              href={SidebarRoutes.profile}
-              startContent={<FaUser />}
-              color="warning"
-            >
-              Profile
-            </BreadcrumbItem>
-          </Breadcrumbs>
-        </div>
-        <div className="h-full w-full shadow-none md:shadow-sm bg-kidemia-biege2 rounded-2xl overflow-y-auto">
-          <div className="flex flex-col justify-center items-center gap-3 py-4 px-6 md:px-12 lg:px-20">
-            <Form
-              className="space-y-4 w-full max-w-2xl flex  justify-center items-center"
-              {...form}
-              onSubmit={form.handleSubmit(onSubmit)}
-            >
-              <div className="group flex justify-center items-center relative">
-                <Avatar
-                  src={
-                    (avatarUrl as string) ||
-                    (user?.profile_picture_url as string)
-                  }
-                  className="w-40 h-40 self-center cursor-pointer uppercase font-extrabold text-kidemia-primary text-4xl"
-                  isBordered
-                  showFallback
-                  name={getNameIntials(fullName) as string}
-                />
+    <div className="max-w-5xl mx-auto space-y-6 pb-10">
+      <div>
+        <Breadcrumbs variant="light" color="foreground">
+          <BreadcrumbItem href={SidebarRoutes.dashboard} startContent={<MdOutlineDashboard />}>
+            Dashboard
+          </BreadcrumbItem>
+          <BreadcrumbItem href={SidebarRoutes.profile} startContent={<FaUser />} color="warning">
+            Profile
+          </BreadcrumbItem>
+        </Breadcrumbs>
+      </div>
 
-                <div className="hidden group-hover:block z-10 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-200">
-                  <div className="relative flex justify-center items-center">
-                    <FaCamera
-                      size={30}
-                      className="text-yellow-300 cursor-pointer"
-                    />
-                    <label
-                      htmlFor="profile"
-                      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform duration-200 z-50 w-full h-full"
-                    ></label>
-                  </div>
-                  <Input
-                    id="profile"
-                    type="file"
-                    className="hidden"
-                    onChange={(e) => handleUpload(e)}
-                  />
+      <div className="w-full shadow-sm bg-white/50 backdrop-blur-sm border border-gray-100 rounded-2xl overflow-hidden">
+        <div className="flex flex-col items-center gap-6 py-10 px-4 md:px-10">
+
+          {/* Avatar Section */}
+          <div className="flex flex-col items-center gap-3">
+            <div className="relative group">
+              <Avatar
+                src={avatarUrl ?? undefined}
+                className="w-32 h-32 md:w-40 md:h-40 cursor-pointer transition-transform duration-300 hover:scale-105"
+                isBordered
+                color="warning"
+                name={getNameIntials(fullName) as string}
+              />
+              {uploadAvatarMutation.isPending && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full">
+                  <div className="w-8 h-8 border-3 border-white border-t-transparent rounded-full animate-spin" />
                 </div>
-              </div>
-
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <MdOutlineEmail className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="email"
-                  label="Your Email"
-                  labelPlacement="inside"
-                  {...form.register("email")}
-                  defaultValue={user?.email}
-                  isDisabled
+              )}
+              <label
+                htmlFor="avatar-upload"
+                className="absolute bottom-1 right-1 bg-kidemia-secondary text-white p-2 rounded-full cursor-pointer shadow-lg hover:bg-kidemia-primary transition-colors"
+              >
+                <BiUser size={20} />
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                  disabled={uploadAvatarMutation.isPending}
                 />
-              </div>
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <GrUserWorker className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="text"
-                  label="User Type"
-                  labelPlacement="inside"
-                  defaultValue={user?.user_type}
-                  isDisabled
-                />
-              </div>
-
-              <div className="pb-2 w-full flex items-center gap-4">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BiUser className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  label="Firstname"
-                  type="text"
-                  labelPlacement="inside"
-                  {...form.register("first_name")}
-                  defaultValue={user?.first_name}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BiUser className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  label="Lastname"
-                  type="text"
-                  labelPlacement="inside"
-                  {...form.register("last_name")}
-                  defaultValue={user?.last_name}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BiUser className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="text"
-                  label="Middle Name"
-                  labelPlacement="inside"
-                  {...form.register("middle_name")}
-                  defaultValue={user?.middle_name || ""}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <SlScreenSmartphone className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="text"
-                  label="Phone Number"
-                  labelPlacement="inside"
-                  {...form.register("phone_number")}
-                  defaultValue={user?.phone_number || ""}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-
-              <div className="pb-2 w-full">
-                <Input
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BsCalendarDate className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  type="text"
-                  label="Date of Birth"
-                  labelPlacement="inside"
-                  {...form.register("date_of_birth")}
-                  defaultValue={user?.date_of_birth || ""}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-
-              <div className="pb-2 w-full">
-                <Textarea
-                  variant="flat"
-                  size="lg"
-                  radius="sm"
-                  startContent={
-                    <BiDetail className="text-kidemia-secondary text-xl pointer-events-none shrink-0" />
-                  }
-                  label="Bio"
-                  {...form.register("bio")}
-                  defaultValue={user?.bio || ""}
-                  isDisabled={updateProfileMutation.isPending}
-                />
-              </div>
-
-              <div className="py-4 w-full">
-                <Button
-                  type="submit"
-                  variant="solid"
-                  size="lg"
-                  className="bg-kidemia-secondary text-kidemia-white font-semibold w-full"
-                  radius="sm"
-                  isDisabled={updateProfileMutation.isPending}
-                  isLoading={updateProfileMutation.isPending}
-                >
-                  Update Profile
-                </Button>
-              </div>
-            </Form>
+              </label>
+            </div>
+            <p className="text-sm text-gray-500">
+              {uploadAvatarMutation.isPending ? "Uploading..." : "Click icon to change photo"}
+            </p>
           </div>
+
+          <Form
+            className="w-full max-w-3xl space-y-5"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            {/* Read-Only Top Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              <Input
+                variant="flat"
+                label="Email Address"
+                value={user?.email}
+                startContent={<MdOutlineEmail className="text-gray-400" />}
+                isDisabled
+              />
+              <Input
+                variant="flat"
+                label="Account Type"
+                value={user?.user_type}
+                startContent={<GrUserWorker className="text-gray-400" />}
+                isDisabled
+              />
+            </div>
+
+            {/* Editable Name Row - Responsive Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              <Input
+                variant="bordered"
+                label="First Name"
+                {...form.register("first_name")}
+                startContent={<BiUser className="text-gray-400" />}
+              />
+              <Input
+                variant="bordered"
+                label="Last Name"
+                {...form.register("last_name")}
+                startContent={<BiUser className="text-gray-400" />}
+              />
+            </div>
+
+            <Input
+              variant="bordered"
+              label="Middle Name"
+              {...form.register("middle_name")}
+              startContent={<BiUser className="text-gray-400" />}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+              <Input
+                variant="bordered"
+                label="Phone Number"
+                {...form.register("phone_number")}
+                startContent={<SlScreenSmartphone className="text-gray-400" />}
+              />
+              <Input
+                variant="bordered"
+                label="Date of Birth"
+                placeholder="YYYY-MM-DD"
+                {...form.register("date_of_birth")}
+                startContent={<BsCalendarDate className="text-gray-400" />}
+              />
+            </div>
+
+            <Textarea
+              variant="bordered"
+              label="Bio"
+              placeholder="Tell us about yourself..."
+              {...form.register("bio")}
+              startContent={<BiDetail className="text-gray-400 mt-1" />}
+            />
+
+            <div className="pt-4">
+              <Button
+                type="submit"
+                color="warning"
+                size="lg"
+                className="w-full md:w-auto px-12 font-bold text-white shadow-lg shadow-warning/20"
+                isLoading={updateProfileMutation.isPending}
+                isDisabled={uploadAvatarMutation.isPending}
+              >
+                Update Profile
+              </Button>
+            </div>
+          </Form>
         </div>
       </div>
-    </>
+    </div>
   );
 }

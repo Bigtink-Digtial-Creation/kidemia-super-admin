@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs, Spinner } from "@heroui/react";
+import { BreadcrumbItem, Breadcrumbs } from "@heroui/react";
 import { useParams } from "react-router";
 import { SidebarRoutes } from "../../routes";
 import { MdAssessment, MdOutlineDashboard } from "react-icons/md";
@@ -10,6 +10,7 @@ import { BsFillQuestionSquareFill, BsHandThumbsDownFill } from "react-icons/bs";
 import { LiaFilePowerpointSolid } from "react-icons/lia";
 import { FaCheck, FaCheckDouble } from "react-icons/fa";
 import { SiSpeedtest } from "react-icons/si";
+import BallSpinner from "../../components/Spinner/BallSpinner";
 
 export default function SingleAssessment() {
   const { id } = useParams<{ id: string }>();
@@ -29,8 +30,8 @@ export default function SingleAssessment() {
 
   if (isLoading && !singleAssessment) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" color="warning" />
+      <div className="h-screen flex justify-center items-center">
+        <BallSpinner />
       </div>
     );
   }
