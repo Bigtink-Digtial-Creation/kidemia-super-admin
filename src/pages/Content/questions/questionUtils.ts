@@ -4,39 +4,39 @@ import { isValidQuestionType, isValidDifficultyLevel } from "./question.types";
 
 export const validateQuestions = (
     questions: QuestionLocal[],
-    showToast: (message: string, type: 'error') => void
+    showToast: (message: string, type: 'danger') => void
 ): boolean => {
     for (const q of questions) {
         if (!q.question_text.trim()) {
-            showToast('Please fill in all question texts', 'error');
+            showToast('Please fill in all question texts', 'danger');
             return false;
         }
         if (!q.topic_id) {
-            showToast('Please select a topic for all questions', 'error');
+            showToast('Please select a topic for all questions', 'danger');
             return false;
         }
         if (!q.question_type) {
-            showToast('Please select a question type for all questions', 'error');
+            showToast('Please select a question type for all questions', 'danger');
             return false;
         }
 
         if (q.question_type === 'multiple_choice') {
             if (q.options.length < 2) {
-                showToast('Multiple choice questions must have at least 2 options', 'error');
+                showToast('Multiple choice questions must have at least 2 options', 'danger');
                 return false;
             }
             if (!q.options.some(opt => opt.is_correct)) {
-                showToast('Please mark the correct answer for all multiple choice questions', 'error');
+                showToast('Please mark the correct answer for all multiple choice questions', 'danger');
                 return false;
             }
             if (q.options.some(opt => !opt.option_text.trim())) {
-                showToast('Please fill in all option texts', 'error');
+                showToast('Please fill in all option texts', 'danger');
                 return false;
             }
         }
 
         if (q.question_type === 'ordering' && q.options.length < 2) {
-            showToast('Ordering questions must have at least 2 options', 'error');
+            showToast('Ordering questions must have at least 2 options', 'danger');
             return false;
         }
     }

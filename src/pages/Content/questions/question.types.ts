@@ -32,7 +32,7 @@ export interface Topic {
     code?: string;
 }
 
-export type ToastType = { message: string; type: 'success' | 'error' | 'info' } | null;
+export type ToastType = { message: string; type: 'success' | 'error' | 'info' | 'danger' } | null;
 
 export const ALLOWED_QUESTION_TYPES = [
     'multiple_choice',

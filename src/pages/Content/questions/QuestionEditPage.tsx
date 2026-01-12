@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, Save } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { QuestionLocal, ToastType, Topic } from './question.types';
+import type { QuestionLocal, Topic } from './question.types';
 import { QueryKeys } from '../../../utils/queryKeys';
 import { ApiSDK } from '../../../sdk';
 import { QuestionCard } from '../components/QuestionCard';
 import { mapToApiPayload, validateQuestions } from './questionUtils';
-import { Toast } from '../../../components/Toast/Toast';
 import { SidebarRoutes } from '../../../routes';
 import type { QuestionTagResponse, TopicListResponse } from '../../../sdk/generated';
+import { addToast } from '@heroui/react';
 
 export default function QuestionEditPage() {
     const { id: questionId } = useParams<{ id: string }>();
@@ -18,7 +18,6 @@ export default function QuestionEditPage() {
 
     const subjectIdFromState = location.state?.subjectId;
     const [questions, setQuestions] = useState<QuestionLocal[]>([]);
-    const [toast, setToast] = useState<ToastType>(null);
 
     const { data: questionData, isLoading: loadingQuestion } = useQuery({
         queryKey: [QueryKeys.questionDetails, questionId],
@@ -76,14 +75,24 @@ export default function QuestionEditPage() {
         mutationFn: (payload: any) =>
             ApiSDK.TopicQuestionsService.updateQuestionApiV1QuestionsQuestionIdPut(questionId!, payload[0]),
         onSuccess: () => {
-            setToast({ message: 'Question updated successfully!', type: 'success' });
+            addToast({
+                title: "Question updated successfully!",
+                color: "success",
+            });
             setTimeout(() => navigate(SidebarRoutes.singleSubject.replace(':id', effectiveSubjectId!)), 1000);
         },
-        onError: () => setToast({ message: 'Failed to update question.', type: 'error' })
+        onError: () => {
+            addToast({
+                title: "Failed to  updated question!",
+                color: "danger",
+            });
+        }
     });
 
     const handleSave = () => {
-        if (!validateQuestions(questions, (msg, type) => setToast({ message: msg, type }))) return;
+        if (!validateQuestions(questions, (msg, type) => {
+            addToast({ title: msg, color: type })
+        })) return;
         const payload = mapToApiPayload(questions);
         updateQuestionMutation.mutate(payload);
     };
@@ -91,7 +100,6 @@ export default function QuestionEditPage() {
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-4xl mx-auto px-6 py-8">
-                <Toast toast={toast} onClose={() => setToast(null)} />
                 <button onClick={() => navigate(-1)} className="flex items-center gap-2 mb-6 text-gray-600 hover:text-gray-900 transition-colors">
                     <ChevronLeft className="w-5 h-5" /> Back to Subject
                 </button>

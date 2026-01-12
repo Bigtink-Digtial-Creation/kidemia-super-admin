@@ -2,16 +2,16 @@ import { useState } from 'react';
 import { ChevronLeft, FileUp } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import type { QuestionLocal, ToastType, Topic } from './question.types';
+import type { QuestionLocal, Topic } from './question.types';
 import { QueryKeys } from '../../../utils/queryKeys';
 import { ApiSDK } from '../../../sdk';
 import type { QuestionCreate, QuestionTagResponse } from '../../../sdk/generated';
 import { parseCsvFile } from './csvParser';
 import { QuestionCard } from '../components/QuestionCard';
 import { mapToApiPayload, validateQuestions } from './questionUtils';
-import { Toast } from '../../../components/Toast/Toast';
 import { BulkUploadModal } from '../../../components/Modals/BulkQuestionUploadModal';
 import { SidebarRoutes } from '../../../routes';
+import { addToast } from '@heroui/react';
 
 export default function QuestionCreationPage() {
   const { id } = useParams<{ id: string }>();
@@ -36,7 +36,6 @@ export default function QuestionCreationPage() {
     }
   ]);
 
-  const [toast, setToast] = useState<ToastType>(null);
   const [showBulkUpload, setShowBulkUpload] = useState(false);
 
   const { data: topicsData, isLoading: loadingTopics } = useQuery({
@@ -58,18 +57,16 @@ export default function QuestionCreationPage() {
     mutationFn: (payload: QuestionCreate[]) =>
       ApiSDK.TopicQuestionsService.createBulkQuestionApiV1QuestionsBulkQuestionsPost(payload),
     onSuccess: () => {
-      showToastMessage('Questions saved successfully!', 'success');
+      addToast({ title: 'Questions saved successfully!', color: 'success' })
       setTimeout(() => navigate(SidebarRoutes.singleSubject.replace(':id', id!)), 1000);
     },
     onError: () => {
-      showToastMessage('Failed to save questions.', 'error');
+      addToast({ title: 'Failed to save questions', color: 'danger' })
+
     }
   });
 
-  const showToastMessage = (message: string, type: 'success' | 'error' | 'info') => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 4000);
-  };
+
 
   const addQuestion = () => {
     const q: QuestionLocal = {
@@ -105,12 +102,17 @@ export default function QuestionCreationPage() {
       const newQuestions = await parseCsvFile(file, id || '');
       setQuestions(prev => [...prev, ...newQuestions]);
     } catch (err) {
-      showToastMessage('Failed to parse CSV', 'error');
+      addToast({
+        title: "Failed to parse CSV",
+        color: "danger",
+      });
     }
   };
 
   const saveQuestions = () => {
-    if (!validateQuestions(questions, showToastMessage)) return;
+    if (!validateQuestions(questions, (msg, type) => {
+      addToast({ title: msg, color: type })
+    })) return;
     // Since tag_ids is already string[], mapToApiPayload should handle it directly
     const payload = mapToApiPayload(questions);
     saveQuestionsMutation.mutate(payload);
@@ -119,7 +121,6 @@ export default function QuestionCreationPage() {
   return (
     <div className="min-h-screen bg-kidemia-white">
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <Toast toast={toast} onClose={() => setToast(null)} />
         <div className="flex justify-between items-center mb-8">
           <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-600"><ChevronLeft className="w-5 h-5" /> Back</button>
           <button onClick={() => setShowBulkUpload(true)} className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg"><FileUp className="w-4 h-4" /> Bulk Upload</button>
