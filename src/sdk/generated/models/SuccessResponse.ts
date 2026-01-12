@@ -8,5 +8,6 @@
 export type SuccessResponse = {
   success?: boolean;
   message: string;
-  data?: Record<string, any> | null;
+  data?: (Record<string, any> | null);
 };
+

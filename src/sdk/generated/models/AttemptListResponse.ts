@@ -1,8 +1,8 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { AttemptResultResponse } from "./AttemptResultResponse";
+/* eslint-disable */
+import type { AttemptResultResponse } from './AttemptResultResponse';
 /**
  * Paginated attempt list
  */
@@ -12,3 +12,4 @@ export type AttemptListResponse = {
   page: number;
   page_size: number;
 };
+

@@ -1,15 +1,15 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { MessageResponse } from "../models/MessageResponse";
-import type { TopicCreate } from "../models/TopicCreate";
-import type { TopicListResponse } from "../models/TopicListResponse";
-import type { TopicResponse } from "../models/TopicResponse";
-import type { TopicUpdate } from "../models/TopicUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+/* eslint-disable */
+import type { MessageResponse } from '../models/MessageResponse';
+import type { src__domains__content__schemas__subject__TopicResponse } from '../models/src__domains__content__schemas__subject__TopicResponse';
+import type { TopicCreate } from '../models/TopicCreate';
+import type { TopicListResponse } from '../models/TopicListResponse';
+import type { TopicUpdate } from '../models/TopicUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class SubjectTopicsService {
   /**
    * Create a new topic
@@ -34,17 +34,17 @@ export class SubjectTopicsService {
    * - 400 Bad Request: Invalid input data.
    * - 404 Not Found: Subject or parent topic not found.
    * @param requestBody
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static createTopicApiV1TopicsPost(
     requestBody: TopicCreate,
-  ): CancelablePromise<TopicResponse> {
+  ): CancelablePromise<src__domains__content__schemas__subject__TopicResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/topics/",
+      method: 'POST',
+      url: '/api/v1/topics/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -77,17 +77,17 @@ export class SubjectTopicsService {
    * - 400 Bad Request: If any topic input is invalid.
    * - 404 Not Found: If a subject or parent topic is missing.
    * @param requestBody
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static bulkCreateTopicsApiV1TopicsBulkPost(
     requestBody: Array<TopicCreate>,
-  ): CancelablePromise<Array<TopicResponse>> {
+  ): CancelablePromise<Array<src__domains__content__schemas__subject__TopicResponse>> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/topics/bulk",
+      method: 'POST',
+      url: '/api/v1/topics/bulk',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -108,14 +108,14 @@ export class SubjectTopicsService {
     limit: number = 20,
   ): CancelablePromise<TopicListResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/subject/{subject_id}",
+      method: 'GET',
+      url: '/api/v1/topics/subject/{subject_id}',
       path: {
-        subject_id: subjectId,
+        'subject_id': subjectId,
       },
       query: {
-        skip: skip,
-        limit: limit,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -129,23 +129,23 @@ export class SubjectTopicsService {
    * @param subjectId
    * @param skip
    * @param limit
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static searchTopicsApiV1TopicsSearchGet(
     q: string,
-    subjectId?: string | null,
+    subjectId?: (string | null),
     skip?: number,
     limit: number = 20,
-  ): CancelablePromise<Array<TopicResponse>> {
+  ): CancelablePromise<Array<src__domains__content__schemas__subject__TopicResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/search",
+      method: 'GET',
+      url: '/api/v1/topics/search',
       query: {
-        q: q,
-        subject_id: subjectId,
-        skip: skip,
-        limit: limit,
+        'q': q,
+        'subject_id': subjectId,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -156,17 +156,17 @@ export class SubjectTopicsService {
    * Get topic by ID
    * Get a specific topic by ID.
    * @param topicId
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static getTopicApiV1TopicsTopicIdGet(
     topicId: string,
-  ): CancelablePromise<TopicResponse> {
+  ): CancelablePromise<src__domains__content__schemas__subject__TopicResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'GET',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       errors: {
         422: `Validation Error`,
@@ -180,21 +180,21 @@ export class SubjectTopicsService {
    * Requires `content:update` permission.
    * @param topicId
    * @param requestBody
-   * @returns TopicResponse Successful Response
+   * @returns src__domains__content__schemas__subject__TopicResponse Successful Response
    * @throws ApiError
    */
   public static updateTopicApiV1TopicsTopicIdPut(
     topicId: string,
     requestBody: TopicUpdate,
-  ): CancelablePromise<TopicResponse> {
+  ): CancelablePromise<src__domains__content__schemas__subject__TopicResponse> {
     return __request(OpenAPI, {
-      method: "PUT",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'PUT',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -213,10 +213,10 @@ export class SubjectTopicsService {
     topicId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/v1/topics/{topic_id}",
+      method: 'DELETE',
+      url: '/api/v1/topics/{topic_id}',
       path: {
-        topic_id: topicId,
+        'topic_id': topicId,
       },
       errors: {
         422: `Validation Error`,

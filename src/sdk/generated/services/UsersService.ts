@@ -1,16 +1,17 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { AssignRolesToUserRequest } from "../models/AssignRolesToUserRequest";
-import type { MessageResponse } from "../models/MessageResponse";
-import type { UserCreate } from "../models/UserCreate";
-import type { UserResponse } from "../models/UserResponse";
-import type { UserType } from "../models/UserType";
-import type { UserUpdate } from "../models/UserUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+/* eslint-disable */
+import type { AssignRolesToUserRequest } from '../models/AssignRolesToUserRequest';
+import type { MessageResponse } from '../models/MessageResponse';
+import type { UserCreate } from '../models/UserCreate';
+import type { UserListResponse } from '../models/UserListResponse';
+import type { UserResponse } from '../models/UserResponse';
+import type { UserType } from '../models/UserType';
+import type { UserUpdate } from '../models/UserUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class UsersService {
   /**
    * Create a new user
@@ -35,13 +36,13 @@ export class UsersService {
     assignDefaultRole: boolean = true,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/users/",
+      method: 'POST',
+      url: '/api/v1/users/',
       query: {
-        assign_default_role: assignDefaultRole,
+        'assign_default_role': assignDefaultRole,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -60,11 +61,49 @@ export class UsersService {
     limit: number = 100,
   ): CancelablePromise<Array<UserResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/users/",
+      method: 'GET',
+      url: '/api/v1/users/',
       query: {
-        skip: skip,
-        limit: limit,
+        'skip': skip,
+        'limit': limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * List users (optimized)
+   * @param skip
+   * @param limit
+   * @param search
+   * @param isActive
+   * @param role
+   * @param sortBy
+   * @param sortOrder
+   * @returns UserListResponse Successful Response
+   * @throws ApiError
+   */
+  public static listUsersMinimalApiV1UsersMinimalGet(
+    skip?: number,
+    limit: number = 20,
+    search?: (string | null),
+    isActive?: (boolean | null),
+    role?: (string | null),
+    sortBy: string = 'created_at',
+    sortOrder: string = 'desc',
+  ): CancelablePromise<Array<UserListResponse>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/users/minimal',
+      query: {
+        'skip': skip,
+        'limit': limit,
+        'search': search,
+        'is_active': isActive,
+        'role': role,
+        'sort_by': sortBy,
+        'sort_order': sortOrder,
       },
       errors: {
         422: `Validation Error`,
@@ -84,11 +123,11 @@ export class UsersService {
     limit: number = 100,
   ): CancelablePromise<Array<UserResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/users/active",
+      method: 'GET',
+      url: '/api/v1/users/active',
       query: {
-        skip: skip,
-        limit: limit,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -112,14 +151,14 @@ export class UsersService {
     limit: number = 100,
   ): CancelablePromise<Array<UserResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/users/type/{user_type}",
+      method: 'GET',
+      url: '/api/v1/users/type/{user_type}',
       path: {
-        user_type: userType,
+        'user_type': userType,
       },
       query: {
-        skip: skip,
-        limit: limit,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -143,12 +182,12 @@ export class UsersService {
     limit: number = 100,
   ): CancelablePromise<Array<UserResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/users/search",
+      method: 'GET',
+      url: '/api/v1/users/search',
       query: {
-        q: q,
-        skip: skip,
-        limit: limit,
+        'q': q,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -166,10 +205,10 @@ export class UsersService {
     email: string,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/users/email/{email}",
+      method: 'GET',
+      url: '/api/v1/users/email/{email}',
       path: {
-        email: email,
+        'email': email,
       },
       errors: {
         422: `Validation Error`,
@@ -187,10 +226,10 @@ export class UsersService {
     username: string,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/users/username/{username}",
+      method: 'GET',
+      url: '/api/v1/users/username/{username}',
       path: {
-        username: username,
+        'username': username,
       },
       errors: {
         422: `Validation Error`,
@@ -208,10 +247,10 @@ export class UsersService {
     userId: string,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/users/{user_id}",
+      method: 'GET',
+      url: '/api/v1/users/{user_id}',
       path: {
-        user_id: userId,
+        'user_id': userId,
       },
       errors: {
         422: `Validation Error`,
@@ -241,13 +280,13 @@ export class UsersService {
     requestBody: UserUpdate,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/v1/users/{user_id}",
+      method: 'PATCH',
+      url: '/api/v1/users/{user_id}',
       path: {
-        user_id: userId,
+        'user_id': userId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -264,10 +303,10 @@ export class UsersService {
     userId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/v1/users/{user_id}",
+      method: 'DELETE',
+      url: '/api/v1/users/{user_id}',
       path: {
-        user_id: userId,
+        'user_id': userId,
       },
       errors: {
         422: `Validation Error`,
@@ -285,10 +324,10 @@ export class UsersService {
     userId: string,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/users/{user_id}/activate",
+      method: 'POST',
+      url: '/api/v1/users/{user_id}/activate',
       path: {
-        user_id: userId,
+        'user_id': userId,
       },
       errors: {
         422: `Validation Error`,
@@ -306,10 +345,10 @@ export class UsersService {
     userId: string,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/users/{user_id}/deactivate",
+      method: 'POST',
+      url: '/api/v1/users/{user_id}/deactivate',
       path: {
-        user_id: userId,
+        'user_id': userId,
       },
       errors: {
         422: `Validation Error`,
@@ -327,10 +366,10 @@ export class UsersService {
     userId: string,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/users/{user_id}/verify-email",
+      method: 'POST',
+      url: '/api/v1/users/{user_id}/verify-email',
       path: {
-        user_id: userId,
+        'user_id': userId,
       },
       errors: {
         422: `Validation Error`,
@@ -352,13 +391,13 @@ export class UsersService {
     requestBody: AssignRolesToUserRequest,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/users/{user_id}/roles",
+      method: 'POST',
+      url: '/api/v1/users/{user_id}/roles',
       path: {
-        user_id: userId,
+        'user_id': userId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -377,11 +416,11 @@ export class UsersService {
     roleId: string,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/users/{user_id}/roles/{role_id}",
+      method: 'POST',
+      url: '/api/v1/users/{user_id}/roles/{role_id}',
       path: {
-        user_id: userId,
-        role_id: roleId,
+        'user_id': userId,
+        'role_id': roleId,
       },
       errors: {
         422: `Validation Error`,
@@ -401,11 +440,11 @@ export class UsersService {
     roleId: string,
   ): CancelablePromise<UserResponse> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/v1/users/{user_id}/roles/{role_id}",
+      method: 'DELETE',
+      url: '/api/v1/users/{user_id}/roles/{role_id}',
       path: {
-        user_id: userId,
-        role_id: roleId,
+        'user_id': userId,
+        'role_id': roleId,
       },
       errors: {
         422: `Validation Error`,

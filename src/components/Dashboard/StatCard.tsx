@@ -4,7 +4,7 @@ import type { StatsCardProps } from "../../pages/Dashboard/dashboard.interface";
 export default function StatCard({ icon, title, figure }: StatsCardProps) {
   const IconComponent = icon;
   return (
-    <Card className="border-none bg-background/60 dark:bg-default-100/50">
+    <Card className="border-none bg-white dark:bg-default-100/50">
       <CardBody className="flex">
         <div className="flex py-6 px-2  items-center gap-4">
           <div className="w-14 h-14 rounded-full shadow-sm flex items-center justify-center bg-kidemia-biege aspect-square">

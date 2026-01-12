@@ -1,14 +1,15 @@
-import { Image, Spinner } from "@heroui/react";
+import { Image } from "@heroui/react";
 import { Outlet } from "react-router";
 import { useAuthRedirect } from "../hooks/use-auth-redirect";
+import BallSpinner from "../components/Spinner/BallSpinner";
 
 export default function AuthLayout() {
   const { authToken } = useAuthRedirect(false);
 
   if (authToken) {
     return (
-      <div className="h-screen flex items-center justify-center">
-        <Spinner size="lg" color="warning" />
+      <div className="h-screen flex justify-center items-center">
+        <BallSpinner />
       </div>
     );
   }

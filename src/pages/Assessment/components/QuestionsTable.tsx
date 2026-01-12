@@ -7,11 +7,11 @@ import {
     TableRow,
     TableCell,
     Chip,
-    Spinner,
 } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { ApiSDK } from "../../../sdk";
 import { QueryKeys } from "../../../utils/queryKeys";
+import BallSpinner from "../../../components/Spinner/BallSpinner";
 
 export interface QuestionRow {
     id: string;
@@ -139,8 +139,8 @@ export default function QuestionsTable({
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center py-8">
-                <Spinner size="lg" color="warning" />
+            <div className="h-screen flex justify-center items-center">
+                <BallSpinner />
             </div>
         );
     }

@@ -6,7 +6,6 @@ import {
   Modal,
   ModalBody,
   ModalContent,
-  Spinner,
   Textarea,
 } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,6 +18,7 @@ import { ApiSDK } from "../../sdk";
 import type { PermissionUpdate } from "../../sdk/generated";
 import { apiErrorParser } from "../../utils/errorParser";
 import { useEffect } from "react";
+import BallSpinner from "../Spinner/BallSpinner";
 
 interface EditPermModalI {
   isOpen: boolean;
@@ -112,8 +112,8 @@ export default function EditPermModal({
               </h3>
             </div>
             {isLoading ? (
-              <div className="flex justify-center items-center">
-                <Spinner size="lg" color="warning" />
+              <div className="h-screen flex justify-center items-center">
+                <BallSpinner />
               </div>
             ) : (
               <Form

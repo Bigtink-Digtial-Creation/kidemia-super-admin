@@ -1,14 +1,14 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { MessageResponse } from "../models/MessageResponse";
-import type { PermissionCreate } from "../models/PermissionCreate";
-import type { PermissionResponse } from "../models/PermissionResponse";
-import type { PermissionUpdate } from "../models/PermissionUpdate";
-import type { CancelablePromise } from "../core/CancelablePromise";
-import { OpenAPI } from "../core/OpenAPI";
-import { request as __request } from "../core/request";
+/* eslint-disable */
+import type { MessageResponse } from '../models/MessageResponse';
+import type { PermissionCreate } from '../models/PermissionCreate';
+import type { PermissionResponse } from '../models/PermissionResponse';
+import type { PermissionUpdate } from '../models/PermissionUpdate';
+import type { CancelablePromise } from '../core/CancelablePromise';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class PermissionsService {
   /**
    * Create a new permission
@@ -27,10 +27,10 @@ export class PermissionsService {
     requestBody: PermissionCreate,
   ): CancelablePromise<PermissionResponse> {
     return __request(OpenAPI, {
-      method: "POST",
-      url: "/api/v1/permissions/",
+      method: 'POST',
+      url: '/api/v1/permissions/',
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -49,11 +49,11 @@ export class PermissionsService {
     limit: number = 100,
   ): CancelablePromise<Array<PermissionResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/permissions/",
+      method: 'GET',
+      url: '/api/v1/permissions/',
       query: {
-        skip: skip,
-        limit: limit,
+        'skip': skip,
+        'limit': limit,
       },
       errors: {
         422: `Validation Error`,
@@ -73,10 +73,10 @@ export class PermissionsService {
     resource: string,
   ): CancelablePromise<Array<PermissionResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/permissions/resource/{resource}",
+      method: 'GET',
+      url: '/api/v1/permissions/resource/{resource}',
       path: {
-        resource: resource,
+        'resource': resource,
       },
       errors: {
         422: `Validation Error`,
@@ -96,10 +96,10 @@ export class PermissionsService {
     action: string,
   ): CancelablePromise<Array<PermissionResponse>> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/permissions/action/{action}",
+      method: 'GET',
+      url: '/api/v1/permissions/action/{action}',
       path: {
-        action: action,
+        'action': action,
       },
       errors: {
         422: `Validation Error`,
@@ -119,10 +119,10 @@ export class PermissionsService {
     name: string,
   ): CancelablePromise<PermissionResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/permissions/name/{name}",
+      method: 'GET',
+      url: '/api/v1/permissions/name/{name}',
       path: {
-        name: name,
+        'name': name,
       },
       errors: {
         422: `Validation Error`,
@@ -140,10 +140,10 @@ export class PermissionsService {
     permissionId: string,
   ): CancelablePromise<PermissionResponse> {
     return __request(OpenAPI, {
-      method: "GET",
-      url: "/api/v1/permissions/{permission_id}",
+      method: 'GET',
+      url: '/api/v1/permissions/{permission_id}',
       path: {
-        permission_id: permissionId,
+        'permission_id': permissionId,
       },
       errors: {
         422: `Validation Error`,
@@ -166,13 +166,13 @@ export class PermissionsService {
     requestBody: PermissionUpdate,
   ): CancelablePromise<PermissionResponse> {
     return __request(OpenAPI, {
-      method: "PATCH",
-      url: "/api/v1/permissions/{permission_id}",
+      method: 'PATCH',
+      url: '/api/v1/permissions/{permission_id}',
       path: {
-        permission_id: permissionId,
+        'permission_id': permissionId,
       },
       body: requestBody,
-      mediaType: "application/json",
+      mediaType: 'application/json',
       errors: {
         422: `Validation Error`,
       },
@@ -189,10 +189,10 @@ export class PermissionsService {
     permissionId: string,
   ): CancelablePromise<MessageResponse> {
     return __request(OpenAPI, {
-      method: "DELETE",
-      url: "/api/v1/permissions/{permission_id}",
+      method: 'DELETE',
+      url: '/api/v1/permissions/{permission_id}',
       path: {
-        permission_id: permissionId,
+        'permission_id': permissionId,
       },
       errors: {
         422: `Validation Error`,

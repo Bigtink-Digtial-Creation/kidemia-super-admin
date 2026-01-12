@@ -7,21 +7,48 @@ export const AuthRoutes = {
 
 export const SidebarRoutes = {
   dashboard: "/dashboard",
-  settings: "/dashboard/settings",
-  subjects: "/dashboard/subjects",
-  singleSubject: "/dashboard/subjects/:id",
-  addQuestionsSubject: "/dashboard/subjects/:id/add-questions",
-  roles: "/dashboard/roles",
-  singleRole: "/dashboard/roles/:id",
   profile: "/dashboard/profile",
-  permissions: "/dashboard/permissions",
-  topics: "/dashboard/topics",
-  singleTopic: "/dashboard/topics/:id",
-  bulkTopic: "/dashboard/topics/bulk/:id",
-  assessment: "/dashboard/assessment",
-  createAssessment: "/dashboard/assessment/create",
-  singleAssessment: "/dashboard/assessment/:id",
+  profileSettings: "/dashboard/profile/settings",
+  settings: "/dashboard/settings",
+  subjects: "/content/subjects",
+  singleSubject: "/content/subjects/:id",
+  addQuestionsSubject: "/content/subjects/:id/add-questions",
+  editQuestion: "/content/subjects/:id/edit-questions",
+  topics: "/content/topics",
+  singleTopic: "/content/subjects/:subjectId/topics/:topicId",
+  bulkTopic: "/content/topics/bulk/:id",
+
+  tag: "/content/tag",
+
+  assessment: "/content/assessment",
+  createAssessment: "/content/assessment/create",
+  singleAssessment: "/content/assessment/:id",
+  categories: "/content/category",
+
+  roles: "/platform/manage/roles",
+  singleRole: "/platform/manage/roles/:id",
+
+  // sub
+  plans: "/platform/plans",
+  createPlan: "/platform/plan/add-plan",
+  promo: "/platform/plans/promo",
+  editPlan: "/platform/plans/:id",
+
+  game: "/platform/game/badges",
+  // people
+  users: "/people/users",
+
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
+
+export const buildRoute = (
+  template: string,
+  params: Record<string, string | number>
+) =>
+  Object.entries(params).reduce(
+    (path, [key, value]) =>
+      path.replace(`:${key}`, encodeURIComponent(String(value))),
+    template
+  );

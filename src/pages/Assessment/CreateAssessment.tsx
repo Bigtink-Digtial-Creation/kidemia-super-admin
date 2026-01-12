@@ -24,7 +24,7 @@ import AdaptiveModeConfig from "./components/AdaptiveModConfig";
 import RandomModeConfig from "./components/RandomModeConfig";
 import { addToast } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { type AssessmentCreate } from "../../sdk/generated";
 import { type QuestionSelectionMode } from "../../sdk/generated/models/QuestionSelectionMode";
 import { ApiSDK } from "../../sdk";

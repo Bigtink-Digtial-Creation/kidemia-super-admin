@@ -1,0 +1,59 @@
+ 
+# Git
+.gcloudignore
+.git
+.gitignore
+.gitattributes
+
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Environment files
+.env
+.env.*
+!.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Testing
+coverage/
+.nyc_output/
+*.test.*
+*.spec.*
+__tests__/
+__mocks__/
+
+# Build artifacts (dist will be recreated)
+.vite/
+
+# Documentation
+README.md
+docs/
+*.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+cloudbuild.yaml
+
+# Misc
+.editorconfig
+.prettierrc
+.eslintrc*
+.emsnf

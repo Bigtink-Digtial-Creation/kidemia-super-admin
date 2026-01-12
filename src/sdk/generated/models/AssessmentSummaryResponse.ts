@@ -1,10 +1,10 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { AssessmentCategory } from "./AssessmentCategory";
-import type { AssessmentStatus } from "./AssessmentStatus";
-import type { AssessmentType } from "./AssessmentType";
+/* eslint-disable */
+import type { AssessmentCategory } from './AssessmentCategory';
+import type { AssessmentStatus } from './AssessmentStatus';
+import type { AssessmentType } from './AssessmentType';
 /**
  * Lightweight assessment response for listings
  */
@@ -23,3 +23,4 @@ export type AssessmentSummaryResponse = {
   total_attempts: number;
   average_score: string;
 };
+

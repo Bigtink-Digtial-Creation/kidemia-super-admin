@@ -1,8 +1,8 @@
 /* generated using openapi-typescript-codegen -- do not edit */
 /* istanbul ignore file */
 /* tslint:disable */
-
-import type { QuestionResponse } from "./QuestionResponse";
+/* eslint-disable */
+import type { QuestionResponse } from './QuestionResponse';
 /**
  * Paginated question list response
  */
@@ -12,3 +12,4 @@ export type QuestionListResponse = {
   page: number;
   page_size: number;
 };
+

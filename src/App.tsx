@@ -13,22 +13,29 @@ import SignUpPage from "./pages/Auth/SignUp";
 
 //dashboard
 import DashboardPage from "./pages/Dashboard";
-import SubjectsPage from "./pages/Subjects";
 import ProfilePage from "./pages/Profile";
-import SettingsPage from "./pages/Settings";
-import RolesPage from "./pages/Roles";
-import SingleRoles from "./pages/Roles/SingleRoles";
-import PermissionsPage from "./pages/Permissions";
-import SingleSubject from "./pages/Subjects/SingleSubject";
-import TopicsPage from "./pages/Topics";
-import SingleTopic from "./pages/Topics/SingleTopic";
-import BulkTopic from "./pages/Topics/BulkTopic";
-import AddQuestions from "./pages/Subjects/AddQuestions";
 import AssessmentPage from "./pages/Assessment";
 import CreateAssessment from "./pages/Assessment/CreateAssessment";
 import SingleAssessment from "./pages/Assessment/SingleAssessment";
 
 import ErrorPage from "./pages/ErrorPage";
+import UserManagementPage from "./pages/People";
+import RolesPage from "./pages/Access";
+import RoleDetailPage from "./pages/Access/role";
+import SubjectsPage from "./pages/Content/subjects";
+import SubjectDetailPage from "./pages/Content/subjects/SubjectDetailPage";
+import TopicDetailPage from "./pages/Content/topics";
+import QuestionCreationPage from "./pages/Content/questions/AddQuestions";
+import TagsPage from "./pages/Content/tags";
+import AssessmentCategoriesPage from "./pages/Content/categories";
+import PlansPage from "./pages/Plans/plan";
+import { CreatePlanPage } from "./pages/Plans/CreatePlanPage";
+import { EditPlanPage } from "./pages/Plans/EditPlanPage";
+import PromotionsPage from "./pages/Plans/promo";
+import QuestionEditPage from "./pages/Content/questions/QuestionEditPage";
+import BadgesPage from "./pages/Game/badge";
+import MyProfileSettingsPage from "./pages/Profile/setting";
+import PlatformSettingsPage from "./pages/Settings";
 
 export const router = createBrowserRouter([
   {
@@ -47,7 +54,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: SidebarRoutes.dashboard,
+    // path: SidebarRoutes.dashboard,
     element: <DashboardLayout />,
     children: [
       {
@@ -55,20 +62,24 @@ export const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
+        path: SidebarRoutes.users,
+        element: <UserManagementPage />,
+      },
+      {
         path: SidebarRoutes.subjects,
         element: <SubjectsPage />,
       },
       {
         path: SidebarRoutes.singleSubject,
-        element: <SingleSubject />,
+        element: <SubjectDetailPage />,
       },
       {
         path: SidebarRoutes.profile,
         element: <ProfilePage />,
       },
       {
-        path: SidebarRoutes.settings,
-        element: <SettingsPage />,
+        path: SidebarRoutes.profileSettings,
+        element: <MyProfileSettingsPage />,
       },
       {
         path: SidebarRoutes.roles,
@@ -76,28 +87,34 @@ export const router = createBrowserRouter([
       },
       {
         path: SidebarRoutes.singleRole,
-        element: <SingleRoles />,
+        element: <RoleDetailPage />,
       },
-      {
-        path: SidebarRoutes.permissions,
-        element: <PermissionsPage />,
-      },
-      {
-        path: SidebarRoutes.topics,
-        element: <TopicsPage />,
-      },
+
       {
         path: SidebarRoutes.singleTopic,
-        element: <SingleTopic />,
+        element: <TopicDetailPage />,
       },
-      {
-        path: SidebarRoutes.bulkTopic,
-        element: <BulkTopic />,
-      },
+
       {
         path: SidebarRoutes.addQuestionsSubject,
-        element: <AddQuestions />,
+        element: <QuestionCreationPage />,
       },
+
+      {
+        path: SidebarRoutes.editQuestion,
+        element: <QuestionEditPage />,
+      },
+
+      {
+        path: SidebarRoutes.tag,
+        element: <TagsPage />,
+      },
+
+      {
+        path: SidebarRoutes.categories,
+        element: <AssessmentCategoriesPage />,
+      },
+
       {
         path: SidebarRoutes.assessment,
         element: <AssessmentPage />,
@@ -109,6 +126,36 @@ export const router = createBrowserRouter([
       {
         path: SidebarRoutes.singleAssessment,
         element: <SingleAssessment />,
+      },
+
+      {
+        path: SidebarRoutes.plans,
+        element: <PlansPage />,
+      },
+
+      {
+        path: SidebarRoutes.createPlan,
+        element: <CreatePlanPage />,
+      },
+
+      {
+        path: SidebarRoutes.editPlan,
+        element: <EditPlanPage />,
+      },
+
+      {
+        path: SidebarRoutes.promo,
+        element: <PromotionsPage />,
+      },
+
+      {
+        path: SidebarRoutes.game,
+        element: <BadgesPage />,
+      },
+
+      {
+        path: SidebarRoutes.settings,
+        element: <PlatformSettingsPage />,
       },
     ],
   },
