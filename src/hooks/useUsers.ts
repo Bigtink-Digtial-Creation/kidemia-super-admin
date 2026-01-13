@@ -4,7 +4,7 @@ import { atomWithStorage } from 'jotai/utils';
 import { useMemo, useState } from 'react';
 import { ApiSDK } from '../sdk';
 import { QueryKeys } from '../utils/queryKeys';
-import type { RoleResponse, UserListResponse, UserResponse, UserUpdate } from '../sdk/generated';
+import type { RegisterRequest, RoleResponse, UserListResponse, UserResponse, UserUpdate } from '../sdk/generated';
 
 
 export const userFiltersAtom = atomWithStorage('user-filters', {
@@ -277,3 +277,18 @@ export const useUserSearch = () => {
         updateSearch,
     };
 };
+
+export function useCreateUser() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async (data: RegisterRequest) => {
+            console.log(data)
+            const response = await ApiSDK.AuthenticationService.adminCreateUserApiV1AuthAdminCreateUserPost(data);
+            return response;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [QueryKeys.users] });
+        },
+    });
+}

@@ -3,6 +3,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
+      - '--no-cache'
       - '--build-arg'
       - 'VITE_BASE_URL=https://kidemia-service-1007453817746.europe-west1.run.app'
       - '-t'

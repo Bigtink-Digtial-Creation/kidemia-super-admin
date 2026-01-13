@@ -3,6 +3,9 @@ export const AuthRoutes = {
   signup: "/auth/signup",
   forgotPassword: "/auth/forgot-password",
   changePassword: "/auth/change-password",
+  resetPassword: "/auth/reset-password",
+  verifyEmail: "/auth/verify-email",
+  emailVerificationRequired: "/auth/email-verification-required",
 };
 
 export const SidebarRoutes = {
