@@ -8,8 +8,10 @@ import {
 import { useState } from "react";
 import { AiOutlineLogout } from "react-icons/ai";
 import { useNavigate } from "react-router";
+import { useSetAtom } from "jotai";
 import { AuthRoutes } from "../../routes";
 import { ApiSDK } from "../../sdk";
+import { clearAuthAtom } from "../../store/user.atom";
 
 interface ModalProp {
   isOpen: boolean;
@@ -24,13 +26,20 @@ export default function LogoutModal({
 }: ModalProp) {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const clearAuth = useSetAtom(clearAuthAtom);
 
   const logOut = async () => {
     setIsLoading(true);
 
     try {
+      // Call logout API
       await ApiSDK.AuthenticationService.logoutAllDevicesApiV1AuthLogoutAllPost();
-      localStorage.clear();
+
+      // Clear auth state using the atom
+      clearAuth();
+
+      // Clear API token
+      ApiSDK.OpenAPI.TOKEN = undefined;
 
       addToast({
         title: "Logged out successfully",
@@ -38,12 +47,19 @@ export default function LogoutModal({
       });
 
       onClose();
-      navigate(AuthRoutes.login);
+      navigate(AuthRoutes.login, { replace: true });
     } catch (error: any) {
+      // Even if API call fails, clear local auth state
+      clearAuth();
+      ApiSDK.OpenAPI.TOKEN = undefined;
+
       addToast({
-        title: error?.message || "Logout failed",
-        color: "danger",
+        title: error?.message || "Logged out locally",
+        color: "warning",
       });
+
+      onClose();
+      navigate(AuthRoutes.login, { replace: true });
     } finally {
       setIsLoading(false);
     }

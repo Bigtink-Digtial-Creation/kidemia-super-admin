@@ -71,6 +71,27 @@ export class AuthenticationService {
     });
   }
   /**
+   * Admin Login only
+   * Authenticate administrative users only.
+   * Restricts access for 'guardian' and 'student' types.
+   * @param requestBody
+   * @returns LoginResponse Successful Response
+   * @throws ApiError
+   */
+  public static adminLoginApiV1AuthAdminLoginPost(
+    requestBody: LoginRequest,
+  ): CancelablePromise<LoginResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/auth/admin/login',
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
    * Refresh access token
    * Get a new access token using refresh token.
    *

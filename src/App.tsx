@@ -1,17 +1,21 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { AuthRoutes, SidebarRoutes } from "./routes";
 
-//layouts
+// Route Guards
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PublicRoute } from "./components/PublicRoute";
+
+// Layouts
 import AuthLayout from "./layouts/Auth.layout";
 import DashboardLayout from "./layouts/Dashboard.layout";
 
-//auth
+// Auth pages
 import LoginPage from "./pages/Auth/Login";
 import ForgotPasswordPage from "./pages/Auth/ForgotPassword";
 import ChangePasswordPage from "./pages/Auth/ChangePassword";
 import SignUpPage from "./pages/Auth/SignUp";
 
-//dashboard
+// Dashboard pages
 import DashboardPage from "./pages/Dashboard";
 import ProfilePage from "./pages/Profile";
 import AssessmentPage from "./pages/Assessment";
@@ -39,123 +43,127 @@ import PlatformSettingsPage from "./pages/Settings";
 
 export const router = createBrowserRouter([
   {
-    element: <AuthLayout />,
-    errorElement: <ErrorPage />,
     path: "/",
+    errorElement: <ErrorPage />,
     children: [
+      // Public Routes (Auth)
       {
-        index: true,
-        element: <Navigate to={AuthRoutes.login} replace />,
-      },
-      { path: AuthRoutes.login, element: <LoginPage /> },
-      { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
-      { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> },
-      { path: AuthRoutes.signup, element: <SignUpPage /> },
-    ],
-  },
-  {
-    // path: SidebarRoutes.dashboard,
-    element: <DashboardLayout />,
-    children: [
-      {
-        path: SidebarRoutes.dashboard,
-        element: <DashboardPage />,
-      },
-      {
-        path: SidebarRoutes.users,
-        element: <UserManagementPage />,
-      },
-      {
-        path: SidebarRoutes.subjects,
-        element: <SubjectsPage />,
-      },
-      {
-        path: SidebarRoutes.singleSubject,
-        element: <SubjectDetailPage />,
-      },
-      {
-        path: SidebarRoutes.profile,
-        element: <ProfilePage />,
-      },
-      {
-        path: SidebarRoutes.profileSettings,
-        element: <MyProfileSettingsPage />,
-      },
-      {
-        path: SidebarRoutes.roles,
-        element: <RolesPage />,
-      },
-      {
-        path: SidebarRoutes.singleRole,
-        element: <RoleDetailPage />,
+        element: <PublicRoute />,
+        children: [
+          {
+            element: <AuthLayout />,
+            children: [
+              {
+                index: true,
+                element: <Navigate to={AuthRoutes.login} replace />,
+              },
+              { path: AuthRoutes.login, element: <LoginPage /> },
+              { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
+              { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> },
+              { path: AuthRoutes.signup, element: <SignUpPage /> },
+            ],
+          },
+        ],
       },
 
+      // Protected Routes (Dashboard)
       {
-        path: SidebarRoutes.singleTopic,
-        element: <TopicDetailPage />,
-      },
-
-      {
-        path: SidebarRoutes.addQuestionsSubject,
-        element: <QuestionCreationPage />,
-      },
-
-      {
-        path: SidebarRoutes.editQuestion,
-        element: <QuestionEditPage />,
-      },
-
-      {
-        path: SidebarRoutes.tag,
-        element: <TagsPage />,
-      },
-
-      {
-        path: SidebarRoutes.categories,
-        element: <AssessmentCategoriesPage />,
-      },
-
-      {
-        path: SidebarRoutes.assessment,
-        element: <AssessmentPage />,
-      },
-      {
-        path: SidebarRoutes.createAssessment,
-        element: <CreateAssessment />,
-      },
-      {
-        path: SidebarRoutes.singleAssessment,
-        element: <SingleAssessment />,
-      },
-
-      {
-        path: SidebarRoutes.plans,
-        element: <PlansPage />,
-      },
-
-      {
-        path: SidebarRoutes.createPlan,
-        element: <CreatePlanPage />,
-      },
-
-      {
-        path: SidebarRoutes.editPlan,
-        element: <EditPlanPage />,
-      },
-
-      {
-        path: SidebarRoutes.promo,
-        element: <PromotionsPage />,
-      },
-
-      {
-        path: SidebarRoutes.game,
-        element: <BadgesPage />,
-      },
-
-      {
-        path: SidebarRoutes.settings,
-        element: <PlatformSettingsPage />,
+        element: <ProtectedRoute />,
+        children: [
+          {
+            element: <DashboardLayout />,
+            children: [
+              {
+                path: SidebarRoutes.dashboard,
+                element: <DashboardPage />,
+              },
+              {
+                path: SidebarRoutes.users,
+                element: <UserManagementPage />,
+              },
+              {
+                path: SidebarRoutes.subjects,
+                element: <SubjectsPage />,
+              },
+              {
+                path: SidebarRoutes.singleSubject,
+                element: <SubjectDetailPage />,
+              },
+              {
+                path: SidebarRoutes.profile,
+                element: <ProfilePage />,
+              },
+              {
+                path: SidebarRoutes.profileSettings,
+                element: <MyProfileSettingsPage />,
+              },
+              {
+                path: SidebarRoutes.roles,
+                element: <RolesPage />,
+              },
+              {
+                path: SidebarRoutes.singleRole,
+                element: <RoleDetailPage />,
+              },
+              {
+                path: SidebarRoutes.singleTopic,
+                element: <TopicDetailPage />,
+              },
+              {
+                path: SidebarRoutes.addQuestionsSubject,
+                element: <QuestionCreationPage />,
+              },
+              {
+                path: SidebarRoutes.editQuestion,
+                element: <QuestionEditPage />,
+              },
+              {
+                path: SidebarRoutes.tag,
+                element: <TagsPage />,
+              },
+              {
+                path: SidebarRoutes.categories,
+                element: <AssessmentCategoriesPage />,
+              },
+              {
+                path: SidebarRoutes.assessment,
+                element: <AssessmentPage />,
+              },
+              {
+                path: SidebarRoutes.createAssessment,
+                element: <CreateAssessment />,
+              },
+              {
+                path: SidebarRoutes.singleAssessment,
+                element: <SingleAssessment />,
+              },
+              {
+                path: SidebarRoutes.plans,
+                element: <PlansPage />,
+              },
+              {
+                path: SidebarRoutes.createPlan,
+                element: <CreatePlanPage />,
+              },
+              {
+                path: SidebarRoutes.editPlan,
+                element: <EditPlanPage />,
+              },
+              {
+                path: SidebarRoutes.promo,
+                element: <PromotionsPage />,
+              },
+              {
+                path: SidebarRoutes.game,
+                element: <BadgesPage />,
+              },
+              {
+                path: SidebarRoutes.settings,
+                element: <PlatformSettingsPage />,
+              },
+            ],
+          },
+        ],
       },
     ],
   },
