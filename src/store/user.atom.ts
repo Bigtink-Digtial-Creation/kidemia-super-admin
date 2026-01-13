@@ -7,6 +7,9 @@ export const encryptedStorage = createJSONStorage<string | null>(
   () => localStorage,
 );
 
+export const userRoleAtom = atom<string | null>(null);
+
+
 export const storedAuthTokenAtom = atomWithStorage(
   StoredKeys.token,
   null,

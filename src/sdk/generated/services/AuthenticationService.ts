@@ -47,6 +47,38 @@ export class AuthenticationService {
     });
   }
   /**
+   * Admin Create User
+   * Create a new user account (Platform Admin only).
+   *
+   * This endpoint allows platform administrators to create user accounts
+   * with any user type. The created user will receive a verification email.
+   *
+   * - **email**: Valid email address
+   * - **password**: Min 8 characters with uppercase, lowercase, and number
+   * - **first_name**: User's first name
+   * - **last_name**: User's last name
+   * - **user_type**: Type of user (student, guardian, institution_admin, platform_admin)
+   * - **phone_number**: Optional phone number
+   * - **date_of_birth**: Optional date of birth
+   * - **username**: Optional username
+   * @param requestBody
+   * @returns RegisterResponse Successful Response
+   * @throws ApiError
+   */
+  public static adminCreateUserApiV1AuthAdminCreateUserPost(
+    requestBody: RegisterRequest,
+  ): CancelablePromise<RegisterResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/auth/admin/create-user',
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
    * Login to get access token
    * Authenticate user and get access tokens.
    *

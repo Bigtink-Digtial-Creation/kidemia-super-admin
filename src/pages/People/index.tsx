@@ -1,18 +1,26 @@
 import { useState } from 'react';
-import { Users, UserPlus, RefreshCw, } from 'lucide-react';
+import { Users, UserPlus, RefreshCw } from 'lucide-react';
+import { addToast } from '@heroui/react';
 
-
-import { useActivateUser, useAvailableRoles, useDeleteUser, useSuspendUser, useUpdateUser, useUpdateUserRole, useUsers } from '../../hooks/useUsers';
+import {
+    useActivateUser,
+    useAvailableRoles,
+    useCreateUser,
+    useDeleteUser,
+    useSuspendUser,
+    useUpdateUser,
+    useUpdateUserRole,
+    useUsers,
+} from '../../hooks/useUsers';
 import { UserFilters } from './components/users/UserFilters';
 import { UserTable } from './components/users/UserTable';
 import { Pagination } from './components/users/Pagination';
 import { ConfirmDialog } from './components/modals/ConfirmDialog';
 import { UserEditModal } from './components/modals/UserEditModal';
+import { CreateUserModal } from './components/modals/CreateUserModal';
 import { StatCard } from '../../components/StatCard';
-import { addToast } from '@heroui/react';
-import type { UserUpdate } from '../../sdk/generated';
+import type { UserUpdate, RegisterRequest } from '../../sdk/generated';
 
-// pages/UserManagementPage.tsx
 export default function UserManagementPage() {
     const {
         users,
@@ -32,9 +40,11 @@ export default function UserManagementPage() {
     const activateUser = useActivateUser();
     const suspendUser = useSuspendUser();
     const deleteUser = useDeleteUser();
+    const createUser = useCreateUser();
 
     const [selectedUser, setSelectedUser] = useState<any | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [confirmDialog, setConfirmDialog] = useState<any>({
         isOpen: false,
         type: null,
@@ -52,21 +62,23 @@ export default function UserManagementPage() {
     const handleSaveUserAdapter = async (userId: string, data: UserUpdate) => {
         try {
             await updateUser.mutateAsync({ userId, data });
-            addToast({ title: "User updated successfully", color: "success" })
+            addToast({ title: "User updated successfully", color: "success" });
         } catch (error) {
-            addToast({ title: "Unable to update user now", color: "danger" })
-
+            addToast({ title: "Unable to update user now", color: "danger" });
         }
     };
 
     const handleUpdateRoleAdapter = async (userId: string, roleId: string) => {
         try {
             await updateUserRole.mutateAsync({ userId, roleId });
-            addToast({ title: "User role updated successfully", color: "success" })
+            addToast({ title: "User role updated successfully", color: "success" });
         } catch (error) {
-            addToast({ title: "Unable to update role now", color: "danger" })
-
+            addToast({ title: "Unable to update role now", color: "danger" });
         }
+    };
+
+    const handleCreateUser = async (data: RegisterRequest) => {
+        await createUser.mutateAsync(data);
     };
 
     const handleConfirmAction = async () => {
@@ -101,7 +113,7 @@ export default function UserManagementPage() {
         } catch (error: any) {
             addToast({
                 title: error.body?.detail || 'Failed to perform action',
-                color: "success",
+                color: "danger",
             });
         }
     };
@@ -130,7 +142,6 @@ export default function UserManagementPage() {
         };
     };
 
-
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -138,7 +149,7 @@ export default function UserManagementPage() {
                     {/* HEADER */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-kidemia-primary rounded-2xl shadow-lg shadow-kidemia-primary/20">
+                            <div className="p-3 bg-kidemia-secondary rounded-2xl shadow-lg shadow-kidemia-secondary/20">
                                 <Users className="h-7 w-7 text-white" />
                             </div>
                             <div>
@@ -160,14 +171,17 @@ export default function UserManagementPage() {
                                 <span>Refresh</span>
                             </button>
 
-                            <button className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-kidemia-primary text-white font-semibold rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-kidemia-primary/25">
+                            <button
+                                onClick={() => setIsCreateModalOpen(true)}
+                                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-kidemia-secondary text-white font-semibold rounded-xl hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-kidemia-primary/25"
+                            >
                                 <UserPlus className="h-4 w-4" />
                                 <span>Add User</span>
                             </button>
                         </div>
                     </div>
 
-                    {/* STATS: Snap-scroll on mobile, Grid on desktop */}
+                    {/* STATS */}
                     <div className="flex sm:grid sm:grid-cols-3 gap-4 overflow-x-auto pb-4 sm:pb-0 snap-x snap-mandatory scrollbar-hide">
                         <StatCard label="Total" value={totalCount} />
                         <StatCard
@@ -182,7 +196,7 @@ export default function UserManagementPage() {
                         />
                     </div>
 
-                    {/* FILTERS: Wrapped in a container to prevent overflow issues */}
+                    {/* FILTERS */}
                     <div className="relative w-full overflow-hidden">
                         <UserFilters
                             filters={filters}
@@ -237,6 +251,14 @@ export default function UserManagementPage() {
             </div>
 
             {/* MODALS */}
+            <CreateUserModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onSuccess={() => refetch()}
+                onCreateUser={handleCreateUser}
+                isCreating={createUser.isPending}
+            />
+
             <UserEditModal
                 isOpen={isEditModalOpen}
                 onClose={() => {
@@ -258,7 +280,6 @@ export default function UserManagementPage() {
                 isLoading={isProcessing}
                 {...getConfirmDialogProps()}
             />
-
         </div>
     );
 }

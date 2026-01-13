@@ -40,6 +40,9 @@ import QuestionEditPage from "./pages/Content/questions/QuestionEditPage";
 import BadgesPage from "./pages/Game/badge";
 import MyProfileSettingsPage from "./pages/Profile/setting";
 import PlatformSettingsPage from "./pages/Settings";
+import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
+import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
+import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
 
 export const router = createBrowserRouter([
   {
@@ -60,8 +63,22 @@ export const router = createBrowserRouter([
               { path: AuthRoutes.login, element: <LoginPage /> },
               { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
               { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> },
+              { path: AuthRoutes.resetPassword, element: <ResetPasswordPage /> },
               { path: AuthRoutes.signup, element: <SignUpPage /> },
+              { path: AuthRoutes.verifyEmail, element: <VerifyEmailPage /> },
             ],
+          },
+        ],
+      },
+
+      // Email Verification Required (Semi-protected - user logged in but not verified)
+      {
+        path: AuthRoutes.emailVerificationRequired,
+        element: <AuthLayout />,
+        children: [
+          {
+            index: true,
+            element: <EmailVerificationRequiredPage />,
           },
         ],
       },
