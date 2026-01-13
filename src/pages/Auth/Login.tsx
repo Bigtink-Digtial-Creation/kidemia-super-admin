@@ -43,8 +43,10 @@ export default function LoginPage() {
       if (data) {
         const token = data.access_token;
         ApiSDK.OpenAPI.TOKEN = token;
-
+        console.log("attempt to test login")
         // Update atoms
+
+
         setStoredToken(token);
         setLoggedInUser(data);
 
