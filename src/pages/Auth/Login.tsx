@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSetAtom } from "jotai";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useLocation } from "react-router";
 import { useForm } from "react-hook-form";
 import { addToast, Button, Form, Input, Switch } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,44 +13,62 @@ import { LoginSchema } from "../../schema/auth.schema";
 import type { LoginRequest } from "../../sdk/generated";
 import { ApiSDK } from "../../sdk";
 import { AuthRoutes, SidebarRoutes } from "../../routes";
-import { apiErrorParser } from "../../utils/errorParser";
 
 export default function LoginPage() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
   const navigate = useNavigate();
+  const location = useLocation();
   const setStoredToken = useSetAtom(storedAuthTokenAtom);
   const setLoggedInUser = useSetAtom(loggedinUserAtom);
+
+  // Get redirect location from navigation state
+  const from = (location.state as any)?.from?.pathname || SidebarRoutes.dashboard;
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<LoginSchema>({
     resolver: zodResolver(LoginSchema),
   });
 
+  const rememberMe = watch("remember_me");
+
   const loginMutation = useMutation({
     mutationFn: (formData: LoginRequest) =>
-      ApiSDK.AuthenticationService.loginApiV1AuthLoginPost(formData),
+      ApiSDK.AuthenticationService.adminLoginApiV1AuthAdminLoginPost(formData),
     onSuccess(data) {
       if (data) {
         const token = data.access_token;
         ApiSDK.OpenAPI.TOKEN = token;
+
+        // Update atoms
         setStoredToken(token);
         setLoggedInUser(data);
-        navigate(SidebarRoutes.dashboard, { replace: true });
+
+        // Persist to localStorage if remember me is checked
+        if (rememberMe) {
+          localStorage.setItem("auth_token", token);
+          localStorage.setItem("user_data", JSON.stringify(data));
+        } else {
+          // Use sessionStorage for session-only persistence
+          sessionStorage.setItem("auth_token", token);
+          sessionStorage.setItem("user_data", JSON.stringify(data));
+        }
+
+        navigate(from, { replace: true });
         addToast({
           title: "Login Successful",
           color: "success",
         });
       }
     },
-    onError(error) {
-      const parsedError = apiErrorParser(error);
+    onError(error: any) {
       addToast({
-        title: "An Error Occured",
-        description: parsedError.message,
+        title: "Unable to Login",
+        description: error?.body?.detail,
         color: "danger",
       });
     },
