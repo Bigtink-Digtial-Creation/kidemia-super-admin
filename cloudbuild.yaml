@@ -24,7 +24,7 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'kidemia'
+      - 'kidemia-admin'
       - '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/kidemiaadmin/kidemia:$SHORT_SHA'
       - '--region=europe-west1'
       - '--platform=managed'
