@@ -6,13 +6,15 @@ import {
     ModalBody,
     Button,
     Input,
-
+    Select,
+    SelectItem,
     addToast
 } from '@heroui/react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useCreateSubject } from '../../../../hooks/useSubjects';
+import { useAssessmentCategories } from '../../../../hooks/useAssessmentCategories';
 
 const createSubjectSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -24,8 +26,8 @@ const createSubjectSchema = z.object({
             'Code must look like MATH101 or ENG202'
         ),
     description: z.string().optional(),
-    color_code: z
-        .string().optional(),
+    color_code: z.string().optional(),
+    category_id: z.string().uuid('Please select a category').optional().nullable(),
 });
 
 type CreateSubjectForm = z.infer<typeof createSubjectSchema>;
@@ -40,6 +42,7 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
     onClose,
 }) => {
     const createSubject = useCreateSubject();
+    const { categories, isLoading: categoriesLoading } = useAssessmentCategories();
 
     const {
         control,
@@ -53,6 +56,7 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
             code: '',
             description: '',
             color_code: '#BF4C20',
+            category_id: null,
         },
     });
 
@@ -99,7 +103,6 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
                                 <span className="text-gray-900">Create </span>
                                 <span className="text-kidemia-secondary">Subject</span>
                             </h2>
-
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -148,6 +151,34 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
                                 )}
                             />
 
+                            <Controller
+                                name="category_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        label="Exam Category"
+                                        placeholder="Select Category (e.g. JAMB)"
+                                        selectedKeys={field.value ? [field.value] : []}
+                                        onSelectionChange={(keys) => field.onChange(Array.from(keys)[0])}
+                                        variant="flat"
+                                        size="lg"
+                                        radius="sm"
+                                        isDisabled={categoriesLoading || createSubject.isPending}
+                                        isInvalid={!!errors.category_id}
+                                        errorMessage={errors.category_id?.message}
+                                        classNames={{
+                                            trigger: 'bg-kidemia-biege/30 border-none',
+                                            value: 'text-gray-900',
+                                        }}
+                                    >
+                                        {(categories || []).map((cat: any) => (
+                                            <SelectItem key={cat.id} textValue={cat.display_name}>
+                                                {cat.display_name}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
+                                )}
+                            />
 
                             <Controller
                                 name="description"
@@ -177,9 +208,16 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
                                     <Input
                                         placeholder="Color (e.g. red, navy, #333333)"
                                         value={field.value}
+                                        variant="flat"
+                                        size="lg"
+                                        radius="sm"
+                                        isDisabled={createSubject.isPending}
+                                        classNames={{
+                                            input: 'placeholder:text-gray-600',
+                                            inputWrapper: 'bg-kidemia-biege/30 border-none',
+                                        }}
                                         onChange={(e) => {
                                             const input = e.target.value;
-
                                             try {
                                                 const hex = Color(input).hex();
                                                 field.onChange(hex);
@@ -189,7 +227,7 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
                                         }}
                                         startContent={
                                             <div
-                                                className="w-4 h-4 rounded-full border"
+                                                className="w-4 h-4 rounded-full border border-gray-300"
                                                 style={{
                                                     backgroundColor: (() => {
                                                         try {
@@ -204,7 +242,6 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
                                     />
                                 )}
                             />
-
 
                             <div className="flex items-center gap-4 pt-4">
                                 <Button

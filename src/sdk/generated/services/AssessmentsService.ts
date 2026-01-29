@@ -302,6 +302,27 @@ export class AssessmentsService {
       });
     }
     /**
+     * Get Assessment Config
+     * Get assessment configuration for pre-check screen
+     * @param assessmentId
+     * @returns any Successful Response
+     * @throws ApiError
+     */
+    public static getAssessmentConfigApiV1AssessmentsAssessmentIdConfigGet(
+      assessmentId: string,
+    ): CancelablePromise<any> {
+      return __request(OpenAPI, {
+        method: 'GET',
+        url: '/api/v1/assessments/{assessment_id}/config',
+        path: {
+          'assessment_id': assessmentId,
+        },
+        errors: {
+          422: `Validation Error`,
+        },
+      });
+    }
+    /**
      * Publish an assessment
      * Publish an assessment to make it available to students.
      *

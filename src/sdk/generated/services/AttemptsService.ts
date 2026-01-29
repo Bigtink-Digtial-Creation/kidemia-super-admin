@@ -220,6 +220,31 @@ export class AttemptsService {
     });
   }
   /**
+   * Log Proctoring Violation
+   * Log a proctoring violation
+   * @param attemptId
+   * @param requestBody
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static logProctoringViolationApiV1AttemptsAttemptsAttemptIdViolationPost(
+    attemptId: string,
+    requestBody: Record<string, any>,
+  ): CancelablePromise<any> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/attempts/attempts/{attempt_id}/violation',
+      path: {
+        'attempt_id': attemptId,
+      },
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
    * Delete attempts
    * @param attemptId
    * @returns any Successful Response

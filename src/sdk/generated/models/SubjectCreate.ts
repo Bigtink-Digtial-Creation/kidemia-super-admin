@@ -12,6 +12,10 @@ export type SubjectCreate = {
   icon_url?: (string | null);
   color_code?: (string | null);
   parent_id?: (string | null);
+  /**
+   * Linked assessment category configuration
+   */
+  category_id?: (string | null);
   order?: number;
   is_active?: boolean;
   is_featured?: boolean;
