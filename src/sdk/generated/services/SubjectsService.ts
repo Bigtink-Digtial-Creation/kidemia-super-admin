@@ -35,14 +35,11 @@ export class SubjectsService {
   }
   /**
    * Get All subjects
-   * Get all subjects with pagination.
-   *
-   * - **skip**: Number of records to skip
-   * - **limit**: Maximum number of records to return
-   * - **active_only**: Return only active subjects
+   * Get all subjects with pagination and optional category filtering.
    * @param skip
    * @param limit
    * @param activeOnly
+   * @param categoryId
    * @returns SubjectListResponse Successful Response
    * @throws ApiError
    */
@@ -50,6 +47,7 @@ export class SubjectsService {
     skip?: number,
     limit: number = 20,
     activeOnly: boolean = false,
+    categoryId?: (string | null),
   ): CancelablePromise<SubjectListResponse> {
     return __request(OpenAPI, {
       method: 'GET',
@@ -58,6 +56,7 @@ export class SubjectsService {
         'skip': skip,
         'limit': limit,
         'active_only': activeOnly,
+        'category_id': categoryId,
       },
       errors: {
         422: `Validation Error`,

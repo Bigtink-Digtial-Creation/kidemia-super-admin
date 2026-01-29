@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { GuardianBase } from './GuardianBase';
 import type { RoleResponse } from './RoleResponse';
 import type { StudentResponse } from './StudentResponse';
 import type { UserType } from './UserType';
@@ -30,5 +31,6 @@ export type UserResponse = {
   last_login: (string | null);
   roles?: Array<RoleResponse>;
   student?: (StudentResponse | null);
+  guardian?: (GuardianBase | null);
 };
 

@@ -12,6 +12,7 @@ export type SubjectUpdate = {
   icon_url?: (string | null);
   color_code?: (string | null);
   parent_id?: (string | null);
+  category_id?: (string | null);
   order?: (number | null);
   is_active?: (boolean | null);
   is_featured?: (boolean | null);

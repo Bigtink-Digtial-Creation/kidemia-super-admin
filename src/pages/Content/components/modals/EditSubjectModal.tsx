@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import Color from 'color'; // Ensure this is installed: npm install color
+import Color from 'color';
 import {
     addToast,
     Button,
@@ -10,8 +10,11 @@ import {
     Modal,
     ModalBody,
     ModalContent,
+    Select,
+    SelectItem,
 } from "@heroui/react";
 import { useUpdateSubject } from "../../../../hooks/useSubjects";
+import { useAssessmentCategories } from "../../../../hooks/useAssessmentCategories";
 
 const editSubjectSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -21,6 +24,7 @@ const editSubjectSchema = z.object({
         .regex(/^[A-Z]{2,6}\d{2,4}$/, 'Code must look like MATH101 or ENG202'),
     description: z.string().optional(),
     color_code: z.string().optional(),
+    category_id: z.string().uuid().optional().nullable(),
 });
 
 type EditSubjectForm = z.infer<typeof editSubjectSchema>;
@@ -37,6 +41,7 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
     subject,
 }) => {
     const updateSubject = useUpdateSubject();
+    const { categories, isLoading: categoriesLoading } = useAssessmentCategories();
 
     const {
         control,
@@ -54,6 +59,7 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
                 code: subject.code || '',
                 description: subject.description || '',
                 color_code: subject.color_code || '#BF4C20',
+                category_id: subject.category_id || null,
             });
         }
     }, [subject, isOpen, reset]);
@@ -102,7 +108,6 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
                         </div>
 
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                            {/* Name Input */}
                             <Controller
                                 name="name"
                                 control={control}
@@ -124,7 +129,6 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
                                 )}
                             />
 
-                            {/* Code Input */}
                             <Controller
                                 name="code"
                                 control={control}
@@ -147,7 +151,35 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
                                 )}
                             />
 
-                            {/* Description Input */}
+                            <Controller
+                                name="category_id"
+                                control={control}
+                                render={({ field }) => (
+                                    <Select
+                                        label="Exam Category"
+                                        placeholder="Select Category"
+                                        selectedKeys={field.value ? [field.value] : []}
+                                        onSelectionChange={(keys) => field.onChange(Array.from(keys)[0])}
+                                        variant="flat"
+                                        size="lg"
+                                        radius="sm"
+                                        isDisabled={categoriesLoading || updateSubject.isPending}
+                                        isInvalid={!!errors.category_id}
+                                        errorMessage={errors.category_id?.message}
+                                        classNames={{
+                                            trigger: 'bg-kidemia-biege/30 border-none',
+                                            value: 'text-gray-900',
+                                        }}
+                                    >
+                                        {(categories || []).map((cat: any) => (
+                                            <SelectItem key={cat.id} textValue={cat.display_name}>
+                                                {cat.display_name}
+                                            </SelectItem>
+                                        ))}
+                                    </Select>
+                                )}
+                            />
+
                             <Controller
                                 name="description"
                                 control={control}
@@ -169,7 +201,6 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
                                 )}
                             />
 
-                            {/* Color Input with Script Conversion */}
                             <Controller
                                 name="color_code"
                                 control={control}
@@ -188,11 +219,9 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
                                         onChange={(e) => {
                                             const input = e.target.value;
                                             try {
-                                                // Attempt to convert name to hex immediately
                                                 const hex = Color(input).hex();
                                                 field.onChange(hex);
                                             } catch {
-                                                // If it's not a valid color yet (typing), just update the text
                                                 field.onChange(input);
                                             }
                                         }}
@@ -204,7 +233,7 @@ export const EditSubjectModal: React.FC<EditSubjectModalProps> = ({
                                                         try {
                                                             return Color(field.value).hex();
                                                         } catch {
-                                                            return '#ccc'; // Fallback circle color
+                                                            return '#ccc';
                                                         }
                                                     })(),
                                                 }}

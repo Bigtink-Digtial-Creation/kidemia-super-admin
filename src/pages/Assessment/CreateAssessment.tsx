@@ -305,7 +305,7 @@ export default function CreateAssessment() {
     }
 
     const payload = buildPayload();
-    console.log("Payload ->", payload);
+    // console.log("Payload ->", payload);
     // show preview for confirmation
     // setPreviewOpen(true);
     // const payload = buildPayload();

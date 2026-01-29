@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { ChangePasswordRequest } from '../models/ChangePasswordRequest';
 import type { ForgotPasswordRequest } from '../models/ForgotPasswordRequest';
+import type { GuardianRegisterRequest } from '../models/GuardianRegisterRequest';
 import type { LoginRequest } from '../models/LoginRequest';
 import type { LoginResponse } from '../models/LoginResponse';
 import type { MessageResponse } from '../models/MessageResponse';
@@ -39,6 +40,27 @@ export class AuthenticationService {
     return __request(OpenAPI, {
       method: 'POST',
       url: '/api/v1/auth/register',
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Register a new Guardian
+   * Register a new Guardian.
+   * This automatically creates a User and triggers the Guardian profile creation.
+   * @param requestBody
+   * @returns RegisterResponse Successful Response
+   * @throws ApiError
+   */
+  public static registerGuardianApiV1AuthRegisterGuardianPost(
+    requestBody: GuardianRegisterRequest,
+  ): CancelablePromise<RegisterResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/auth/register/guardian',
       body: requestBody,
       mediaType: 'application/json',
       errors: {
