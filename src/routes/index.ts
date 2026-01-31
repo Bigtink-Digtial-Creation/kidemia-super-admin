@@ -26,6 +26,7 @@ export const SidebarRoutes = {
   assessment: "/content/assessment",
   createAssessment: "/content/assessment/create",
   singleAssessment: "/content/assessment/:id",
+  assessmentAttempt: "/content/assessment/attempt/:id",
   categories: "/content/category",
 
   roles: "/platform/manage/roles",
@@ -40,6 +41,11 @@ export const SidebarRoutes = {
   game: "/platform/game/badges",
   // people
   users: "/people/users",
+
+  reportAnalytic: "/platform/report/analytics",
+  generateReport: "/platform/report/generate"
+
+
 
 };
 

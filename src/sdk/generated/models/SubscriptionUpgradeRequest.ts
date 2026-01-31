@@ -3,12 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * Schema for upgrading subscription
+ * Schema for upgrading subscription with improved validation
  */
 export type SubscriptionUpgradeRequest = {
   /**
    * New plan code to upgrade to
    */
   new_plan: string;
+  callback_url: string;
 };
 

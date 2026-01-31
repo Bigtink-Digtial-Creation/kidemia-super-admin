@@ -38,31 +38,28 @@ export default function QuestionsTable({
 }: QuestionsTableProps) {
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
 
-    // Fetch questions based on filters
     const { data: questionRows = [], isLoading } = useQuery<QuestionRow[]>({
         queryKey: [QueryKeys.questionsById, subjectId, topicIds, filterMode],
         queryFn: async () => {
             try {
                 let rows: QuestionRow[] = [];
 
-                // --- by-subject ---
                 if (filterMode === "by-subject" && subjectId) {
                     const resp = await ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(subjectId);
                     rows = (resp?.items ?? []).map((q) => ({
-                        id: q.id,
+                        id: String(q.id),
                         question_text: q.question_text,
                         difficulty: q.difficulty_level,
                         marks: q.points ?? 1,
+                        topic_name: q.topic?.name,
                     }));
                 }
-
-                // --- by-topic ---
                 else if (filterMode === "by-topic" && topicIds?.length) {
                     const resp = await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(topicIds);
                     const topics = resp?.topics ?? [];
                     rows = topics.flatMap((topic) =>
-                        (topic.questions ?? []).map((q, idx) => ({
-                            id: `${topic.topic_name}-${idx}`,
+                        (topic.questions ?? []).map((q) => ({
+                            id: String(q.id), // Used q.id from API
                             question_text: q.question_text,
                             difficulty: q.difficulty_level,
                             marks: 1,
@@ -70,14 +67,12 @@ export default function QuestionsTable({
                         }))
                     );
                 }
-
-                // --- manual ---
                 else if (filterMode === "manual") {
                     const resp = await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost([]);
                     const topics = resp?.topics ?? [];
                     rows = topics.flatMap((topic) =>
-                        (topic.questions ?? []).map((q, idx) => ({
-                            id: `${topic.topic_name}-${idx}`,
+                        (topic.questions ?? []).map((q) => ({
+                            id: String(q.id), // Used q.id from API
                             question_text: q.question_text,
                             difficulty: q.difficulty_level,
                             marks: 1,
@@ -100,46 +95,44 @@ export default function QuestionsTable({
                     : true,
     });
 
-    // Filter by search query
     const filteredQuestions = useMemo(() => {
         if (!searchQuery.trim()) return questionRows;
         const query = searchQuery.toLowerCase();
         return questionRows.filter((q) => q.question_text.toLowerCase().includes(query));
     }, [questionRows, searchQuery]);
 
-    // Handle selection changes
     const handleSelectionChange = (keys: any) => {
-        // Convert whatever comes from Table to a Set<string>
-        const newSelectedKeys = new Set(
-            Array.isArray(keys)
-                ? keys.map(String)
-                : keys instanceof Set
-                    ? Array.from(keys).map(String)
-                    : [String(keys)]
-        );
+        let newSelectedKeys: Set<string>;
+
+        if (keys === "all") {
+            // Select all currently filtered rows
+            newSelectedKeys = new Set(filteredQuestions.map((q) => String(q.id)));
+        } else {
+            // Convert selection to set of strings
+            newSelectedKeys = new Set(Array.from(keys).map(String));
+        }
 
         setSelectedKeys(newSelectedKeys);
 
-        const selectedRows = filteredQuestions.filter((row) => newSelectedKeys.has(row.id));
+        // Find the full row data for the parent callback
+        const selectedRows = filteredQuestions.filter((row) =>
+            newSelectedKeys.has(String(row.id))
+        );
         onSelectionChange(selectedRows);
     };
 
     const getDifficultyColor = (difficulty: string) => {
-        switch (difficulty.toLowerCase()) {
-            case "easy":
-                return "success";
-            case "medium":
-                return "warning";
-            case "hard":
-                return "danger";
-            default:
-                return "default";
+        switch (difficulty?.toLowerCase()) {
+            case "easy": return "success";
+            case "medium": return "warning";
+            case "hard": return "danger";
+            default: return "default";
         }
     };
 
     if (isLoading) {
         return (
-            <div className="h-screen flex justify-center items-center">
+            <div className="py-20 flex justify-center items-center">
                 <BallSpinner />
             </div>
         );
@@ -150,19 +143,28 @@ export default function QuestionsTable({
             <Table
                 aria-label="Questions table with selection"
                 selectionMode="multiple"
-                selectedKeys={selectedKeys}
+                selectedKeys={selectedKeys.size === filteredQuestions.length && filteredQuestions.length > 0 ? "all" : selectedKeys}
                 onSelectionChange={handleSelectionChange}
-                classNames={{ wrapper: "max-h-[500px] overflow-auto" }}
+                shadow="none"
+                radius="none"
+                removeWrapper
+                classNames={{
+                    base: "max-h-[500px] overflow-scroll",
+                    table: "min-w-full",
+                    thead: "[&>tr]:first:rounded-none",
+                    th: "bg-gray-50 text-gray-600 border-b border-gray-100 py-4",
+                    td: "py-3 border-b border-gray-50",
+                }}
             >
                 <TableHeader>
                     <TableColumn>QUESTION</TableColumn>
                     <TableColumn>TOPIC</TableColumn>
                     <TableColumn>DIFFICULTY</TableColumn>
-                    <TableColumn>MARKS</TableColumn>
+                    <TableColumn>POINTS</TableColumn>
                 </TableHeader>
                 <TableBody emptyContent="No questions found">
                     {filteredQuestions.map((row) => (
-                        <TableRow key={row.id}>
+                        <TableRow key={row.id} className="hover:bg-gray-50/50 transition-colors">
                             <TableCell>
                                 <div className="max-w-md truncate" title={row.question_text}>
                                     {row.question_text}
@@ -174,23 +176,29 @@ export default function QuestionsTable({
                                     {row.difficulty}
                                 </Chip>
                             </TableCell>
-                            <TableCell>{row.marks}</TableCell>
+                            <TableCell className="font-medium text-gray-700">{row.marks}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
 
-            <div className="mt-2 text-sm text-gray-600">
-                Total Questions: <span className="font-semibold">{filteredQuestions.length}</span>
-                {" | "}
-                Selected: <span className="font-semibold">{selectedKeys.size}</span>
-                {" | "}
-                Total Marks:{" "}
-                <span className="font-semibold">
-                    {filteredQuestions
-                        .filter((row) => selectedKeys.has(row.id))
-                        .reduce((sum, row) => sum + row.marks, 0)}
-                </span>
+            <div className="mt-4 flex items-center gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <div>
+                    Total: <span className="text-gray-900">{filteredQuestions.length}</span>
+                </div>
+                <div className="w-px h-3 bg-gray-200" />
+                <div>
+                    Selected: <span className="text-kidemia-secondary">{selectedKeys.size}</span>
+                </div>
+                <div className="w-px h-3 bg-gray-200" />
+                <div>
+                    Marks:{" "}
+                    <span className="text-gray-900">
+                        {filteredQuestions
+                            .filter((row) => selectedKeys.has(String(row.id)))
+                            .reduce((sum, row) => sum + row.marks, 0)}
+                    </span>
+                </div>
             </div>
         </div>
     );

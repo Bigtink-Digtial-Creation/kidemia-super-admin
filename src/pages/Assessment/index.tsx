@@ -12,6 +12,7 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  addToast,
 } from "@heroui/react";
 import { FiPlusSquare, FiTrash2, FiRefreshCw } from "react-icons/fi";
 import { useNavigate } from "react-router";
@@ -82,8 +83,13 @@ export default function AssessmentPage() {
         id,
         { status: newStatus }
       ),
-    onSuccess: () => {
+    onSuccess: (resp) => {
       queryClient.invalidateQueries({ queryKey: [QueryKeys.allAssessment] });
+      const new_status = resp.status
+      addToast({
+        title: "Successful",
+        description: `Status updated to ${new_status} successfully`,
+      })
     },
   });
 
@@ -175,7 +181,7 @@ export default function AssessmentPage() {
         </div>
 
         {/* --- DESKTOP VIEW: Original Table with Pink Stripes --- */}
-        <div className="hidden lg:block bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+        <div className="hidden lg:block   overflow-hidden  ">
           <table className="w-full">
             <thead className="border-b border-gray-200 bg-white">
               <tr>
@@ -199,7 +205,7 @@ export default function AssessmentPage() {
                     </div>
                   </td>
                   <td className="px-6 py-6">
-                    <Chip variant="flat" size="sm" color="primary">
+                    <Chip variant="flat" size="sm" color="primary" className="bg-kidemia-primary text-white">
                       {allCategories.find(c => c.category_name === asst.category)?.display_name || asst.category}
                     </Chip>
                   </td>
@@ -208,6 +214,7 @@ export default function AssessmentPage() {
                       variant="flat"
                       size="sm"
                       color={statuses.find(s => s.value === asst.status)?.color || "default"}
+                      className="capitalize"
                     >
                       {asst.status}
                     </Chip>

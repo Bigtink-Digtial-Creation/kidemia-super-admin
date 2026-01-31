@@ -9,6 +9,7 @@ import type { AttemptResponse } from '../models/AttemptResponse';
 import type { AttemptResultResponse } from '../models/AttemptResultResponse';
 import type { AttemptStartRequest } from '../models/AttemptStartRequest';
 import type { AttemptStartResponse } from '../models/AttemptStartResponse';
+import type { AttemptStatus } from '../models/AttemptStatus';
 import type { SaveAnswerRequest } from '../models/SaveAnswerRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -220,6 +221,40 @@ export class AttemptsService {
     });
   }
   /**
+   * Get Assessment Attempts
+   * Get all attempts for a specific assessment.
+   *
+   * Requires `attempt:read` permission.
+   * @param assessmentId
+   * @param status Filter by status
+   * @param skip
+   * @param limit
+   * @returns AttemptResponse Successful Response
+   * @throws ApiError
+   */
+  public static getAssessmentAttemptsApiV1AttemptsAssessmentAssessmentIdGet(
+    assessmentId: string,
+    status?: (AttemptStatus | null),
+    skip?: number,
+    limit: number = 100,
+  ): CancelablePromise<Array<AttemptResponse>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/attempts/assessment/{assessment_id}',
+      path: {
+        'assessment_id': assessmentId,
+      },
+      query: {
+        'status': status,
+        'skip': skip,
+        'limit': limit,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
    * Log Proctoring Violation
    * Log a proctoring violation
    * @param attemptId
@@ -239,6 +274,37 @@ export class AttemptsService {
       },
       body: requestBody,
       mediaType: 'application/json',
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Get Attempt Detail
+   * Get detailed attempt information including proctoring violations.
+   *
+   * Users can view their own attempt details without special permissions.
+   * Viewing others' attempts requires `attempt:read` permission.
+   *
+   * Returns:
+   * - Complete attempt information
+   * - User details
+   * - Assessment configuration
+   * - Proctoring violations (if enabled)
+   * - Violation summary by type
+   * @param attemptId
+   * @returns any Successful Response
+   * @throws ApiError
+   */
+  public static getAttemptDetailApiV1AttemptsAttemptIdDetailGet(
+    attemptId: string,
+  ): CancelablePromise<Record<string, any>> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/attempts/{attempt_id}/detail',
+      path: {
+        'attempt_id': attemptId,
+      },
       errors: {
         422: `Validation Error`,
       },

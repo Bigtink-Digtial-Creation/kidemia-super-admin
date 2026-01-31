@@ -7,6 +7,7 @@ import type { QuestionOptionResponse } from './QuestionOptionResponse';
 import type { QuestionStatus } from './QuestionStatus';
 import type { QuestionTagResponse } from './QuestionTagResponse';
 import type { QuestionType } from './QuestionType';
+import type { TopicName } from './TopicName';
 /**
  * Schema for full question response (with answers)
  */
@@ -25,6 +26,7 @@ export type QuestionResponse = {
   video_url?: (string | null);
   points?: number;
   time_limit_seconds?: (number | null);
+  topic: (TopicName | null);
   status: QuestionStatus;
   times_used: number;
   times_correct: number;

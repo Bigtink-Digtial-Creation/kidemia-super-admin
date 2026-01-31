@@ -4,7 +4,6 @@ import {
   Breadcrumbs,
   Button,
   DatePicker,
-  Divider,
   Input,
   Radio,
   RadioGroup,
@@ -25,11 +24,10 @@ import RandomModeConfig from "./components/RandomModeConfig";
 import { addToast } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
-import { type AssessmentCreate } from "../../sdk/generated";
+import { type AssessmentCreate, type AssessmentStatus, type AssessmentType, type ResultDisplayMode } from "../../sdk/generated";
 import { type QuestionSelectionMode } from "../../sdk/generated/models/QuestionSelectionMode";
 import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
-
 
 function uid(prefix = "") {
   return `${prefix}${Math.random().toString(36).slice(2, 9)}`;
@@ -42,7 +40,6 @@ interface SelectedQuestion {
   points?: number;
 }
 
-type ExamSession = "May June" | "Nov Dec" | "Continuous" | "";
 
 type SelectionMode = QuestionSelectionMode | "manual" | "random" | "adaptive";
 
@@ -55,87 +52,54 @@ type SectionShape = {
   difficulty_distribution: { easy: number; medium: number; hard: number };
 };
 
-
 export default function CreateAssessment() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
-  // Basic details
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
   const [instructions, setInstructions] = useState("");
   const [category, setCategory] = useState<string>("");
+  const [categoryConfigId, setCategoryConfigId] = useState<string>("");
   const [subjectId, setSubjectId] = useState<string>("");
   const [topicIds, setTopicIds] = useState<string[]>([]);
   const [examYear, setExamYear] = useState<number>(new Date().getFullYear());
-  const [examSession, setExamSession] = useState<ExamSession>("");
+  const [examSession, setExamSession] = useState<string>("May/June");
   const [durationMinutes, setDurationMinutes] = useState<number>(60);
-  // const [timePerQuestion, setTimePerQuestion] = useState<number | null>(null);
-
-  // Pricing & availability
   const [price, setPrice] = useState<number>(0);
   const [currency, setCurrency] = useState<string>("NGN");
   const [discountPrice, setDiscountPrice] = useState<number | null>(null);
   const [availableFrom, setAvailableFrom] = useState<any>(null);
   const [availableUntil, setAvailableUntil] = useState<any>(null);
-  // const [bannerImageId, setBannerImageId] = useState<string | null>(null);
   const [bannerImageId] = useState<string | null>(null);
-
-
   const [questionSelectionMode, setQuestionSelectionMode] = useState<SelectionMode>("manual");
-  // const [questionFilterMode, setQuestionFilterMode] = useState<"by-subject" | "by-topic" | "manual">(
-  //   "by-subject"
-  // );
-  const [questionFilterMode] = useState<"by-subject" | "by-topic" | "manual">(
-    "by-subject"
-  );
-  // const [searchQuery, setSearchQuery] = useState("");
+  const [questionFilterMode] = useState<"by-subject" | "by-topic" | "manual">("by-subject");
   const [searchQuery] = useState("");
-
   const [selectedQuestionIds, setSelectedQuestionIds] = useState<string[]>([]);
-
-  // Behaviour
   const [shuffleQuestions, setShuffleQuestions] = useState(true);
   const [shuffleOptions, setShuffleOptions] = useState(true);
   const [allowQuestionNavigation, setAllowQuestionNavigation] = useState(true);
   const [allowBackwardNavigation, setAllowBackwardNavigation] = useState(true);
-
-  // Result & feedback
   const [resultDisplayMode, setResultDisplayMode] = useState<string>("immediate");
   const [showCorrectAnswers, setShowCorrectAnswers] = useState(true);
   const [showExplanations, setShowExplanations] = useState(true);
-
-  // Proctoring
   const [proctoringEnabled, setProctoringEnabled] = useState(false);
   const [requireWebcam, setRequireWebcam] = useState(false);
   const [fullscreenRequired, setFullscreenRequired] = useState(false);
   const [detectTabSwitching, setDetectTabSwitching] = useState(false);
   const [maxTabSwitches, setMaxTabSwitches] = useState<number>(0);
-
-  // Attempts and passing
-  // const [passingPercentage, setPassingPercentage] = useState<number>(50);
   const [passingPercentage] = useState<number>(50);
-
-  // const [maxAttempts, setMaxAttempts] = useState<number>(10);
   const [maxAttempts] = useState<number>(10);
-
-
-  // Status & visibility
   const [isPublic, setIsPublic] = useState(true);
   const [requireEnrollment, setRequireEnrollment] = useState(false);
   const [status, setStatus] = useState<string>("draft");
-
-  // Sections
   const [sections, setSections] = useState<SectionShape[]>([]);
-
-  // Random/adaptive mode configs
   const [randomConfig, setRandomConfig] = useState({
     number_of_questions: 20,
     topic_distribution: [] as { topic_id: string; percent: number }[],
     difficulty_distribution: { easy: 30, medium: 50, hard: 20 },
   });
-
   const [adaptiveConfig, setAdaptiveConfig] = useState({
     starting_difficulty: "medium",
     sensitivity: 1,
@@ -143,7 +107,6 @@ export default function CreateAssessment() {
     max_difficulty: "hard",
   });
 
-  // Queries
   const { data: subjects = [] } = useQuery({
     queryKey: [QueryKeys.subjects],
     queryFn: async () => {
@@ -160,6 +123,7 @@ export default function CreateAssessment() {
     },
     staleTime: 5 * 60 * 1000,
   });
+
   const { data: categories = [] } = useQuery({
     queryKey: [QueryKeys.assessmentCategories],
     queryFn: async () => {
@@ -171,30 +135,32 @@ export default function CreateAssessment() {
       }
     },
   });
-  const examSessions = ["May June", "Nov Dec", "Continuous"];
 
-  // Mutation
+
   const createAssessmentMutation = useMutation({
     mutationFn: async (payload: AssessmentCreate) => {
-      const resp = await ApiSDK.AssessmentsService?.createAssessmentApiV1AssessmentsPost?.(payload);
-      return resp;
+      try {
+        const resp = await ApiSDK.AssessmentsService?.createAssessmentApiV1AssessmentsPost?.(payload);
+        return resp;
+      } catch (error: any) {
+        throw error;
+      }
     },
     onSuccess: () => {
-      showToastMessage("Assessment created successfully!", "success");
+      addToast({
+        title: "Successful",
+        description: "Assessment Created Successfully"
+      })
       qc.invalidateQueries({ queryKey: [QueryKeys.allAssessment] });
       navigate(SidebarRoutes.assessment);
     },
-    onError: (err) => {
-      console.error("Failed to create assessment", err?.message);
-      showToastMessage("Failed to create assessment. Please check and try again.", "error");
+    onError: (err: any) => {
+      addToast({
+        title: "Error",
+        description: err?.body?.detail || err?.body?.message
+      })
     },
   });
-
-  /* -------------------------
-     Derived / validation
-     ------------------------- */
-  // const selectedCount = selectedQuestionIds.length;
-  // const totalMarks = selectedQuestionIds.length; // placeholder
 
   const sectionsValid = useMemo(() => {
     for (const s of sections) {
@@ -205,17 +171,14 @@ export default function CreateAssessment() {
     return true;
   }, [sections]);
 
-  /* -------------------------
-     Build payload
-     ------------------------- */
   const buildPayload = (): AssessmentCreate => {
     const payload: AssessmentCreate = {
       title,
       code,
-      description: description || undefined,
-      instructions: instructions || undefined,
-      assessment_type: "exam" as any,
-      category: category as any,
+      description: description?.trim() || null,
+      instructions: instructions?.trim() || null,
+      assessment_type: "exam" as AssessmentType,
+      category: category,
       subject_id: subjectId,
       topic_ids: topicIds.length ? topicIds : [],
       exam_year: examYear,
@@ -236,7 +199,7 @@ export default function CreateAssessment() {
       shuffle_options: shuffleOptions,
       allow_question_navigation: allowQuestionNavigation,
       allow_backward_navigation: allowBackwardNavigation,
-      result_display_mode: resultDisplayMode as any,
+      result_display_mode: resultDisplayMode as ResultDisplayMode,
       show_correct_answers: showCorrectAnswers,
       show_explanations: showExplanations,
       proctoring_enabled: proctoringEnabled,
@@ -247,8 +210,10 @@ export default function CreateAssessment() {
       is_public: isPublic,
       require_enrollment: requireEnrollment,
       question_ids: selectedQuestionIds.length ? selectedQuestionIds : [],
-      duration_minutes_override: undefined as any,
+      // duration_minutes_override: undefined as any,
       max_attempts: maxAttempts,
+      category_config_id: categoryConfigId,
+      status: (status as AssessmentStatus) || null,
       sections: sections.map((s) => ({
         title: s.title,
         description: s.description ?? null,
@@ -258,13 +223,10 @@ export default function CreateAssessment() {
       })) as any[],
       banner_image_id: bannerImageId ?? null,
     } as unknown as AssessmentCreate;
-
+    console.log(payload)
     return payload;
   };
 
-  /* -------------------------
-     Handlers
-     ------------------------- */
   const onQuestionsSelectionChange = (rows: SelectedQuestion[]) => {
     const ids = rows.map((r) => r.id);
     setSelectedQuestionIds(ids);
@@ -275,40 +237,43 @@ export default function CreateAssessment() {
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
 
-    // Client validation
     if (!title.trim()) {
-      showToastMessage("Please provide a title", "error");
+      addToast({
+        title: "Warning",
+        description: "Please provide a title"
+      })
       return;
     }
     if (!code.trim()) {
-      showToastMessage("Please provide a code", "error");
+      addToast({
+        title: "Warning",
+        description: "Please provide a code"
+      })
       return;
     }
     if (!subjectId) {
-      showToastMessage("Please choose a subject", "error");
+      addToast({
+        title: "Warning",
+        description: "Please choose a subject"
+      })
       return;
     }
     if (questionSelectionMode === "manual" && selectedQuestionIds.length === 0) {
-      showToastMessage("Select at least one question for manual mode", "error");
+      addToast({
+        title: "Warning",
+        description: "Select at least one question"
+      })
       return;
     }
-    if (sections.length === 0 && questionSelectionMode !== "manual") {
-      // random/adaptive should have sections or config
-      // not strictly required by api but good UX
-      // allow it, but warn
-      // showToastMessage("Add at least one section or switch to manual selection", "error");
-      // return;
-    }
     if (!sectionsValid) {
-      showToastMessage("Please ensure each section has valid difficulty distribution (sums to 100) and questions", "error");
+      addToast({
+        title: "Warning",
+        description: "Please ensure each section has valid difficulty distribution (sums to 100) and questions"
+      })
       return;
     }
 
     const payload = buildPayload();
-    // console.log("Payload ->", payload);
-    // show preview for confirmation
-    // setPreviewOpen(true);
-    // const payload = buildPayload();
     createAssessmentMutation.mutate(payload);
   };
 
@@ -318,222 +283,146 @@ export default function CreateAssessment() {
     setPreviewOpen(false);
   };
 
-  /* -------------------------
-     UI
-     ------------------------- */
   return (
-    <section className="space-y-8 bg-kidemia-white">
-      <div>
-        <Breadcrumbs variant="light" color="foreground">
-          <BreadcrumbItem href={SidebarRoutes.dashboard} startContent={<MdOutlineDashboard />}>
-            Dashboard
-          </BreadcrumbItem>
-          <BreadcrumbItem href={SidebarRoutes.assessment} startContent={<MdAssessment />}>
-            Assessment
-          </BreadcrumbItem>
-          <BreadcrumbItem startContent={<MdAssessment />} color="warning">
-            Create Assessment
-          </BreadcrumbItem>
-        </Breadcrumbs>
-      </div>
+    <div className="min-h-screen bg-neutral-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Header */}
+        <div className="mb-6">
+          <Breadcrumbs size="sm" className="mb-3">
+            <BreadcrumbItem href={SidebarRoutes.dashboard} startContent={<MdOutlineDashboard className="w-4 h-4" />}>
+              Dashboard
+            </BreadcrumbItem>
+            <BreadcrumbItem href={SidebarRoutes.assessment} startContent={<MdAssessment className="w-4 h-4" />}>
+              Assessments
+            </BreadcrumbItem>
+            <BreadcrumbItem>Create Assessment</BreadcrumbItem>
+          </Breadcrumbs>
+          <h1 className="text-2xl font-semibold text-neutral-900">Create Assessment</h1>
+        </div>
 
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* MAIN */}
-          <div className="col-span-3 p-6 border border-kidemia-grey/30 rounded-xl space-y-4 bg-white">
-            <h3 className="text-xl font-semibold text-kidemia-dark">Assessment Details</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-12 gap-6">
+            {/* Main Content */}
+            <div className="col-span-12 lg:col-span-8 space-y-6">
+              {/* Basic Information */}
+              <div className=" p-6">
+                <h2 className="text-base font-medium text-neutral-900 mb-5">Basic Information</h2>
 
-            <div className="flex flex-col md:flex-row gap-4">
-              <Input
-                variant="underlined"
-                size="md"
-                radius="sm"
-                label="Title"
-                labelPlacement="outside"
-                type="text"
-                placeholder="Assessment Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      label="Title"
+                      labelPlacement="outside"
+                      placeholder="Enter assessment title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      required
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
+                    />
+                    <Input
+                      label="Code"
+                      labelPlacement="outside"
+                      placeholder="Enter assessment code"
+                      value={code}
+                      onChange={(e) => setCode(e.target.value)}
+                      required
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
+                    />
+                  </div>
 
-              <Input
-                variant="underlined"
-                size="md"
-                radius="sm"
-                label="Code"
-                labelPlacement="outside"
-                type="text"
-                placeholder="Assessment Code"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                required
-              />
-            </div>
-
-            <div>
-              <Textarea
-                variant="underlined"
-                size="md"
-                radius="sm"
-                label="Description"
-                labelPlacement="outside"
-                placeholder="Comprehensive description for the assessment"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <Textarea
-                  variant="underlined"
-                  size="md"
-                  radius="sm"
-                  label="Instructions"
-                  labelPlacement="outside"
-                  placeholder="Exam instructions (no negative marking, use calculator, etc.)"
-                  value={instructions}
-                  onChange={(e) => setInstructions(e.target.value)}
-                />
-              </div>
-
-              <div className="w-60 space-y-6 p-4 border border-kidemia-grey/30 rounded-xl bg-white">
-                <div className="mt-2">
-                  <Select
-                    variant="underlined"
-                    size="md"
-                    radius="sm"
-                    label="Category"
+                  <Textarea
+                    label="Description"
                     labelPlacement="outside"
-                    placeholder="Category"
-                    selectedKeys={category ? [category] : []}
-                    onSelectionChange={(keys) => setCategory(Array.from(keys)[0] as string)}
-                  >
-                    {categories.map((c: any) => (
-                      <SelectItem key={c.category_name.toLowerCase() ?? c.category_name.toLowerCase()}>
-                        {c.display_name.toUpperCase() ?? c.display_name.toUpperCase() ?? c.toUpperCase()}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
+                    placeholder="Provide a description for this assessment"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    minRows={3}
+                    classNames={{ label: "text-sm font-medium mb-1.5" }}
+                  />
 
-                <div className="mt-2">
-                  <Select
-                    variant="underlined"
-                    size="md"
-                    radius="sm"
-                    label="Subject"
+                  <Textarea
+                    label="Instructions"
                     labelPlacement="outside"
-                    placeholder="Subject"
-                    selectedKeys={subjectId ? [subjectId] : []}
-                    onSelectionChange={(keys) => setSubjectId(Array.from(keys)[0] as string)}
-                  >
-                    {subjects.map((s: any) => (
-                      <SelectItem key={s.id}>{s.name ?? s.title ?? s.label}</SelectItem>
-                    ))}
-                  </Select>
+                    placeholder="Enter exam instructions (e.g., no negative marking, calculators allowed)"
+                    value={instructions}
+                    onChange={(e) => setInstructions(e.target.value)}
+                    minRows={3}
+                    classNames={{ label: "text-sm font-medium mb-1.5" }}
+                  />
+
+                  <div className="grid grid-cols-2 gap-4">
+
+                    <Select
+                      label="Category"
+                      labelPlacement="outside"
+                      placeholder="Select category"
+                      selectedKeys={category ? [category] : []}
+                      onSelectionChange={(keys) => {
+                        const selectedId = Array.from(keys)[0] as string;
+                        const selectedCategory = categories.find((c: any) => c.id === selectedId);
+
+                        if (selectedCategory) {
+                          setCategoryConfigId(selectedCategory.id);
+                          setCategory(selectedCategory.category_name);
+                        }
+                      }}
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
+                    >
+                      {categories.map((c: any) => (
+                        <SelectItem key={c.id}>
+                          {c.display_name ?? c.category_name}
+                        </SelectItem>
+                      ))}
+                    </Select>
+
+
+                    <Select
+                      label="Subject"
+                      labelPlacement="outside"
+                      placeholder="Select subject"
+                      selectedKeys={subjectId ? [subjectId] : []}
+                      onSelectionChange={(keys) => setSubjectId(Array.from(keys)[0] as string)}
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
+                      required
+                    >
+                      {subjects.map((s: any) => (
+                        <SelectItem key={s.id}>{s.name ?? s.title}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      label="Exam Year (optional)"
+                      labelPlacement="outside"
+                      type="number"
+                      value={examYear.toString()}
+                      onChange={(e) => setExamYear(Number(e.target.value))}
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
+                    />
+                    <Input
+                      label="Exam Session (Optional)"
+                      labelPlacement="outside"
+                      placeholder="e.g., May June, Nov Dec, Continuous"
+                      value={examSession}
+                      onChange={(e) => setExamSession(e.target.value)}
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
+                    />
+                  </div>
                 </div>
-
-                <Input
-                  variant="underlined"
-                  size="md"
-                  radius="sm"
-                  label="Exam Year"
-                  labelPlacement="outside"
-                  type="number"
-                  placeholder="2024"
-                  value={examYear.toString()}
-                  onChange={(e) => setExamYear(Number(e.target.value))}
-                />
-
-                <Select
-                  variant="underlined"
-                  size="md"
-                  radius="sm"
-                  label="Exam Session"
-                  labelPlacement="outside"
-                  placeholder="Exam Session"
-                  selectedKeys={examSession ? [examSession] : []}
-                  onSelectionChange={(keys) => setExamSession(Array.from(keys)[0] as ExamSession)}
-                >
-                  {examSessions.map((s) => (
-                    <SelectItem key={s}>{s}</SelectItem>
-                  ))}
-                </Select>
               </div>
-            </div>
 
-            <Divider />
-
-            {/* Topics multi-select */}
-            <TopicsSelect
-              selectedTopicIds={topicIds}
-              onChange={(ids) => setTopicIds(ids)}
-              subjectId={subjectId}
-            />
-
-            <Divider />
-
-            {/* Selection mode and configs */}
-            <div>
-              <RadioGroup
-                label="Question Selection Mode"
-                orientation="horizontal"
-                classNames={{
-                  wrapper: "space-x-4",
-                  label: "text-base font-semibold text-kidemia-black",
-                }}
-                value={questionSelectionMode}
-                onValueChange={(val) => setQuestionSelectionMode(val as SelectionMode)}
-              >
-                <Radio size="sm" value="manual" className="text-kidemia-grey font-normal text-sm">
-                  Manual
-                </Radio>
-                <Radio size="sm" value="random" className="text-kidemia-grey font-normal text-sm">
-                  Random
-                </Radio>
-                <Radio size="sm" value="adaptive" className="text-kidemia-grey font-normal text-sm">
-                  Adaptive
-                </Radio>
-              </RadioGroup>
-
-              <div className="mt-4">
-                {questionSelectionMode === "manual" && (
-                  <>
-                    <div className="text-sm text-kidemia-grey mb-2">Pick questions manually</div>
-                    <div className="pt-4">
-                      <QuestionsTable
-                        subjectId={subjectId}
-                        topicIds={topicIds}
-                        filterMode={questionFilterMode}
-                        searchQuery={searchQuery}
-                        onSelectionChange={onQuestionsSelectionChange}
-                      />
-                    </div>
-                  </>
-                )}
-
-                {questionSelectionMode === "random" && (
-                  <RandomModeConfig config={randomConfig} onChange={setRandomConfig} topics={topicIds} />
-                )}
-
-                {questionSelectionMode === "adaptive" && (
-                  <AdaptiveModeConfig config={adaptiveConfig} onChange={setAdaptiveConfig} />
-                )}
+              {/* Topics */}
+              <div className="bg-white rounded-lg border border-neutral-200 p-6">
+                <TopicsSelect selectedTopicIds={topicIds} onChange={(ids) => setTopicIds(ids)} subjectId={subjectId} />
               </div>
-            </div>
 
-            <Divider />
-
-            {/* Sections */}
-            <div>
-              <div className="flex items-center justify-between">
-                <h4 className="text-lg font-semibold">Sections</h4>
-                <div>
+              {/* Sections */}
+              <div className="hidden bg-white rounded-lg border border-neutral-200 p-6">
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-base font-medium text-neutral-900">Sections</h2>
                   <Button
                     type="button"
-                    variant="flat"
                     size="sm"
                     startContent={<FiPlus />}
                     onClick={() =>
@@ -553,341 +442,317 @@ export default function CreateAssessment() {
                     Add Section
                   </Button>
                 </div>
-              </div>
 
-              <div className="space-y-3 mt-3">
-                {sections.map((s, idx) => (
-                  <SectionCard
-                    key={s.id}
-                    section={s}
-                    topics={topicIds}
-                    onChange={(next) =>
-                      setSections((prev) => prev.map((p) => (p.id === s.id ? { ...p, ...next } : p)))
-                    }
-                    onDelete={() => setSections((prev) => prev.filter((p) => p.id !== s.id))}
-                    index={idx}
-                  />
-                ))}
-                {sections.length === 0 && <div className="text-sm text-kidemia-grey">No sections added yet.</div>}
+                <div className="space-y-3">
+                  {sections.map((s, idx) => (
+                    <SectionCard
+                      key={s.id}
+                      section={s}
+                      topics={topicIds}
+                      onChange={(next) =>
+                        setSections((prev) => prev.map((p) => (p.id === s.id ? { ...p, ...next } : p)))
+                      }
+                      onDelete={() => setSections((prev) => prev.filter((p) => p.id !== s.id))}
+                      index={idx}
+                    />
+                  ))}
+                  {sections.length === 0 && (
+                    <p className="text-sm text-neutral-500 text-center py-8">No sections yet. Click "Add Section" to create one.</p>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* RIGHT - controls */}
-          <div className="space-y-4">
-            {/* Proctoring Panel */}
-            <div className="p-4 border border-kidemia-grey/30 rounded-xl bg-white sticky">
-              <h3 className="text-sm font-semibold text-kidemia-black mb-3">Proctoring</h3>
+            {/* Sidebar */}
+            <div className="col-span-12 lg:col-span-4 space-y-6">
+              {/* Publish */}
+              <div className="hidden md:block bg-white rounded-lg border border-neutral-200 p-5">
+                <Button
+                  type="submit"
+                  color="primary"
+                  size="md"
+                  className="w-full font-medium bg-kidemia-secondary text-white"
+                  isLoading={createAssessmentMutation.isPending}
+                >
+                  {createAssessmentMutation.isPending ? "Publishing..." : "Publish Assessment"}
+                </Button>
+              </div>
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Enable Proctoring</span>
+              {/* Behavior */}
+              <div className="bg-white rounded-lg border border-neutral-200 p-5">
+                <h3 className="text-sm font-medium text-neutral-900 mb-4">Behavior</h3>
+                <div className="space-y-3">
+                  {[
+                    { id: "shuffle-q", label: "Shuffle questions", checked: shuffleQuestions, onChange: setShuffleQuestions },
+                    { id: "shuffle-o", label: "Shuffle options", checked: shuffleOptions, onChange: setShuffleOptions },
+                    { id: "nav-q", label: "Allow question navigation", checked: allowQuestionNavigation, onChange: setAllowQuestionNavigation },
+                    { id: "nav-b", label: "Allow backward navigation", checked: allowBackwardNavigation, onChange: setAllowBackwardNavigation },
+                  ].map((item) => (
+                    <label key={item.id} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={item.checked}
+                        onChange={(e) => item.onChange(e.target.checked)}
+                        className="w-4 h-4 rounded border-neutral-300"
+                      />
+                      <span className="text-sm text-neutral-700">{item.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
 
-                  <Switch checked={proctoringEnabled} onChange={(v) => setProctoringEnabled(Boolean(v))} />
+              {/* Results */}
+              <div className="bg-white rounded-lg border border-neutral-200 p-5">
+                <h3 className="text-sm font-medium text-neutral-900 mb-4">Results & Feedback</h3>
+                <div className="space-y-4">
+                  <Select
+                    label="Display mode"
+                    labelPlacement="outside"
+                    size="sm"
+                    selectedKeys={[resultDisplayMode]}
+                    onSelectionChange={(keys) => setResultDisplayMode(Array.from(keys)[0] as string)}
+                    classNames={{ label: "text-sm font-medium mb-1.5" }}
+                  >
+                    <SelectItem key="immediate">Immediate</SelectItem>
+                    <SelectItem key="after_submission">After submission</SelectItem>
+                    <SelectItem key="manual">Manual review</SelectItem>
+                  </Select>
+
+                  <div className="space-y-3">
+                    {[
+                      { id: "show-ans", label: "Show correct answers", checked: showCorrectAnswers, onChange: setShowCorrectAnswers },
+                      { id: "show-exp", label: "Show explanations", checked: showExplanations, onChange: setShowExplanations },
+                    ].map((item) => (
+                      <label key={item.id} className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={item.checked}
+                          onChange={(e) => item.onChange(e.target.checked)}
+                          className="w-4 h-4 rounded border-neutral-300"
+                        />
+                        <span className="text-sm text-neutral-700">{item.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Proctoring */}
+              <div className="bg-white rounded-lg border border-neutral-200 p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-sm font-medium text-neutral-900">Proctoring</h3>
+                  <Switch size="sm" classNames={{ wrapper: ["group-data-[selected=true]:bg-kidemia-primary"] }} isSelected={proctoringEnabled} onValueChange={setProctoringEnabled} />
                 </div>
 
                 {proctoringEnabled && (
-                  <>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Require Webcam</span>
-                      <Switch checked={requireWebcam} onChange={(v) => setRequireWebcam(Boolean(v))} />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm">Fullscreen Required</span>
-                      <Switch checked={fullscreenRequired} onChange={(v) => setFullscreenRequired(Boolean(v))} />
-                    </div>
-
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm">Detect Tab Switching</span>
-                        <Switch checked={detectTabSwitching} onChange={(v) => setDetectTabSwitching(Boolean(v))} />
-                      </div>
-                      {detectTabSwitching && (
-                        <div className="mt-2">
-                          <Input
-                            variant="flat"
-                            label="Max Tab Switches"
-                            value={String(maxTabSwitches)}
-                            onChange={(e) => setMaxTabSwitches(Number(e.target.value))}
-                            type="number"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  </>
+                  <div className="space-y-3 pt-2 border-t border-neutral-100">
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="text-sm text-neutral-700">Require webcam</span>
+                      <Switch size="sm" classNames={{ wrapper: ["group-data-[selected=true]:bg-kidemia-secondary"] }} isSelected={requireWebcam} onValueChange={setRequireWebcam} />
+                    </label>
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="text-sm text-neutral-700">Fullscreen required</span>
+                      <Switch size="sm" classNames={{ wrapper: ["group-data-[selected=true]:bg-kidemia-secondary"] }} isSelected={fullscreenRequired} onValueChange={setFullscreenRequired} />
+                    </label>
+                    <label className="flex items-center justify-between cursor-pointer">
+                      <span className="text-sm text-neutral-700">Detect tab switching</span>
+                      <Switch size="sm" classNames={{ wrapper: ["group-data-[selected=true]:bg-kidemia-secondary"] }} isSelected={detectTabSwitching} onValueChange={setDetectTabSwitching} />
+                    </label>
+                    {detectTabSwitching && (
+                      <Input
+                        label="Max tab switches"
+                        labelPlacement="outside"
+                        type="number"
+                        size="sm"
+                        value={String(maxTabSwitches)}
+                        onChange={(e) => setMaxTabSwitches(Number(e.target.value))}
+                        classNames={{ label: "text-sm font-medium mb-1.5" }}
+                      />
+                    )}
+                  </div>
                 )}
               </div>
 
-              <div className="pt-4">
-                <Button
-                  type="submit"
-                  variant="solid"
-                  size="lg"
-                  className="bg-kidemia-primary text-kidemia-white font-semibold w-full"
-                  radius="sm"
-                  isLoading={createAssessmentMutation.isPending}
-                >
-                  {createAssessmentMutation.isPending ? "Publishing..." : "Publish"}
-                </Button>
-              </div>
-            </div>
-            <div className="p-4 border border-kidemia-grey/30 rounded-xl bg-white sticky top-20">
-              <h3 className="text-sm font-semibold text-kidemia-black mb-3">Assessment Behaviour</h3>
 
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <input
-                    id="shuffleQuestions"
-                    type="checkbox"
-                    checked={shuffleQuestions}
-                    onChange={(e) => setShuffleQuestions(e.target.checked)}
-                    className="h-3 w-3"
-                  />
-                  <label htmlFor="shuffleQuestions" className="text-kidemia-grey font-normal text-sm">
-                    Shuffle Questions
-                  </label>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <input
-                    id="shuffleOptions"
-                    type="checkbox"
-                    checked={shuffleOptions}
-                    onChange={(e) => setShuffleOptions(e.target.checked)}
-                    className="h-3 w-3"
-                  />
-                  <label htmlFor="shuffleOptions" className="text-kidemia-grey font-normal text-sm">
-                    Shuffle Options
-                  </label>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <input
-                    id="allowQuestionNavigation"
-                    type="checkbox"
-                    checked={allowQuestionNavigation}
-                    onChange={(e) => setAllowQuestionNavigation(e.target.checked)}
-                    className="h-3 w-3"
-                  />
-                  <label htmlFor="allowQuestionNavigation" className="text-kidemia-grey font-normal text-sm">
-                    Allow Question Navigation
-                  </label>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <input
-                    id="allowBackwardNavigation"
-                    type="checkbox"
-                    checked={allowBackwardNavigation}
-                    onChange={(e) => setAllowBackwardNavigation(e.target.checked)}
-                    className="h-3 w-3"
-                  />
-                  <label htmlFor="allowBackwardNavigation" className="text-kidemia-grey font-normal text-sm">
-                    Allow Backward Navigation
-                  </label>
-                </div>
-              </div>
             </div>
 
-            <div className="p-4 border border-kidemia-grey/30 rounded-xl bg-white sticky top-40">
-              <h3 className="text-sm font-semibold text-kidemia-black mb-3">Result Display & Feedback</h3>
+            {/* Question Selection */}
+            <div className="col-span-12 bg-white rounded-lg border border-neutral-200 p-6">
 
-              <div className="space-y-3">
-                <Select
-                  variant="flat"
-                  size="md"
-                  radius="sm"
-                  placeholder="Result Display Mode"
-                  selectedKeys={[resultDisplayMode]}
-                  onSelectionChange={(keys) => setResultDisplayMode(Array.from(keys)[0] as string)}
-                >
-                  <SelectItem key="immediate">Immediate</SelectItem>
-                  <SelectItem key="after_submission">After Submission</SelectItem>
-                  <SelectItem key="manual">Manual Review</SelectItem>
-                </Select>
+              <h2 className="text-base font-md text-kidemia-gray mb-2">Question Selection</h2>
 
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="showCorrect"
-                      type="checkbox"
-                      checked={showCorrectAnswers}
-                      onChange={(e) => setShowCorrectAnswers(e.target.checked)}
-                      className="h-3 w-3"
-                    />
-                    <label htmlFor="showCorrect" className="text-kidemia-grey font-normal text-sm">
-                      Show Correct Answers
-                    </label>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <input
-                      id="showExplanation"
-                      type="checkbox"
-                      checked={showExplanations}
-                      onChange={(e) => setShowExplanations(e.target.checked)}
-                      className="h-3 w-3"
-                    />
-                    <label htmlFor="showExplanation" className="text-kidemia-grey font-normal text-sm">
-                      Show Explanations
-                    </label>
-                  </div>
-                </div>
+              <RadioGroup
+                orientation="horizontal"
+                value={questionSelectionMode}
+                onValueChange={(val) => setQuestionSelectionMode(val as SelectionMode)}
+                classNames={{ wrapper: "gap-4" }}
+              >
+                <Radio value="manual">Manual</Radio>
+                <Radio value="random">Random</Radio>
+                <Radio value="adaptive">Adaptive</Radio>
+              </RadioGroup>
+              <div className="mt-2">
+                {questionSelectionMode === "manual" && (
+                  <QuestionsTable
+                    subjectId={subjectId}
+                    topicIds={topicIds}
+                    filterMode={questionFilterMode}
+                    searchQuery={searchQuery}
+                    onSelectionChange={onQuestionsSelectionChange}
+                  />
+                )}
+                {questionSelectionMode === "random" && (
+                  <RandomModeConfig config={randomConfig} onChange={setRandomConfig} topics={topicIds} />
+                )}
+                {questionSelectionMode === "adaptive" && (
+                  <AdaptiveModeConfig config={adaptiveConfig} onChange={setAdaptiveConfig} />
+                )}
               </div>
             </div>
 
             {/* Availability & Pricing */}
-            <div className="p-4 border border-kidemia-grey/30 rounded-xl bg-white sticky top-60">
-              <h3 className="text-sm font-semibold text-kidemia-black mb-3">Availability & Pricing</h3>
+            <div className="col-span-12 bg-white rounded-lg border border-neutral-200 p-5 md:p-6">
+              <h3 className="text-sm font-medium text-neutral-900 mb-6">Availability & Pricing</h3>
 
-              <div className="flex flex-col gap-3">
-                <label className="text-sm text-kidemia-grey">Available From</label>
-                <DatePicker variant="flat" size="sm" radius="sm" value={availableFrom} onChange={setAvailableFrom} />
-                <label className="text-sm text-kidemia-grey">Available Until</label>
-                <DatePicker
-                  variant="flat"
-                  size="md"
-                  radius="sm"
-                  value={availableUntil}
-                  onChange={setAvailableUntil}
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
 
-              <div className="mt-4">
-                <Input
-                  variant="flat"
-                  size="md"
-                  radius="sm"
-                  label="Duration (minutes)"
-                  labelPlacement="outside"
-                  type="number"
-                  placeholder="Duration"
-                  value={String(durationMinutes)}
-                  onChange={(e) => setDurationMinutes(Number(e.target.value))}
-                />
-              </div>
-
-              <div className="mt-4">
-                <Input
-                  variant="flat"
-                  size="md"
-                  radius="sm"
-                  label="Price"
-                  labelPlacement="outside"
-                  type="number"
-                  placeholder="0"
-                  value={String(price)}
-                  onChange={(e) => setPrice(Number(e.target.value))}
-                />
-              </div>
-
-              {price > 0 && (
-                <div className="mt-3">
+                {/* --- Date Group --- */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-neutral-700 mb-1.5 block">Available from (optional)</label>
+                    <DatePicker className="w-full" size="sm" value={availableFrom} onChange={setAvailableFrom} />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-neutral-700 mb-1.5 block">Available until (optional)</label>
+                    <DatePicker className="w-full" size="sm" value={availableUntil} onChange={setAvailableUntil} />
+                  </div>
                   <Input
-                    variant="flat"
-                    size="md"
-                    radius="sm"
-                    label="Discount Price (optional)"
+                    label="Duration (minutes)"
                     labelPlacement="outside"
                     type="number"
-                    placeholder="Discount Price"
-                    value={discountPrice === null ? "" : String(discountPrice)}
-                    onChange={(e) => setDiscountPrice(e.target.value ? Number(e.target.value) : null)}
+                    size="sm"
+                    placeholder="60"
+                    value={String(durationMinutes)}
+                    onChange={(e) => setDurationMinutes(Number(e.target.value))}
+                    classNames={{ label: "text-sm font-medium mb-1.5" }}
                   />
-                  <div className="mt-2">
+                </div>
+
+                {/* --- Pricing Group --- */}
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      label="Price"
+                      labelPlacement="outside"
+                      type="number"
+                      size="sm"
+                      value={String(price)}
+                      onChange={(e) => setPrice(Number(e.target.value))}
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
+                    />
                     <Select
-                      variant="flat"
-                      size="md"
-                      radius="sm"
                       label="Currency"
                       labelPlacement="outside"
-                      placeholder="Currency"
+                      size="sm"
                       selectedKeys={[currency]}
                       onSelectionChange={(keys) => setCurrency(Array.from(keys)[0] as string)}
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
                     >
                       <SelectItem key="NGN">NGN</SelectItem>
                       <SelectItem key="USD">USD</SelectItem>
                       <SelectItem key="GHS">GHS</SelectItem>
                     </Select>
                   </div>
-                </div>
-              )}
 
-              <div className="mt-3">
-                <div className="flex items-center gap-4">
-                  <div>
-                    <input
-                      id="isPublic"
-                      type="radio"
-                      name="visibility"
-                      checked={isPublic}
-                      onChange={() => {
-                        setIsPublic(true);
-                        setRequireEnrollment(false);
-                      }}
+                  {price > 0 && (
+                    <Input
+                      label="Discount price"
+                      labelPlacement="outside"
+                      type="number"
+                      size="sm"
+                      placeholder="Optional"
+                      value={discountPrice === null ? "" : String(discountPrice)}
+                      onChange={(e) => setDiscountPrice(e.target.value ? Number(e.target.value) : null)}
+                      classNames={{ label: "text-sm font-medium mb-1.5" }}
                     />
-                    <label htmlFor="isPublic" className="ml-2 text-kidemia-grey font-normal text-sm">
-                      Public
+                  )}
+
+                  <Select
+                    label="Status"
+                    labelPlacement="outside"
+                    size="sm"
+                    selectedKeys={[status]}
+                    onSelectionChange={(keys) => setStatus(Array.from(keys)[0] as string)}
+                    classNames={{ label: "text-sm font-medium mb-1.5" }}
+                  >
+                    <SelectItem key="published">Published</SelectItem>
+                    <SelectItem key="review">Review</SelectItem>
+                    <SelectItem key="scheduled">Scheduled</SelectItem>
+                    <SelectItem key="draft">Draft</SelectItem>
+                    <SelectItem key="archived">Archived</SelectItem>
+                  </Select>
+                </div>
+
+                {/* --- Full Width Visibility Section --- */}
+                <div className="md:col-span-2 pt-2 border-t border-neutral-100 mt-2">
+                  <label className="text-sm font-medium text-neutral-700 mb-3 block">Visibility</label>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <label className="flex-1 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="visibility"
+                        checked={isPublic}
+                        onChange={() => {
+                          setIsPublic(true);
+                          setRequireEnrollment(false);
+                        }}
+                        className="peer sr-only"
+                      />
+                      <div className="border border-neutral-200 rounded-lg px-4 py-3 text-sm text-center transition-all peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-600 hover:bg-neutral-50">
+                        <span className="font-medium">Public</span>
+                        <p className="text-[11px] opacity-70 hidden sm:block">Visible to everyone</p>
+                      </div>
                     </label>
-                  </div>
-                  <div>
-                    <input
-                      id="requireEnrollment"
-                      type="radio"
-                      name="visibility"
-                      checked={requireEnrollment}
-                      onChange={() => {
-                        setIsPublic(false);
-                        setRequireEnrollment(true);
-                      }}
-                    />
-                    <label htmlFor="requireEnrollment" className="ml-2 text-kidemia-grey font-normal text-sm">
-                      Invite Only
+
+                    <label className="flex-1 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="visibility"
+                        checked={requireEnrollment}
+                        onChange={() => {
+                          setIsPublic(false);
+                          setRequireEnrollment(true);
+                        }}
+                        className="peer sr-only"
+                      />
+                      <div className="border border-neutral-200 rounded-lg px-4 py-3 text-sm text-center transition-all peer-checked:border-blue-600 peer-checked:bg-blue-50 peer-checked:text-blue-600 hover:bg-neutral-50">
+                        <span className="font-medium">Invite only</span>
+                        <p className="text-[11px] opacity-70 hidden sm:block">Requires manual enrollment</p>
+                      </div>
                     </label>
+
+                    <div className="block md:hidden mt-4 px-4">
+                      <Button
+                        type="submit"
+                        color="primary"
+                        size="lg" // Slightly larger for better mobile tap target
+                        className="w-full font-medium bg-kidemia-secondary text-white shadow-lg"
+                        isLoading={createAssessmentMutation.isPending}
+                      >
+                        {createAssessmentMutation.isPending ? "Publishing..." : "Publish Assessment"}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="mt-6">
-                <Select
-                  variant="flat"
-                  size="md"
-                  radius="sm"
-                  label="Status"
-                  labelPlacement="outside"
-                  placeholder="Status"
-                  selectedKeys={[status]}
-                  onSelectionChange={(keys) => setStatus(Array.from(keys)[0] as string)}
-                >
-                  <SelectItem key="draft">Draft</SelectItem>
-                  <SelectItem key="published">Published</SelectItem>
-                  <SelectItem key="archived">Archived</SelectItem>
-                </Select>
               </div>
             </div>
 
-
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
 
-      {/* Preview Modal */}
-      <PreviewModal
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-        payload={buildPayload()}
-        onConfirm={confirmCreate}
-      />
-    </section>
+      <PreviewModal open={previewOpen} onClose={() => setPreviewOpen(false)} payload={buildPayload()} onConfirm={confirmCreate} />
+    </div>
   );
-}
-
-
-function showToastMessage(message: string, type: "success" | "error") {
-  addToast({
-    title: message,
-    color: type === "success" ? "success" : "danger",
-  });
-  console.log(`[${type.toUpperCase()}] ${message}`);
 }

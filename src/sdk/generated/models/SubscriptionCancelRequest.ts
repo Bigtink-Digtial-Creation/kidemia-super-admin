@@ -6,7 +6,13 @@
  * Schema for cancelling subscription
  */
 export type SubscriptionCancelRequest = {
+  /**
+   * Reason for cancellation
+   */
   reason?: (string | null);
+  /**
+   * If True, cancel immediately. If False, cancel at end of billing period
+   */
   cancel_immediately?: boolean;
 };
 

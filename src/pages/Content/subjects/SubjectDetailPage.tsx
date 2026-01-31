@@ -97,7 +97,7 @@ export default function SubjectDetailPage() {
                         >
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 truncate">
+                        <h1 className="text-xl md:text-2xl font-bold text-gray-900 truncate">
                             {subject.name}
                         </h1>
                     </div>

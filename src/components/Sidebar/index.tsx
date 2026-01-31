@@ -8,7 +8,7 @@ import {
 } from "@heroui/react";
 import { NavLink } from "react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiLogOut, FiSettings } from "react-icons/fi";
+import { FiBarChart2, FiLogOut, FiSettings } from "react-icons/fi";
 
 import LogoutModal from "./LogoutModal";
 import AppLogo from "@/assets/appLogo.png";
@@ -87,6 +87,14 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
         {/* Bottom actions */}
         <div className="p-4 mt-auto space-y-4">
           <Divider />
+
+          <SidebarLink
+            title="Analytics & Report"
+            pathname={SidebarRoutes.reportAnalytic}
+            icon={FiBarChart2}
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+          />
 
           <SidebarLink
             title="Platform settings"

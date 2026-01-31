@@ -24,7 +24,7 @@ export const subjectPaginationAtom = atomWithStorage('subject-pagination', {
 export const useSubjects = () => {
     const [filters, setFilters] = useState({
         search: "",
-        category: "",
+        category: "", // This will hold the category UUID
     });
 
     const [pagination, setPagination] = useState({
@@ -43,20 +43,27 @@ export const useSubjects = () => {
         queryFn: async () => {
             const skip = (pagination.page - 1) * pagination.pageSize;
 
-            if (filters.search.trim()) {
+            // Clean up the category ID (treat 'all' or empty string as undefined)
+            const categoryId = filters.category === 'all' || !filters.category
+                ? undefined
+                : filters.category;
+
+            // Use search API if there is a search term OR a category filter
+            if (filters.search.trim() || categoryId) {
                 return ApiSDK.SubjectsService.searchSubjectsApiV1SubjectsSearchGet(
                     filters.search,
+                    categoryId, // Pass the optional category ID here
                     skip,
                     pagination.pageSize,
                 );
             }
 
+            // Fallback to general list if no filters are active
             return ApiSDK.SubjectsService.getSubjectsApiV1SubjectsGet(
                 skip,
                 pagination.pageSize,
             );
         },
-
         staleTime: 60 * 1000,
         refetchOnWindowFocus: false,
     });
@@ -66,14 +73,9 @@ export const useSubjects = () => {
         totalCount: query.data?.total ?? 0,
         page: query.data?.page ?? pagination.page,
         pageSize: query.data?.page_size ?? pagination.pageSize,
-        totalPages: Math.ceil(
-            (query.data?.total ?? 0) / pagination.pageSize
-        ),
-
-
+        totalPages: Math.ceil((query.data?.total ?? 0) / pagination.pageSize),
         isLoading: query.isLoading,
         isFetching: query.isFetching,
-
         filters,
         setFilters,
         pagination,
@@ -82,81 +84,7 @@ export const useSubjects = () => {
 };
 
 
-// Subjects Hook
-// export const useSubjects = () => {
-//     const [filters, setFilters] = useAtom(subjectFiltersAtom);
-//     const [pagination, setPagination] = useAtom(subjectPaginationAtom);
 
-//     const {
-//         data: subjectsResponse,
-//         isLoading,
-//         error,
-//         refetch,
-//     } = useQuery<SubjectListResponse>({
-//         queryKey: [QueryKeys.subjects, filters, pagination],
-//         queryFn: async () => {
-//             return ApiSDK.SubjectsService.getSubjectsApiV1SubjectsGet(
-//                 (pagination.page - 1) * pagination.pageSize,
-//                 pagination.pageSize,
-//             );
-//         },
-//         staleTime: 1000 * 60 * 5,
-//     });
-//     // ({
-//     //         skip: (pagination.page - 1) * pagination.pageSize,
-//     //         limit: pagination.pageSize,
-//     //         search: filters.search || undefined,
-//     //         category: filters.category !== 'all' ? filters.category : undefined,
-//     //       });
-//     const subjects = useMemo(() => {
-//         return subjectsResponse?.items || [];
-//     }, [subjectsResponse]);
-
-
-//     const filteredSubjects = useMemo(() => {
-//         let filtered = [...subjects];
-
-//         if (filters.search) {
-//             const search = filters.search.toLowerCase();
-//             filtered = filtered.filter(
-//                 (subject) =>
-//                     subject.name?.toLowerCase().includes(search) ||
-//                     subject.description?.toLowerCase().includes(search)
-//             );
-//         }
-
-//         // if (filters.category !== 'all') {
-//         //   filtered = filtered.filter(
-//         //     (subject) => subject.category === filters.category
-//         //   );
-//         // }
-
-//         return filtered;
-//     }, [subjects, filters]);
-
-//     const totalCount = filteredSubjects.length;
-//     const totalPages = Math.ceil(totalCount / pagination.pageSize);
-
-//     const paginatedSubjects = useMemo(() => {
-//         const start = (pagination.page - 1) * pagination.pageSize;
-//         const end = start + pagination.pageSize;
-//         return filteredSubjects.slice(start, end);
-//     }, [filteredSubjects, pagination]);
-
-//     return {
-//         subjects: paginatedSubjects,
-//         allSubjects: subjects,
-//         totalCount,
-//         totalPages,
-//         isLoading,
-//         error,
-//         filters,
-//         setFilters,
-//         pagination,
-//         setPagination,
-//         refetch,
-//     };
-// };
 
 // Single Subject Hook
 export const useSubject = (subjectId: string | undefined) => {
