@@ -11,8 +11,10 @@ export default function OverviewTab({ data }: { data: any }) {
         { label: 'Completion Rate', value: `${data?.overview?.completion_rate || 0}%`, change: '-2.4%', trend: 'down', icon: Activity, color: '#ffffff' }
     ];
 
+
+    console.log(data?.trends?.revenue)
     // Helper to render chart content or empty state
-    const renderChart = (chartData: any[], color: string) => {
+    const renderChart = (chartData: any[], color: string, key: string = 'count') => {
         if (!chartData || chartData.length === 0) {
             return (
                 <div className="h-full w-full flex flex-col items-center justify-center text-slate-400">
@@ -49,7 +51,7 @@ export default function OverviewTab({ data }: { data: any }) {
                     <Tooltip contentStyle={{ background: '#0f172a', border: 'none', borderRadius: '8px', color: '#fff' }} />
                     <Area
                         type="monotone"
-                        dataKey="count"
+                        dataKey={key}
                         stroke={color}
                         fill={`url(#color-${color})`}
                         strokeWidth={2}
@@ -78,7 +80,7 @@ export default function OverviewTab({ data }: { data: any }) {
                 <div className="bg-white border border-slate-200 p-6 rounded-2xl min-w-0">
                     <h3 className="text-xl font-serif mb-6 text-slate-900">Revenue Growth</h3>
                     <div className="h-72 w-full">
-                        {renderChart(data?.trends?.revenue, '#6366F1')}
+                        {renderChart(data?.trends?.revenue, '#6366F1', 'revenue')}
                     </div>
                 </div>
             </div>

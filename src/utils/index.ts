@@ -1,4 +1,4 @@
-import type { RoleType, UserListResponse, } from "../sdk/generated";
+import { OpenAPI, type RoleType, type UserListResponse, } from "../sdk/generated";
 
 export const getNameIntials = (name: string) => {
   if (!name) return null;
@@ -103,3 +103,21 @@ export const getDifficultyColor = (action: string) => {
 
 export const toTitleCase = (str: string) =>
   str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+
+// Helper to get current auth headers from the SDK config
+export const getAuthHeaders = async () => {
+
+  const mockOptions = {
+    method: 'POST',
+    url: '/api/v1/analytics/reports/generate',
+  };
+  const token = typeof OpenAPI.TOKEN === 'function'
+    ? await OpenAPI.TOKEN(mockOptions as any)
+    : OpenAPI.TOKEN;
+
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+};

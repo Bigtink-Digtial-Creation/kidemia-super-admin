@@ -44,9 +44,8 @@ import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
 import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
 import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
 import AttemptDetail from "./pages/Assessment/AttemptDetail";
-import AnalyticsDashboard from "./pages/Analytic/Analyticsdashboard";
 import ReportGenerator from "./pages/Analytic/Reportgenerator";
-import StudentAnalyticsDashboard from "./pages/Analytic/StudentAnalyticsDashboard";
+import AnalyticsDashboard from "./pages/Analytic/AnalyticsDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -185,7 +184,7 @@ export const router = createBrowserRouter([
 
               {
                 path: SidebarRoutes.reportAnalytic,
-                element: <StudentAnalyticsDashboard />,
+                element: <AnalyticsDashboard />,
               },
               {
                 path: SidebarRoutes.generateReport,
