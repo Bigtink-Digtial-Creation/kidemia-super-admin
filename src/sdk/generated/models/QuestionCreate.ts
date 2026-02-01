@@ -5,6 +5,7 @@
 import type { DifficultyLevel } from './DifficultyLevel';
 import type { QuestionOptionCreate } from './QuestionOptionCreate';
 import type { QuestionType } from './QuestionType';
+import type { TopicName } from './TopicName';
 /**
  * Schema for creating question
  */
@@ -20,6 +21,7 @@ export type QuestionCreate = {
   video_url?: (string | null);
   points?: number;
   time_limit_seconds?: (number | null);
+  topic: (TopicName | null);
   options: Array<QuestionOptionCreate>;
   tag_ids?: (Array<string> | null);
 };

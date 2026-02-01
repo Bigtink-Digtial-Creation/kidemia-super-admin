@@ -86,15 +86,17 @@ export class SubjectsService {
   }
   /**
    * Search subjects
-   * Search subjects by name, code, or description.
+   * Search subjects by name, code, description, and optionally category.
    * @param q
+   * @param categoryId
    * @param skip
    * @param limit
    * @returns SubjectListResponse Successful Response
    * @throws ApiError
    */
   public static searchSubjectsApiV1SubjectsSearchGet(
-    q: string,
+    q?: (string | null),
+    categoryId?: (string | null),
     skip?: number,
     limit: number = 20,
   ): CancelablePromise<SubjectListResponse> {
@@ -103,6 +105,7 @@ export class SubjectsService {
       url: '/api/v1/subjects/search',
       query: {
         'q': q,
+        'category_id': categoryId,
         'skip': skip,
         'limit': limit,
       },

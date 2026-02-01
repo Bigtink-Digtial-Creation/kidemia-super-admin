@@ -89,7 +89,8 @@ export const mapToApiPayload = (questions: QuestionLocal[]): QuestionCreate[] =>
             points: q.points,
             time_limit_seconds: q.time_limit_seconds ?? null,
             options,
-            tag_ids: q.tag_ids ?? null
+            tag_ids: q.tag_ids ?? null,
+            topic: null
         };
 
         return payloadItem;

@@ -1,4 +1,4 @@
-import type { RoleType, UserListResponse, } from "../sdk/generated";
+import { OpenAPI, type RoleType, type UserListResponse, } from "../sdk/generated";
 
 export const getNameIntials = (name: string) => {
   if (!name) return null;
@@ -20,6 +20,11 @@ export const getFullName = (user: UserListResponse) => {
     .join(" ");
 };
 
+export const getFullName2 = (user: any) => {
+  return [user.first_name, user.last_name]
+    .filter(Boolean)
+    .join(" ");
+};
 export const getUserStatus = (isActive: boolean) => {
   return isActive ? "active" : "suspended";
 };
@@ -31,6 +36,16 @@ export const getStatusBadgeColor = (isActive: boolean) => {
 };
 
 
+export const getAssessmentStatusColor = (status: string) => {
+  const colors: Record<string, "success" | "warning" | "danger" | "default" | "primary"> = {
+    published: "success",
+    draft: "default",
+    review: "warning",
+    scheduled: "primary",
+    archived: "danger",
+  };
+  return colors[status] || "default";
+};
 
 export const getRoleBadgeColor = (roleType?: RoleType) => {
   switch (roleType) {
@@ -46,8 +61,9 @@ export const getRoleBadgeColor = (roleType?: RoleType) => {
 
 
 
-export const formatDateToDDMMYYYY = (isoDate: string | Date): string => {
+export const formatDateToDDMMYYYY = (isoDate: string | Date | null | undefined): string => {
   // date to dd-mm-yyy
+  if (!isoDate) return "Not set";
   const date = typeof isoDate === "string" ? new Date(isoDate) : isoDate;
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -87,3 +103,21 @@ export const getDifficultyColor = (action: string) => {
 
 export const toTitleCase = (str: string) =>
   str.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+
+// Helper to get current auth headers from the SDK config
+export const getAuthHeaders = async () => {
+
+  const mockOptions = {
+    method: 'POST',
+    url: '/api/v1/analytics/reports/generate',
+  };
+  const token = typeof OpenAPI.TOKEN === 'function'
+    ? await OpenAPI.TOKEN(mockOptions as any)
+    : OpenAPI.TOKEN;
+
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+  };
+};

@@ -20,13 +20,6 @@ import { request as __request } from '../core/request';
 export class AssessmentsService {
   /**
    * Create a new assessment
-   * Create a new assessment (test or exam).
-   *
-   * Requires `assessment:create` permission.
-   *
-   * - **assessment_type**: TEST (free) or EXAM (paid)
-   * - **category**: JAMB, WAEC, NECO, Common Entrance, etc.
-   * - **question_selection_mode**: MANUAL, RANDOM, or ADAPTIVE
    * @param requestBody
    * @returns AssessmentResponse Successful Response
    * @throws ApiError

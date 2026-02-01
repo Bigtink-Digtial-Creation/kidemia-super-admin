@@ -9,6 +9,7 @@ import type { QuestionPublicResponse } from './QuestionPublicResponse';
 import type { QuestionSelectionMode } from './QuestionSelectionMode';
 import type { ResultDisplayMode } from './ResultDisplayMode';
 import type { SectionResponse } from './SectionResponse';
+import type { SubjectForAssessment } from './SubjectForAssessment';
 /**
  * Schema for assessment response
  */
@@ -49,9 +50,9 @@ export type AssessmentResponse = {
   max_tab_switches?: number;
   is_public?: boolean;
   require_enrollment?: boolean;
+  status: AssessmentStatus;
   category_config_id?: (string | null);
   institution_id?: (string | null);
-  status: AssessmentStatus;
   total_questions: number;
   total_points: number;
   total_attempts: number;
@@ -63,5 +64,6 @@ export type AssessmentResponse = {
   lowest_score: string;
   sections?: Array<SectionResponse>;
   questions?: (Array<QuestionPublicResponse> | null);
+  subject?: (SubjectForAssessment | null);
 };
 

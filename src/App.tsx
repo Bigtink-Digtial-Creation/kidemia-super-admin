@@ -43,6 +43,9 @@ import PlatformSettingsPage from "./pages/Settings";
 import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
 import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
 import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
+import AttemptDetail from "./pages/Assessment/AttemptDetail";
+import ReportGenerator from "./pages/Analytic/Reportgenerator";
+import AnalyticsDashboard from "./pages/Analytic/AnalyticsDashboard";
 
 export const router = createBrowserRouter([
   {
@@ -155,6 +158,10 @@ export const router = createBrowserRouter([
                 element: <SingleAssessment />,
               },
               {
+                path: SidebarRoutes.assessmentAttempt,
+                element: <AttemptDetail />,
+              },
+              {
                 path: SidebarRoutes.plans,
                 element: <PlansPage />,
               },
@@ -173,6 +180,15 @@ export const router = createBrowserRouter([
               {
                 path: SidebarRoutes.game,
                 element: <BadgesPage />,
+              },
+
+              {
+                path: SidebarRoutes.reportAnalytic,
+                element: <AnalyticsDashboard />,
+              },
+              {
+                path: SidebarRoutes.generateReport,
+                element: <ReportGenerator />,
               },
               {
                 path: SidebarRoutes.settings,

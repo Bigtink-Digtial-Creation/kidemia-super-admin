@@ -139,9 +139,9 @@ export default function SubjectsPage() {
                             <BookText className="h-6 w-6 text-kidemia-primary" />
                         </div>
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Subjects</h1>
+                            <h1 className="text-xl md:text-2xl font-bold text-gray-900">Subjects</h1>
                             <p className="text-sm text-gray-600">
-                                Manage subjects and grades
+                                Manage subject
                             </p>
                         </div>
                     </div>
@@ -240,9 +240,19 @@ export default function SubjectsPage() {
                                                 backgroundColor: subject.color_code || '#D1D5DB',
                                             }}
                                         />
-                                        <span className="font-bold text-gray-900">
-                                            {subject.name}
-                                        </span>
+                                        <div className='flex gap-2'>
+                                            <span className="font-bold text-gray-900">
+                                                {subject.name}
+                                            </span>
+
+                                            {subject.category && (<span className="inline-flex items-center rounded-full 
+                                            bg-kidemia-primary px-2.5 py-0.5 text-xs font-semibold
+                                             text-white capitalize">
+                                                {subject.category?.display_name}
+                                            </span>)}
+
+                                        </div>
+
                                     </div>
 
                                     <div className="text-sm text-gray-500 mb-3">
@@ -301,6 +311,10 @@ export default function SubjectsPage() {
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                                         Subject
                                     </th>
+
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                                        Category
+                                    </th>
                                     <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">
                                         Questions
                                     </th>
@@ -353,6 +367,16 @@ export default function SubjectsPage() {
                                             </div>
                                         </td>
 
+
+                                        <td className="px-6 py-4 text-sm text-center 
+                                        ">
+                                            <span className='bg-kidemia-primary px-2.5 py-0.5 text-xs font-semibold
+                                             text-white capitalize rounded-lg'>
+                                                {subject.category?.display_name || "N/A"}
+
+                                            </span>
+                                        </td>
+
                                         <td className="px-6 py-4 text-sm text-center">
                                             {subject.questions_count || 0}
                                         </td>
@@ -366,6 +390,7 @@ export default function SubjectsPage() {
                                                 <Button
                                                     variant="light"
                                                     size="sm"
+                                                    className='bg-kidemia-secondary text-white rounded-xl'
                                                     onPress={() =>
                                                         navigate(
                                                             SidebarRoutes.singleSubject.replace(

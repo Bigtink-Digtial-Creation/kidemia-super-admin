@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { AssessmentSummaryResponseForAttempt } from './AssessmentSummaryResponseForAttempt';
 import type { AttemptStatus } from './AttemptStatus';
+import type { UserResponseForAttempt } from './UserResponseForAttempt';
 /**
  * Raw assessment attempt state (with assessment attached)
  */
@@ -40,5 +41,6 @@ export type AttemptResponse = {
   feedback: (string | null);
   certificate_issued: boolean;
   certificate_url: (string | null);
+  user?: (UserResponseForAttempt | null);
 };
 

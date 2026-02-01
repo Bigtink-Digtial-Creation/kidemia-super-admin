@@ -90,7 +90,7 @@ export default function AssessmentCategoriesPage() {
                             <FolderOpen className="h-6 w-6 text-kidemia-primary" />
                         </div>
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                            <h1 className="text-xl md:text-2xl font-bold text-gray-900">
                                 Assessment Categories
                             </h1>
                             <p className="text-sm text-gray-600">
@@ -157,7 +157,7 @@ export default function AssessmentCategoriesPage() {
 
                 {/* Stats - Horizontal scroll on very small screens, 3 cols on tablet */}
                 <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-3 sm:grid-cols-3 gap-6">
                         <div className="border-b sm:border-b-0 sm:border-r border-gray-100 pb-4 sm:pb-0">
                             <p className="text-xs uppercase tracking-wider font-semibold text-gray-500">Total</p>
                             <p className="text-2xl md:text-3xl font-bold text-kidemia-primary mt-1">{totalCount}</p>
@@ -168,12 +168,12 @@ export default function AssessmentCategoriesPage() {
                                 {categories.filter((c) => c.is_active !== false).length}
                             </p>
                         </div>
-                        <div>
+                        {/* <div>
                             <p className="text-xs uppercase tracking-wider font-semibold text-gray-500">Assessments</p>
                             <p className="text-2xl md:text-3xl font-bold text-kidemia-secondary mt-1">
                                 {categories.reduce((acc, cat) => acc + (cat.assessments_count || 0), 0)}
                             </p>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -186,7 +186,7 @@ export default function AssessmentCategoriesPage() {
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">S/N</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Category Name</th>
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Description</th>
-                                    <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase">Assessments</th>
+                                    {/* <th className="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase">Assessments</th> */}
                                     <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Status</th>
                                     <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase">Actions</th>
                                 </tr>
@@ -206,9 +206,9 @@ export default function AssessmentCategoriesPage() {
                                         <td className="px-6 py-4 text-sm text-gray-500">
                                             <div className="max-w-xs truncate">{category.description || 'No description'}</div>
                                         </td>
-                                        <td className="px-6 py-4 text-center">
+                                        {/* <td className="px-6 py-4 text-center">
                                             <Chip variant="flat" size="sm">{category.assessments_count || 0}</Chip>
-                                        </td>
+                                        </td> */}
                                         <td className="px-6 py-4">
                                             <Chip variant="flat" size="sm" color={category.is_active !== false ? 'success' : 'default'}>
                                                 {category.is_active !== false ? 'Active' : 'Inactive'}
@@ -245,9 +245,9 @@ export default function AssessmentCategoriesPage() {
                                 </div>
                                 <p className="text-sm text-gray-600 line-clamp-2">{category.description || 'No description'}</p>
                                 <div className="flex items-center justify-between pt-2">
-                                    <div className="text-xs text-gray-500">
+                                    {/* <div className="text-xs text-gray-500">
                                         Assessments: <span className="font-bold">{category.assessments_count || 0}</span>
-                                    </div>
+                                    </div> */}
                                     <div className="flex gap-2">
                                         <Button size="sm" variant="flat" onPress={() => handleEdit(category)}>Edit</Button>
                                         <Button size="sm" variant="flat" color="danger" className='bg-kidemia-secondary text-white' onPress={() => handleDelete(category.id, category.display_name)}>Delete</Button>

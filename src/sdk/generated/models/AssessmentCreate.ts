@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AssessmentCategory } from './AssessmentCategory';
+import type { AssessmentStatus } from './AssessmentStatus';
 import type { AssessmentType } from './AssessmentType';
 import type { QuestionSelectionMode } from './QuestionSelectionMode';
 import type { ResultDisplayMode } from './ResultDisplayMode';
@@ -44,6 +45,7 @@ export type AssessmentCreate = {
   max_tab_switches?: number;
   is_public?: boolean;
   require_enrollment?: boolean;
+  status?: (AssessmentStatus | null);
   category_config_id?: (string | null);
   institution_id?: (string | null);
   question_ids?: (Array<string> | null);

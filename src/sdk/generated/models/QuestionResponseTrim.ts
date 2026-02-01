@@ -9,6 +9,7 @@ import type { QuestionType } from './QuestionType';
  * Schema for trim question response (with answers)
  */
 export type QuestionResponseTrim = {
+  id: (string | null);
   question_text: string;
   question_type: QuestionType;
   difficulty_level: DifficultyLevel;

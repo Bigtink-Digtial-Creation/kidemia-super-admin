@@ -29,6 +29,8 @@ export const QueryKeys = {
   allAssessment: "allAssessment",
   singleAssessment: "singleAssessment",
   assessmentCategories: "assessmentCategories",
+  assessmentAttempts: "assessmentAttempts",
+  attemptDetail: "attemptDetail",
 
   plans: "plans",
   singlePlan: "singlePlan",
@@ -41,6 +43,7 @@ export const QueryKeys = {
   currencies: "currencies",
   dashboardStats: "dashboardStats",
   dashboardAnalytics: "dashboardAnalytics",
+  reportDashboard: "reportDashboard",
 
   platformSettings: "platformSettings",
   singleSetting: "singleSetting",

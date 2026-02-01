@@ -51,7 +51,8 @@ export default function SidebarLink(props: SidebarPropsT & SidebarLinkT) {
         as={NavLink}
         to={actions?.length ? location.pathname : pathname}
         onClick={handleParentClick}
-        className={`group relative flex w-full items-center justify-between rounded-md py-2 px-4 font-normal transition-all duration-300
+        className={`group relative flex w-full items-center justify-between 
+          rounded-md py-1 px-4 font-normal transition-all duration-300
           ${isParentActive
             ? "bg-kidemia-primary text-kidemia-white"
             : "text-kidemia-black2 hover:bg-kidemia-primary hover:text-kidemia-white"
