@@ -390,6 +390,7 @@ export default function SubjectsPage() {
                                                 <Button
                                                     variant="light"
                                                     size="sm"
+                                                    className='bg-kidemia-secondary text-white rounded-xl'
                                                     onPress={() =>
                                                         navigate(
                                                             SidebarRoutes.singleSubject.replace(
