@@ -7,7 +7,7 @@ export default function EngagementTab({ data }: { data: any }) {
         { label: 'DAU', value: eng?.daily_active_users, desc: 'Daily Active Users', icon: Users2 },
         { label: 'MAU', value: eng?.monthly_active_users, desc: 'Monthly Active Users', icon: Zap },
         { label: 'Discussion', value: eng?.forum_posts_this_week, desc: 'Weekly Forum Posts', icon: MessageSquare },
-        { label: 'Session Time', value: `${eng?.average_session_minutes}m`, desc: 'Average Stay', icon: Clock },
+        { label: 'Session Time', value: `${eng?.average_session_minutes / 60}m`, desc: 'Average Stay', icon: Clock },
     ];
 
     return (
