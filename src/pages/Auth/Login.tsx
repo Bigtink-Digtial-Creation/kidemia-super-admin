@@ -70,7 +70,7 @@ export default function LoginPage() {
     onError(error: any) {
       addToast({
         title: "Unable to Login",
-        description: error?.body?.detail,
+        description: error?.body?.detail || error?.body?.message || error?.message || "Problem here",
         color: "danger",
       });
     },
