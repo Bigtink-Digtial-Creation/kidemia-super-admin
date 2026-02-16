@@ -171,6 +171,7 @@ export default function CreateAssessment() {
     return true;
   }, [sections]);
 
+
   const buildPayload = (): AssessmentCreate => {
     const payload: AssessmentCreate = {
       title,
@@ -223,7 +224,6 @@ export default function CreateAssessment() {
       })) as any[],
       banner_image_id: bannerImageId ?? null,
     } as unknown as AssessmentCreate;
-    console.log(payload)
     return payload;
   };
 
@@ -360,7 +360,6 @@ export default function CreateAssessment() {
                       onSelectionChange={(keys) => {
                         const selectedId = Array.from(keys)[0] as string;
                         const selectedCategory = categories.find((c: any) => c.id === selectedId);
-
                         if (selectedCategory) {
                           setCategoryConfigId(selectedCategory.id);
                           setCategory(selectedCategory.category_name);
@@ -369,7 +368,7 @@ export default function CreateAssessment() {
                       classNames={{ label: "text-sm font-medium mb-1.5" }}
                     >
                       {categories.map((c: any) => (
-                        <SelectItem key={c.id}>
+                        <SelectItem key={c.category_name}>
                           {c.display_name ?? c.category_name}
                         </SelectItem>
                       ))}
