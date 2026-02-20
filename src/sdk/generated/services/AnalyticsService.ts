@@ -41,6 +41,8 @@ export class AnalyticsService {
         'student_id': studentId,
       },
       errors: {
+        402: `Subscribe or upgrade to continue using this feature`,
+        403: `Feature is not available in current plan`,
         422: `Validation Error`,
       },
     });

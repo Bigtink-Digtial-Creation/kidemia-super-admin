@@ -16,7 +16,7 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class AttemptsService {
   /**
-   * Start an assessment attempt
+   * Start a test assessment attempt
    * Start a new assessment attempt.
    *
    * - Validates assessment availability
@@ -28,19 +28,51 @@ export class AttemptsService {
    * @returns AttemptStartResponse Successful Response
    * @throws ApiError
    */
-  public static startAttemptApiV1AttemptsAssessmentIdStartPost(
+  public static startTestAttemptApiV1AttemptsTestAssessmentIdStartPost(
     assessmentId: string,
     requestBody: AttemptStartRequest,
   ): CancelablePromise<AttemptStartResponse> {
     return __request(OpenAPI, {
       method: 'POST',
-      url: '/api/v1/attempts/{assessment_id}/start',
+      url: '/api/v1/attempts/test/{assessment_id}/start',
       path: {
         'assessment_id': assessmentId,
       },
       body: requestBody,
       mediaType: 'application/json',
       errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Start an assessment attempt
+   * Start a new Exam assessment attempt.
+   *
+   * - Validates assessment availability
+   * - Checks attempt limits
+   * - Verifies payment for exams
+   * - Creates or resumes attempt
+   * @param assessmentId
+   * @param requestBody
+   * @returns AttemptStartResponse Successful Response
+   * @throws ApiError
+   */
+  public static startExamAttemptApiV1AttemptsExamAssessmentIdStartPost(
+    assessmentId: string,
+    requestBody: AttemptStartRequest,
+  ): CancelablePromise<AttemptStartResponse> {
+    return __request(OpenAPI, {
+      method: 'POST',
+      url: '/api/v1/attempts/exam/{assessment_id}/start',
+      path: {
+        'assessment_id': assessmentId,
+      },
+      body: requestBody,
+      mediaType: 'application/json',
+      errors: {
+        402: `Subscribe or upgrade to continue using this feature`,
+        403: `Feature is not available in current plan`,
         422: `Validation Error`,
       },
     });

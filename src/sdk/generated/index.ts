@@ -7,6 +7,7 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { AccessDeniedDetail } from './models/AccessDeniedDetail';
 export type { AchievementCreate } from './models/AchievementCreate';
 export type { AchievementResponse } from './models/AchievementResponse';
 export type { AchievementUpdate } from './models/AchievementUpdate';
