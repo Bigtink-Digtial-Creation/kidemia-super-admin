@@ -20,6 +20,13 @@ import { request as __request } from '../core/request';
 export class AssessmentsService {
   /**
    * Create a new assessment
+   * Create a new assessment (test or exam).
+   *
+   * Requires `assessment:create` permission.
+   *
+   * - **assessment_type**: TEST (free) or EXAM (paid)
+   * - **category**: JAMB, WAEC, NECO, Common Entrance, etc.
+   * - **question_selection_mode**: MANUAL, RANDOM, or ADAPTIVE
    * @param requestBody
    * @returns AssessmentResponse Successful Response
    * @throws ApiError
@@ -135,6 +142,8 @@ export class AssessmentsService {
         body: requestBody,
         mediaType: 'application/json',
         errors: {
+          402: `Subscribe or upgrade to continue using this feature`,
+          403: `Feature is not available in current plan`,
           422: `Validation Error`,
         },
       });

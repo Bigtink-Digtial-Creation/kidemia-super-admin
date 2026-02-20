@@ -121,6 +121,8 @@ export class GuardiansService {
       body: requestBody,
       mediaType: 'application/json',
       errors: {
+        402: `Subscribe or upgrade to continue using this feature`,
+        403: `Feature is not available in current plan`,
         422: `Validation Error`,
       },
     });
@@ -367,6 +369,8 @@ export class GuardiansService {
       body: requestBody,
       mediaType: 'application/json',
       errors: {
+        402: `Subscribe or upgrade to continue using this feature`,
+        403: `Feature is not available in current plan`,
         422: `Validation Error`,
       },
     });

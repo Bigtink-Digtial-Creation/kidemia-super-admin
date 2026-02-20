@@ -3,6 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { DifficultyLevel } from './DifficultyLevel';
+import type { QuestionOptionCreate } from './QuestionOptionCreate';
 import type { QuestionStatus } from './QuestionStatus';
 import type { QuestionType } from './QuestionType';
 /**
@@ -20,5 +21,6 @@ export type QuestionUpdate = {
   time_limit_seconds?: (number | null);
   status?: (QuestionStatus | null);
   tag_ids?: (Array<string> | null);
+  options?: (Array<QuestionOptionCreate> | null);
 };
 
