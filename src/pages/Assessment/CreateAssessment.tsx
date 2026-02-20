@@ -28,6 +28,7 @@ import { type AssessmentCreate, type AssessmentStatus, type AssessmentType, type
 import { type QuestionSelectionMode } from "../../sdk/generated/models/QuestionSelectionMode";
 import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
+// import { ca } from "zod/v4/locales";
 
 function uid(prefix = "") {
   return `${prefix}${Math.random().toString(36).slice(2, 9)}`;
@@ -356,7 +357,7 @@ export default function CreateAssessment() {
                       label="Category"
                       labelPlacement="outside"
                       placeholder="Select category"
-                      selectedKeys={category ? [category] : []}
+                      selectedKeys={categoryConfigId ? [categoryConfigId] : []}  // ✅ use id, not category name
                       onSelectionChange={(keys) => {
                         const selectedId = Array.from(keys)[0] as string;
                         const selectedCategory = categories.find((c: any) => c.id === selectedId);
@@ -368,7 +369,7 @@ export default function CreateAssessment() {
                       classNames={{ label: "text-sm font-medium mb-1.5" }}
                     >
                       {categories.map((c: any) => (
-                        <SelectItem key={c.category_name}>
+                        <SelectItem key={c.id}>
                           {c.display_name ?? c.category_name}
                         </SelectItem>
                       ))}
