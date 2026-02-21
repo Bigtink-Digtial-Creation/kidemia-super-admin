@@ -1,7 +1,7 @@
 import { BreadcrumbItem, Breadcrumbs, Button, Chip, Tab, Tabs, Pagination } from "@heroui/react";
 import { useParams, useNavigate } from "react-router";
 import { SidebarRoutes } from "../../routes";
-import { MdAssessment, MdOutlineDashboard, MdEdit, MdDelete } from "react-icons/md";
+import { MdAssessment, MdOutlineDashboard } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../../utils/queryKeys";
 import { ApiSDK } from "../../sdk";
@@ -105,23 +105,7 @@ export default function SingleAssessment() {
               </Chip>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              startContent={<MdEdit />}
-              onClick={() => navigate(`${SidebarRoutes.assessment}/edit/${id}`)}
-            >
-              Edit
-            </Button>
-            <Button
-              size="sm"
-              color="danger"
-              variant="flat"
-              startContent={<MdDelete />}
-            >
-              Delete
-            </Button>
-          </div>
+
         </div>
       </div>
 
