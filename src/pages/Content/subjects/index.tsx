@@ -313,6 +313,10 @@ export default function SubjectsPage() {
                                     </th>
 
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
+                                        Code
+                                    </th>
+
+                                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
                                         Category
                                     </th>
                                     <th className="px-6 py-4 text-center text-sm font-semibold text-gray-700">
@@ -367,6 +371,11 @@ export default function SubjectsPage() {
                                             </div>
                                         </td>
 
+                                        <td>
+                                            <span className="text-sm text-gray-500">
+                                                {subject.code || 'N/A'}
+                                            </span>
+                                        </td>
 
                                         <td className="px-6 py-4 text-sm text-center 
                                         ">
