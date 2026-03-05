@@ -32,3 +32,37 @@ export function getTokenFromStore(key: string) {
   }
   return parsedToken;
 }
+
+export function scheduleTokenExpiry() {
+  const rawToken = localStorage.getItem(StoredKeys.token) ?? "null";
+  const parsedToken = JSON.parse(rawToken);
+
+  if (!parsedToken) return;
+
+  try {
+    const decoded = jwtDecode(rawToken);
+    const expiredAt = (decoded.exp || 0) * 1000;
+    const msUntilExpiry = expiredAt - Date.now();
+
+    if (msUntilExpiry <= 0) {
+      // Already expired
+      forceLogout();
+      return;
+    }
+
+    // Schedule logout exactly when token expires
+    setTimeout(() => {
+      forceLogout();
+    }, msUntilExpiry);
+
+  } catch {
+    forceLogout();
+  }
+}
+
+
+export function forceLogout() {
+  localStorage.setItem(StoredKeys.token, JSON.stringify(null));
+  localStorage.setItem(StoredKeys.user, JSON.stringify(null));
+  window.location.replace(AuthRoutes.login);
+}

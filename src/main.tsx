@@ -6,9 +6,10 @@ import { HeroUIProvider, ToastProvider } from "@heroui/react";
 import { Provider as JotaiProvider } from "jotai";
 import { router } from "./App";
 import "./index.css";
+import { scheduleTokenExpiry } from "./sdk";
 
 const queryClient = new QueryClient();
-
+scheduleTokenExpiry();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HeroUIProvider>

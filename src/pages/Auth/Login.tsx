@@ -11,7 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { loggedinUserAtom, storedAuthTokenAtom } from "../../store/user.atom";
 import { LoginSchema } from "../../schema/auth.schema";
 import type { LoginRequest } from "../../sdk/generated";
-import { ApiSDK } from "../../sdk";
+import { ApiSDK, scheduleTokenExpiry } from "../../sdk";
 import { AuthRoutes, SidebarRoutes } from "../../routes";
 
 export default function LoginPage() {
@@ -57,6 +57,7 @@ export default function LoginPage() {
           sessionStorage.setItem("user_data", JSON.stringify(data));
         }
 
+        scheduleTokenExpiry();
         navigate(from, { replace: true });
         addToast({
           title: "Login Successful",
