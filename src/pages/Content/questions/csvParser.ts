@@ -1,31 +1,63 @@
 import { isValidDifficultyLevel, isValidQuestionType, type QuestionLocal } from "./question.types";
 
-;
+/**
+ * Robustly parses a single CSV line, handling:
+ * - Quoted fields (with commas inside)
+ * - Unquoted fields (plain Excel export)
+ * - Empty trailing fields
+ * - Mixed quote styles
+ */
+const parseCsvLine = (line: string): string[] => {
+    const result: string[] = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+
+        if (char === '"') {
+            if (inQuotes && line[i + 1] === '"') {
+                // Escaped quote inside quoted field
+                current += '"';
+                i++;
+            } else {
+                inQuotes = !inQuotes;
+            }
+        } else if (char === ',' && !inQuotes) {
+            result.push(current.trim());
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+
+    result.push(current.trim()); // Push the last field
+    return result;
+};
 
 export const parseCsvFile = async (
     file: File,
     subjectId: string
 ): Promise<QuestionLocal[]> => {
     const text = await file.text();
-    const lines = text.split(/\r?\n/).filter(Boolean);
+    const lines = text.split(/\r?\n/);
 
-    if (lines.length <= 1) {
-        throw new Error('CSV contains no rows');
+    // Filter truly empty lines but keep lines with just commas (empty fields)
+    const nonEmptyLines = lines.filter(l => l.trim() !== '');
+
+    if (nonEmptyLines.length <= 1) {
+        throw new Error('CSV contains no data rows');
     }
 
-    //   const header = lines[0].split(',').map(h => h.trim().toLowerCase());
     const newQuestions: QuestionLocal[] = [];
 
-    for (let i = 1; i < lines.length; i++) {
-        const raw = lines[i];
+    for (let i = 1; i < nonEmptyLines.length; i++) {
+        const raw = nonEmptyLines[i];
         if (!raw.trim()) continue;
 
-        // Split respecting quoted commas (simple approach)
-        const values = raw
-            .match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)
-            ?.map(s => s.replace(/^"|"$/g, '').trim()) || [];
+        const values = parseCsvLine(raw);
 
-        // Column indices based on template:
+        // Column indices:
         // 0: Question Text
         // 1: Topic ID
         // 2: Question Type
@@ -48,7 +80,12 @@ export const parseCsvFile = async (
         const points = Number(values[4]) || 1;
         const time_limit_seconds = values[5] ? Number(values[5]) : null;
         const explanation = values[6] || '';
-        const optionTexts = [values[7], values[8], values[9], values[10]].filter(Boolean);
+
+        // Filter out empty option strings — handles trailing empty fields from Excel
+        const optionTexts = [values[7], values[8], values[9], values[10]].filter(
+            v => v !== undefined && v !== ''
+        );
+
         const correctIndex = Number(values[11]) || 1;
         const audio_url = values[12] || '';
         const image_url = values[13] || '';
@@ -72,11 +109,23 @@ export const parseCsvFile = async (
         };
 
         if (qType === 'true_false') {
+            // Normalize Excel's TRUE/FALSE (uppercase) and quoted variants
+            const firstOption = (optionTexts[0] || 'True').toLowerCase();
+            const trueIsFirst = firstOption === 'true';
+
             q.options = [
-                { option_text: 'True', is_correct: correctIndex === 1, display_order: 1 },
-                { option_text: 'False', is_correct: correctIndex === 2, display_order: 2 },
+                {
+                    option_text: 'True',
+                    is_correct: trueIsFirst ? correctIndex === 1 : correctIndex === 2,
+                    display_order: 1
+                },
+                {
+                    option_text: 'False',
+                    is_correct: trueIsFirst ? correctIndex === 2 : correctIndex === 1,
+                    display_order: 2
+                },
             ];
-            q.correct_answer = correctIndex === 1 ? 'true' : 'false';
+            q.correct_answer = q.options[0].is_correct ? 'true' : 'false';
         } else {
             q.options = optionTexts.map((t, idx) => ({
                 option_text: t,
