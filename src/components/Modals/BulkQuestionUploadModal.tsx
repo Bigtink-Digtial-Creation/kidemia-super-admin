@@ -7,6 +7,7 @@ interface BulkUploadModalProps {
     onUpload: (file: File) => void;
 }
 
+
 export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     isOpen,
     onClose,
@@ -42,9 +43,12 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
     };
 
     const downloadTemplate = () => {
-        const csvContent = `Question Text,Topic ID,Question Type,Difficulty Level,Points,Time Limit (seconds),Explanation,Option 1,Option 2,Option 3,Option 4,Correct Answer Index,Audio URL,Image URL,Video URL
-"What is Newton's first law of motion?","topic-id-here","multiple_choice","medium","10","60","An object at rest stays at rest...","An object at rest stays at rest","An object in motion stays in motion","Both A and B","None of the above","3","","",""
-"The Earth revolves around the Sun","topic-id-here","true_false","easy","5","30","The Earth orbits the Sun","True","False","","","1","","",""`;
+        const csvContent = [
+            'Question Text,Topic ID,Question Type,Difficulty Level,Points,Time Limit (seconds),Explanation,Option 1,Option 2,Option 3,Option 4,Correct Answer Index,Audio URL,Image URL,Video URL',
+            'What is Newton\'s first law of motion?,topic-id-here,multiple_choice,medium,10,60,An object at rest stays at rest...,An object at rest stays at rest,An object in motion stays in motion,Both A and B,None of the above,3,,,',
+            'The Earth revolves around the Sun,topic-id-here,true_false,easy,5,30,The Earth orbits the Sun,TRUE,FALSE,,,1,,,'
+        ].join('\n');
+
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -97,8 +101,8 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
                         onDragOver={handleDrag}
                         onDrop={handleDrop}
                         className={`border-3 border-dashed rounded-xl p-12 text-center transition-all ${dragActive
-                                ? 'border-orange-500 bg-orange-50 scale-[1.02]'
-                                : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
+                            ? 'border-orange-500 bg-orange-50 scale-[1.02]'
+                            : 'border-gray-200 bg-gray-50 hover:bg-gray-100'
                             }`}
                     >
                         <FileUp
@@ -138,8 +142,8 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
                         onClick={handleConfirm}
                         disabled={!selectedFile}
                         className={`px-8 py-3 rounded-xl font-semibold ${selectedFile
-                                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white'
-                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                            ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white'
+                            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             }`}
                     >
                         Upload Questions
