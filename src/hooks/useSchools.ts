@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useInstitution } from "../context/InstitutionContext";
 import { ApiSDK } from "../sdk";
-import { OpenAPI, type AssignAssessmentRequest, type Body_bulk_upload_students_api_v1_institution_students_bulk_upload_post, type BulkMoveStudentsRequest, type ClassroomCreate, type ClassroomResponse, type ClassroomUpdate, type InstitutionAssessmentCreate, type InstitutionAssessmentResponse, type InstitutionDashboardStats, type InstitutionProfileResponse, type InstitutionUpdateRequest, type LinkStudent, type MoveStudentRequest, type RegisterRequest, type StudentGroupCreate, type StudentGroupResponse, type StudentGroupUpdate, type StudentWithClassroomResponse, type TeacherInviteRequest } from "../sdk/generated";
+import { OpenAPI, type AssessmentDetailResponse, type AssignAssessmentRequest, type Body_bulk_upload_students_api_v1_institution_students_bulk_upload_post, type BulkMoveStudentsRequest, type ClassroomCreate, type ClassroomResponse, type ClassroomUpdate, type InstitutionAssessmentCreate, type InstitutionAssessmentResponse, type InstitutionDashboardStats, type InstitutionProfileResponse, type InstitutionUpdateRequest, type LinkStudent, type MoveStudentRequest, type RegisterRequest, type StudentGroupCreate, type StudentGroupResponse, type StudentGroupUpdate, type StudentWithClassroomResponse, type TeacherInviteRequest } from "../sdk/generated";
 import { institutionKeys } from "../utils/queryKeys";
 import { getAuthHeaders } from "../utils";
 
@@ -394,6 +394,18 @@ export const useAssignAssessment = () => {
     });
 };
 
+export const useAssessmentDetail = (assessmentId: string | null) => {
+    const { institutionId } = useInstitution();
+    return useQuery<AssessmentDetailResponse>({
+        queryKey: ["institution", institutionId, "assessment-detail", assessmentId],
+        queryFn: () =>
+            ApiSDK.InstitutionService.
+                getAssessmentDetailApiV1InstitutionAssessmentsAssessmentIdDetailGet(assessmentId!),
+        enabled: !!assessmentId,
+        staleTime: 1000 * 60 * 2, // 2 mins — submission status changes frequently
+    });
+};
+
 
 
 export const useInstitutionAnalytics = () => {
@@ -485,8 +497,6 @@ export const useClassroomPerformanceOverview = () => {
 };
 
 
-
-// hooks/useSchools.ts — add
 
 export const useInstitutionProfile = () => {
     const { institutionId } = useInstitution();

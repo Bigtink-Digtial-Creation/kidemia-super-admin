@@ -22,6 +22,7 @@ export type { ApproveCategoryChangeRequest } from './models/ApproveCategoryChang
 export type { AssessmentAnalyticsResponse } from './models/AssessmentAnalyticsResponse';
 export type { AssessmentCategory } from './models/AssessmentCategory';
 export type { AssessmentCreate } from './models/AssessmentCreate';
+export type { AssessmentDetailResponse } from './models/AssessmentDetailResponse';
 export type { AssessmentInfo } from './models/AssessmentInfo';
 export type { AssessmentListResponse } from './models/AssessmentListResponse';
 export type { AssessmentPerformanceMetrics } from './models/AssessmentPerformanceMetrics';
@@ -224,6 +225,7 @@ export type { src__domains__gamification__schemas__schemas__LeaderboardResponse 
 export type { src__domains__institution__schemas__analytics__StudentPerformanceSummary } from './models/src__domains__institution__schemas__analytics__StudentPerformanceSummary';
 export type { src__domains__report__schemas__analytics__StudentPerformanceSummary } from './models/src__domains__report__schemas__analytics__StudentPerformanceSummary';
 export type { StudentAchievementResponse } from './models/StudentAchievementResponse';
+export type { StudentAttemptStatus } from './models/StudentAttemptStatus';
 export type { StudentBadgeResponse } from './models/StudentBadgeResponse';
 export type { StudentGroupCreate } from './models/StudentGroupCreate';
 export type { StudentGroupResponse } from './models/StudentGroupResponse';

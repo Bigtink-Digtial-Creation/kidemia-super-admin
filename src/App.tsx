@@ -54,6 +54,7 @@ import InstitutionDashboard from "./pages/Institution/dashboard";
 
 import ErrorPage from "./pages/ErrorPage";
 import CreateInstitutionAssessment from "./pages/Institution/CreateInstitutionAssessment";
+import AssessmentDetailPage from "./pages/Institution/AssessmentDetailPage";
 
 export const router = createBrowserRouter([
   {
@@ -170,6 +171,7 @@ export const router = createBrowserRouter([
             children: [
               { path: "dashboard", element: <InstitutionDashboard />, },
               { path: "assessments/create", element: <CreateInstitutionAssessment /> },
+              { path: "assessments/:assessmentId", element: <AssessmentDetailPage />, },
               { path: 'profile', element: <ProfilePage /> },
 
             ],

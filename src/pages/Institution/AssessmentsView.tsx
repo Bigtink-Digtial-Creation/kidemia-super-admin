@@ -27,8 +27,8 @@ export function AssessmentsView({ onModal }: AssessmentsViewProps) {
     const { data: assessments, isLoading, isError } = useInstitutionAssessments();
 
     const statusVariant = (status: string) => {
-        if (status === "Published") return "green";
-        if (status === "Draft") return "gray";
+        if (status === "published") return "green";
+        if (status === "draft") return "gray";
         return "orange";
     };
 
@@ -185,11 +185,17 @@ export function AssessmentsView({ onModal }: AssessmentsViewProps) {
                                         </td>
                                         <td className="px-5 py-4">
                                             <Badge variant={statusVariant(a.status)}>
-                                                {a.status}
+                                                {a.status.toUpperCase()}
                                             </Badge>
                                         </td>
                                         <td className="px-5 py-4">
-                                            <button className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+                                            <button
+                                                onClick={() =>
+                                                    navigate(`/institution/${institutionId}/assessments/${a.id}`)
+                                                }
+                                                className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                                                title="View detail"
+                                            >
                                                 <MoreVertical size={15} className="text-gray-400" />
                                             </button>
                                         </td>
