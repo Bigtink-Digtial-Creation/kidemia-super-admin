@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { QueryKeys } from "../utils/queryKeys";
 import { ApiSDK } from "../sdk";
 import type { CategoryConfigResponse } from "../sdk/generated";
+import { addToast } from "@heroui/react";
 
 
 export const useSubjectCategories = () => {
@@ -12,7 +13,7 @@ export const useSubjectCategories = () => {
                 const response = await ApiSDK.AssessmentCategoriesService.getCategoryConfigsApiV1CategoriesGet?.();
                 return response || [];
             } catch (error) {
-                console.error("Failed to load categories");
+                addToast({ title: "error", description: "Failed to load categories" })
                 throw error;
             }
         },
