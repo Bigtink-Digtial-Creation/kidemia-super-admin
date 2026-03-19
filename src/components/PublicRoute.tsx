@@ -1,18 +1,22 @@
-import { Navigate, Outlet, useLocation } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import { useAtomValue } from "jotai";
 import { storedAuthTokenAtom, loggedinUserAtom } from "../store/user.atom";
+import { institutionAccessAtom } from "../store/institution.atom";
 import { SidebarRoutes } from "../routes";
-
 
 export const PublicRoute = () => {
     const token = useAtomValue(storedAuthTokenAtom);
-    const user = useAtomValue(loggedinUserAtom);
-    const location = useLocation();
+    const loginData = useAtomValue(loggedinUserAtom);
+    const institutionAccess = useAtomValue(institutionAccessAtom);
 
-    const from = (location.state as any)?.from?.pathname || SidebarRoutes.dashboard;
-
-    if (token && user) {
-        return <Navigate to={from} replace />;
+    if (token && loginData) {
+        if (institutionAccess?.institutionId) {
+            return <Navigate
+                to={`/institution/${institutionAccess.institutionId}/dashboard`}
+                replace
+            />;
+        }
+        return <Navigate to={SidebarRoutes.dashboard} replace />;
     }
 
     return <Outlet />;

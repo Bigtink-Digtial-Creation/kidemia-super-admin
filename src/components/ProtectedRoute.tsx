@@ -7,13 +7,13 @@ import { ApiSDK } from "../sdk";
 
 export const ProtectedRoute = () => {
     const token = useAtomValue(storedAuthTokenAtom);
-    const user = useAtomValue(loggedinUserAtom);
+    const loginData = useAtomValue(loggedinUserAtom);
     const location = useLocation();
+    const user = loginData?.user;
+
 
     useEffect(() => {
-        if (token) {
-            ApiSDK.OpenAPI.TOKEN = token;
-        }
+        if (token) ApiSDK.OpenAPI.TOKEN = token;
     }, [token]);
 
     if (!token || !user) {
