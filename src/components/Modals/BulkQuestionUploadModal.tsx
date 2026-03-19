@@ -65,7 +65,7 @@ export const BulkUploadModal: React.FC<BulkUploadModalProps> = ({
             <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scaleIn">
                 <div className="px-8 py-6 border-b border-gray-100 flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold text-gray-900">Bulk Upload Questions</h2>
+                        <h2 className="text-2xl font-bold text-kidemia-primary">Bulk Upload Questions</h2>
                         <p className="text-sm text-gray-500 mt-1">Import multiple questions at once</p>
                     </div>
                     <button

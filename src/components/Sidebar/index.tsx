@@ -85,7 +85,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: SidebarProps) {
         </ScrollShadow>
 
         {/* Bottom actions */}
-        <div className="p-4 mt-auto space-y-4">
+        <div className="p-4 mt-auto space-y-2">
           <Divider />
 
           <SidebarLink

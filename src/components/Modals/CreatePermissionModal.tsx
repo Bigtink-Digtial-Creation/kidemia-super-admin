@@ -63,7 +63,6 @@ export default function CreatePermissionModal({
   });
 
   const onSubmit = (data: PermissionSchema) => {
-    console.log(data);
     addPermMutation.mutate(data);
   };
 

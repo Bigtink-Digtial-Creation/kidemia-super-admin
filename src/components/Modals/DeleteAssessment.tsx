@@ -10,7 +10,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FiTrash2 } from "react-icons/fi";
 import { ApiSDK } from "../../sdk";
 import { QueryKeys } from "../../utils/queryKeys";
-import { apiErrorParser } from "../../utils/errorParser";
 
 interface DeleteAssessmentI {
   isOpen: boolean;
@@ -42,18 +41,11 @@ export default function DeleteAssessmentModal({
         color: "success",
       });
     },
-    onError(error) {
+    onError(error: any) {
       onClose();
-      let parsedMessage = "Something went wrong";
-      try {
-        const parsedError = apiErrorParser(error);
-        parsedMessage = parsedError?.message || parsedMessage;
-      } catch (e) {
-        console.error("Error parsing API error:", e);
-      }
       addToast({
         title: "An error occurred",
-        description: parsedMessage,
+        description: error?.body.message || error?.body?.detail || error?.message || "Network Error",
         color: "danger",
       });
     },

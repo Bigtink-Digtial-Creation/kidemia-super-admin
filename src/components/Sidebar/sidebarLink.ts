@@ -4,6 +4,7 @@ import {
   MdOutlineDashboard,
   MdAssessment,
   MdPeople,
+  MdSchool,
 } from "react-icons/md";
 import { PiBooksBold } from "react-icons/pi";
 import { SiPrivateinternetaccess } from "react-icons/si";
@@ -59,6 +60,11 @@ export const sidebarLinks: SidebarLinkT[] = [
     pathname: SidebarRoutes.users,
   },
 
+  {
+    title: "Manage Schools",
+    icon: MdSchool,
+    pathname: SidebarRoutes.institution,
+  },
   {
     title: "Gamification",
     icon: Gamepad2,
