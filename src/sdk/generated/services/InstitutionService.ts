@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AssessmentDetailResponse } from '../models/AssessmentDetailResponse';
 import type { AssignAssessmentRequest } from '../models/AssignAssessmentRequest';
 import type { Body_bulk_upload_students_api_v1_institution_students_bulk_upload_post } from '../models/Body_bulk_upload_students_api_v1_institution_students_bulk_upload_post';
 import type { BulkMoveStudentsRequest } from '../models/BulkMoveStudentsRequest';
@@ -518,13 +519,33 @@ export class InstitutionService {
    * @throws ApiError
    */
   public static getAssessmentStatApiV1InstitutionAssessmentsStatsGet(
-    assessementId: string = '952b4c12-8fd5-45f6-8c32-612cdd374515',
+    assessementId: string,
   ): CancelablePromise<any> {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/institution/assessments/stats',
       query: {
         'assessement_id': assessementId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Get Assessment Detail
+   * @param assessmentId
+   * @returns AssessmentDetailResponse Successful Response
+   * @throws ApiError
+   */
+  public static getAssessmentDetailApiV1InstitutionAssessmentsAssessmentIdDetailGet(
+    assessmentId: string,
+  ): CancelablePromise<AssessmentDetailResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/institution/assessments/{assessment_id}/detail',
+      path: {
+        'assessment_id': assessmentId,
       },
       errors: {
         422: `Validation Error`,
@@ -690,7 +711,7 @@ export class InstitutionService {
   }
   /**
    * Get Institution Assignments
-   * Returns all assessments assigned to this student via their institution
+   * Returns all assessments assigned to the student via their institution
    * (classroom, group, or individual assignments).
    * @param status
    * @returns any Successful Response
