@@ -5,11 +5,11 @@
 import type { PersonalizedRecommendation } from './PersonalizedRecommendation';
 import type { PersonalizedStudyPlan } from './PersonalizedStudyPlan';
 import type { ProgressDataPoint } from './ProgressDataPoint';
-import type { StudentPerformanceSummary } from './StudentPerformanceSummary';
+import type { src__domains__report__schemas__analytics__StudentPerformanceSummary } from './src__domains__report__schemas__analytics__StudentPerformanceSummary';
 import type { SubjectPerformance } from './SubjectPerformance';
 import type { TopicPerformance } from './TopicPerformance';
 export type StudentPerformanceResponse = {
-  performance_summary: StudentPerformanceSummary;
+  performance_summary: src__domains__report__schemas__analytics__StudentPerformanceSummary;
   subject_breakdown: Array<SubjectPerformance>;
   topic_breakdown: Array<TopicPerformance>;
   progress_over_time: Array<ProgressDataPoint>;

@@ -12,5 +12,7 @@ export type LoginResponse = {
   token_type?: string;
   expires_in: number;
   user: UserResponse;
+  institution_id?: (string | null);
+  institution_role?: (string | null);
 };
 

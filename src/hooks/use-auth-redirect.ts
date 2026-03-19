@@ -28,7 +28,6 @@ export function useAuthRedirect(requireAuth = true) {
         return;
       }
     } catch (err) {
-      console.error(err);
       navigate(AuthRoutes.login, { replace: true });
       return;
     }

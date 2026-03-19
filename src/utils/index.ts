@@ -110,7 +110,7 @@ export const getAuthHeaders = async () => {
 
   const mockOptions = {
     method: 'POST',
-    url: '/api/v1/analytics/reports/generate',
+    url: '/api/v1/auth/me',
   };
   const token = typeof OpenAPI.TOKEN === 'function'
     ? await OpenAPI.TOKEN(mockOptions as any)

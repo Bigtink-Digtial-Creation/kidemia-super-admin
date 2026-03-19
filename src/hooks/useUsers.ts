@@ -283,7 +283,6 @@ export function useCreateUser() {
 
     return useMutation({
         mutationFn: async (data: RegisterRequest) => {
-            console.log(data)
             const response = await ApiSDK.AuthenticationService.adminCreateUserApiV1AuthAdminCreateUserPost(data);
             return response;
         },

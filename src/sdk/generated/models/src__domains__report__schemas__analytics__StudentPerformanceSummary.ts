@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { GamificationData } from './GamificationData';
-export type StudentPerformanceSummary = {
+export type src__domains__report__schemas__analytics__StudentPerformanceSummary = {
   total_attempts: number;
   completed_attempts: number;
   average_score: number;

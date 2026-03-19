@@ -6,6 +6,7 @@ export const AuthRoutes = {
   resetPassword: "/auth/reset-password",
   verifyEmail: "/auth/verify-email",
   emailVerificationRequired: "/auth/email-verification-required",
+  unauthorized: "/auth/unauthorized",
 };
 
 export const SidebarRoutes = {
@@ -43,14 +44,21 @@ export const SidebarRoutes = {
   users: "/people/users",
 
   reportAnalytic: "/platform/report/analytics",
-  generateReport: "/platform/report/generate"
+  generateReport: "/platform/report/generate",
 
+  institution: "/institution",
+};
 
+export const InstitutionRoutes = {
+  dashboard: "/institution/:institutionId/dashboard",
+  profile: "/institution/profile",
+  settings: "/institution/settings",
 
 };
 
 export type AuthRoutes = (typeof AuthRoutes)[keyof typeof AuthRoutes];
 export type SidebarRoutes = (typeof SidebarRoutes)[keyof typeof SidebarRoutes];
+export type InstitutionRoutes = (typeof InstitutionRoutes)[keyof typeof InstitutionRoutes];
 
 export const buildRoute = (
   template: string,

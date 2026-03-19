@@ -12,7 +12,9 @@ import { loggedinUserAtom, storedAuthTokenAtom } from "../../store/user.atom";
 import { LoginSchema } from "../../schema/auth.schema";
 import type { LoginRequest } from "../../sdk/generated";
 import { ApiSDK, scheduleTokenExpiry } from "../../sdk";
-import { AuthRoutes, SidebarRoutes } from "../../routes";
+import { AuthRoutes } from "../../routes";
+import { resolveLoginRedirect } from "../../components/resolveLoginRedirect";
+import { institutionAccessAtom } from "../../store/institution.atom";
 
 export default function LoginPage() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -21,54 +23,78 @@ export default function LoginPage() {
   const location = useLocation();
   const setStoredToken = useSetAtom(storedAuthTokenAtom);
   const setLoggedInUser = useSetAtom(loggedinUserAtom);
+  const setInstitutionAccess = useSetAtom(institutionAccessAtom)
 
   // Get redirect location from navigation state
-  const from = (location.state as any)?.from?.pathname || SidebarRoutes.dashboard;
+  // const from = (location.state as any)?.from?.pathname || SidebarRoutes.dashboard;
 
   const {
     register,
     handleSubmit,
-    watch,
+    // watch,
     formState: { errors },
   } = useForm<LoginSchema>({
     resolver: zodResolver(LoginSchema),
   });
 
-  const rememberMe = watch("remember_me");
+  // const rememberMe = watch("remember_me");
 
   const loginMutation = useMutation({
     mutationFn: (formData: LoginRequest) =>
       ApiSDK.AuthenticationService.adminLoginApiV1AuthAdminLoginPost(formData),
+    // onSuccess(data) {
+    //   if (data) {
+    //     const token = data.access_token;
+    //     ApiSDK.OpenAPI.TOKEN = token;
+    //     // Update atoms
+    //     setStoredToken(token);
+    //     setLoggedInUser(data);
+
+    //     // Persist to localStorage if remember me is checked
+    //     if (rememberMe) {
+    //       localStorage.setItem("auth_token", token);
+    //       localStorage.setItem("user_data", JSON.stringify(data));
+    //     } else {
+    //       // Use sessionStorage for session-only persistence
+    //       sessionStorage.setItem("auth_token", token);
+    //       sessionStorage.setItem("user_data", JSON.stringify(data));
+    //     }
+
+    //     scheduleTokenExpiry();
+    //     navigate(from, { replace: true });
+    //     addToast({
+    //       title: "Login Successful",
+    //       color: "success",
+    //     });
+    //   }
+    // },
+
     onSuccess(data) {
-      if (data) {
-        const token = data.access_token;
-        ApiSDK.OpenAPI.TOKEN = token;
-        // Update atoms
-        setStoredToken(token);
-        setLoggedInUser(data);
+      // No more remember_me storage switching needed
+      // Just handle session expiry preference separately if needed
+      ApiSDK.OpenAPI.TOKEN = data.access_token;
 
-        // Persist to localStorage if remember me is checked
-        if (rememberMe) {
-          localStorage.setItem("auth_token", token);
-          localStorage.setItem("user_data", JSON.stringify(data));
-        } else {
-          // Use sessionStorage for session-only persistence
-          sessionStorage.setItem("auth_token", token);
-          sessionStorage.setItem("user_data", JSON.stringify(data));
-        }
+      setStoredToken(data.access_token);
+      setLoggedInUser(data);
 
-        scheduleTokenExpiry();
-        navigate(from, { replace: true });
-        addToast({
-          title: "Login Successful",
-          color: "success",
+      if (data.institution_id && data.institution_role) {
+        setInstitutionAccess({
+          institutionId: data.institution_id,
+          role: data.institution_role,
         });
       }
+
+      scheduleTokenExpiry();
+
+      const intendedPath = (location.state as any)?.from?.pathname;
+      navigate(resolveLoginRedirect(data, intendedPath), { replace: true });
+
+      addToast({ title: "Login Successful", color: "success" });
     },
     onError(error: any) {
       addToast({
         title: "Unable to Login",
-        description: error?.body?.detail || error?.body?.message || error?.message || "Problem here",
+        description: error?.body?.message || error?.body?.detail || error?.message || "Problem here",
         color: "danger",
       });
     },

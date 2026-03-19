@@ -1,19 +1,31 @@
 import { useState } from "react";
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import { useAuthRedirect } from "../hooks/use-auth-redirect";
 import BallSpinner from "../components/Spinner/BallSpinner";
+import { institutionAccessAtom } from "../store/institution.atom";
+import { useAtomValue } from "jotai";
 
 export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const { loggedInUser, authToken } = useAuthRedirect(true);
+  const institutionAccess = useAtomValue(institutionAccessAtom);
 
   if (!loggedInUser || !authToken) {
     return (
       <div className="h-screen flex justify-center items-center">
         <BallSpinner />
       </div>
+    );
+  }
+
+  if (institutionAccess) {
+    return (
+      <Navigate
+        to={`/institution/${institutionAccess.institutionId}/dashboard`}
+        replace
+      />
     );
   }
 

@@ -7,6 +7,7 @@ import {
     TableRow,
     TableCell,
     Chip,
+    addToast,
 } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { ApiSDK } from "../../../sdk";
@@ -82,8 +83,12 @@ export default function QuestionsTable({
                 }
 
                 return rows;
-            } catch (error) {
-                console.error("Failed to fetch questions", error);
+            } catch (error: any) {
+                addToast({
+                    title: "An error occurred",
+                    description: error?.body.message || error?.body?.detail || error?.message || "Network Error",
+                    color: "danger",
+                });
                 return [];
             }
         },
