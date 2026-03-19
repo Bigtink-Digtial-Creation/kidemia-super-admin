@@ -18,6 +18,8 @@ export type RegisterRequest = {
   username?: (string | null);
   category?: (string | null);
   guardian_email?: (string | null);
+  institution_id?: string;
+  classroom_id?: string;
   school_name?: (string | null);
   admin_email?: (string | null);
 };
