@@ -4,6 +4,8 @@ import { AuthRoutes, SidebarRoutes } from "./routes";
 // Route Guards
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { PublicRoute } from "./components/PublicRoute";
+import { RoleRoute } from "./components/RoleRoute";
+import { InstitutionRoute } from "./components/InstitutionRoute";
 
 // Layouts
 import AuthLayout from "./layouts/Auth.layout";
@@ -14,15 +16,15 @@ import LoginPage from "./pages/Auth/Login";
 import ForgotPasswordPage from "./pages/Auth/ForgotPassword";
 import ChangePasswordPage from "./pages/Auth/ChangePassword";
 import SignUpPage from "./pages/Auth/SignUp";
+import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
+import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
+import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
+import UnauthorizedPage from "./pages/Auth/unauthorized";
 
-// Dashboard pages
+// Platform dashboard pages
 import DashboardPage from "./pages/Dashboard";
 import ProfilePage from "./pages/Profile";
-import AssessmentPage from "./pages/Assessment";
-import CreateAssessment from "./pages/Assessment/CreateAssessment";
-import SingleAssessment from "./pages/Assessment/SingleAssessment";
-
-import ErrorPage from "./pages/ErrorPage";
+import MyProfileSettingsPage from "./pages/Profile/setting";
 import UserManagementPage from "./pages/People";
 import RolesPage from "./pages/Access";
 import RoleDetailPage from "./pages/Access/role";
@@ -30,29 +32,42 @@ import SubjectsPage from "./pages/Content/subjects";
 import SubjectDetailPage from "./pages/Content/subjects/SubjectDetailPage";
 import TopicDetailPage from "./pages/Content/topics";
 import QuestionCreationPage from "./pages/Content/questions/AddQuestions";
+import QuestionEditPage from "./pages/Content/questions/QuestionEditPage";
 import TagsPage from "./pages/Content/tags";
 import AssessmentCategoriesPage from "./pages/Content/categories";
+import AssessmentPage from "./pages/Assessment";
+import CreateAssessment from "./pages/Assessment/CreateAssessment";
+import SingleAssessment from "./pages/Assessment/SingleAssessment";
+import AttemptDetail from "./pages/Assessment/AttemptDetail";
 import PlansPage from "./pages/Plans/plan";
 import { CreatePlanPage } from "./pages/Plans/CreatePlanPage";
 import { EditPlanPage } from "./pages/Plans/EditPlanPage";
 import PromotionsPage from "./pages/Plans/promo";
-import QuestionEditPage from "./pages/Content/questions/QuestionEditPage";
 import BadgesPage from "./pages/Game/badge";
-import MyProfileSettingsPage from "./pages/Profile/setting";
 import PlatformSettingsPage from "./pages/Settings";
-import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
-import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
-import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
-import AttemptDetail from "./pages/Assessment/AttemptDetail";
-import ReportGenerator from "./pages/Analytic/Reportgenerator";
 import AnalyticsDashboard from "./pages/Analytic/AnalyticsDashboard";
+import ReportGenerator from "./pages/Analytic/Reportgenerator";
+import AdminInstitutionManager from "./pages/Institution/AdminManger";
+
+// Institution pages
+import InstitutionDashboard from "./pages/Institution/dashboard";
+
+import ErrorPage from "./pages/ErrorPage";
+import CreateInstitutionAssessment from "./pages/Institution/CreateInstitutionAssessment";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     errorElement: <ErrorPage />,
     children: [
-      // Public Routes (Auth)
+
+      // ── Standalone pages (no layout, no auth) ──────────────────
+      {
+        path: AuthRoutes.unauthorized,
+        element: <UnauthorizedPage />,
+      },
+
+      // ── Public Routes (Auth) ────────────────────────────────────
       {
         element: <PublicRoute />,
         children: [
@@ -74,7 +89,7 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // Email Verification Required (Semi-protected - user logged in but not verified)
+      // ── Semi-protected (logged in but email not verified) ───────
       {
         path: AuthRoutes.emailVerificationRequired,
         element: <AuthLayout />,
@@ -86,118 +101,83 @@ export const router = createBrowserRouter([
         ],
       },
 
-      // Protected Routes (Dashboard)
+      // ── All authenticated routes ────────────────────────────────
       {
         element: <ProtectedRoute />,
         children: [
+
+          // ── Platform dashboard 
           {
             element: <DashboardLayout />,
             children: [
+
+              // Shared — any authenticated platform user
+              { path: SidebarRoutes.dashboard, element: <DashboardPage /> },
+              { path: SidebarRoutes.profile, element: <ProfilePage /> },
+              { path: SidebarRoutes.profileSettings, element: <MyProfileSettingsPage /> },
+
+              // Content management — permission based (covers custom roles too)
               {
-                path: SidebarRoutes.dashboard,
-                element: <DashboardPage />,
-              },
-              {
-                path: SidebarRoutes.users,
-                element: <UserManagementPage />,
-              },
-              {
-                path: SidebarRoutes.subjects,
-                element: <SubjectsPage />,
-              },
-              {
-                path: SidebarRoutes.singleSubject,
-                element: <SubjectDetailPage />,
-              },
-              {
-                path: SidebarRoutes.profile,
-                element: <ProfilePage />,
-              },
-              {
-                path: SidebarRoutes.profileSettings,
-                element: <MyProfileSettingsPage />,
-              },
-              {
-                path: SidebarRoutes.roles,
-                element: <RolesPage />,
-              },
-              {
-                path: SidebarRoutes.singleRole,
-                element: <RoleDetailPage />,
-              },
-              {
-                path: SidebarRoutes.singleTopic,
-                element: <TopicDetailPage />,
-              },
-              {
-                path: SidebarRoutes.addQuestionsSubject,
-                element: <QuestionCreationPage />,
-              },
-              {
-                path: SidebarRoutes.editQuestion,
-                element: <QuestionEditPage />,
-              },
-              {
-                path: SidebarRoutes.tag,
-                element: <TagsPage />,
-              },
-              {
-                path: SidebarRoutes.categories,
-                element: <AssessmentCategoriesPage />,
-              },
-              {
-                path: SidebarRoutes.assessment,
-                element: <AssessmentPage />,
-              },
-              {
-                path: SidebarRoutes.createAssessment,
-                element: <CreateAssessment />,
-              },
-              {
-                path: SidebarRoutes.singleAssessment,
-                element: <SingleAssessment />,
-              },
-              {
-                path: SidebarRoutes.assessmentAttempt,
-                element: <AttemptDetail />,
-              },
-              {
-                path: SidebarRoutes.plans,
-                element: <PlansPage />,
-              },
-              {
-                path: SidebarRoutes.createPlan,
-                element: <CreatePlanPage />,
-              },
-              {
-                path: SidebarRoutes.editPlan,
-                element: <EditPlanPage />,
-              },
-              {
-                path: SidebarRoutes.promo,
-                element: <PromotionsPage />,
-              },
-              {
-                path: SidebarRoutes.game,
-                element: <BadgesPage />,
+                element: <RoleRoute requiredPermission="content:create" />,
+                children: [
+                  { path: SidebarRoutes.subjects, element: <SubjectsPage /> },
+                  { path: SidebarRoutes.singleSubject, element: <SubjectDetailPage /> },
+                  { path: SidebarRoutes.singleTopic, element: <TopicDetailPage /> },
+                  { path: SidebarRoutes.addQuestionsSubject, element: <QuestionCreationPage /> },
+                  { path: SidebarRoutes.editQuestion, element: <QuestionEditPage /> },
+                  { path: SidebarRoutes.tag, element: <TagsPage /> },
+                  { path: SidebarRoutes.categories, element: <AssessmentCategoriesPage /> },
+                ],
               },
 
+              // Assessment management — permission based
               {
-                path: SidebarRoutes.reportAnalytic,
-                element: <AnalyticsDashboard />,
+                element: <RoleRoute requiredPermission="assessment:manage" />,
+                children: [
+                  { path: SidebarRoutes.assessment, element: <AssessmentPage /> },
+                  { path: SidebarRoutes.createAssessment, element: <CreateAssessment /> },
+                  { path: SidebarRoutes.singleAssessment, element: <SingleAssessment /> },
+                  { path: SidebarRoutes.assessmentAttempt, element: <AttemptDetail /> },
+                ],
               },
+
+              // Administrator only
               {
-                path: SidebarRoutes.generateReport,
-                element: <ReportGenerator />,
+                element: <RoleRoute allowedRoles={["super_admin"]} />,
+                children: [
+                  { path: SidebarRoutes.users, element: <UserManagementPage /> },
+                  { path: SidebarRoutes.roles, element: <RolesPage /> },
+                  { path: SidebarRoutes.singleRole, element: <RoleDetailPage /> },
+                  { path: SidebarRoutes.plans, element: <PlansPage /> },
+                  { path: SidebarRoutes.createPlan, element: <CreatePlanPage /> },
+                  { path: SidebarRoutes.editPlan, element: <EditPlanPage /> },
+                  { path: SidebarRoutes.promo, element: <PromotionsPage /> },
+                  { path: SidebarRoutes.game, element: <BadgesPage /> },
+                  { path: SidebarRoutes.institution, element: <AdminInstitutionManager /> },
+                  { path: SidebarRoutes.settings, element: <PlatformSettingsPage /> },
+                  { path: SidebarRoutes.reportAnalytic, element: <AnalyticsDashboard /> },
+                  { path: SidebarRoutes.generateReport, element: <ReportGenerator /> },
+                ],
               },
-              {
-                path: SidebarRoutes.settings,
-                element: <PlatformSettingsPage />,
-              },
+
             ],
           },
+
+          // ── Institution dashboard ─────────────────────────────
+          {
+            path: "institution/:institutionId",
+            element: <InstitutionRoute />,
+            children: [
+              { path: "dashboard", element: <InstitutionDashboard />, },
+              { path: "assessments/create", element: <CreateInstitutionAssessment /> },
+              { path: 'profile', element: <ProfilePage /> },
+
+            ],
+          }
+
         ],
       },
+
     ],
   },
 ]);
