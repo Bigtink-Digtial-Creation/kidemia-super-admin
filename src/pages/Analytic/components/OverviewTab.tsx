@@ -12,7 +12,6 @@ export default function OverviewTab({ data }: { data: any }) {
     ];
 
 
-    console.log(data?.trends?.revenue)
     // Helper to render chart content or empty state
     const renderChart = (chartData: any[], color: string, key: string = 'count') => {
         if (!chartData || chartData.length === 0) {

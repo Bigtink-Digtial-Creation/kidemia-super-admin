@@ -1,4 +1,4 @@
-import { BreadcrumbItem, Breadcrumbs, Button, Chip, Tab, Tabs, Pagination } from "@heroui/react";
+import { BreadcrumbItem, Breadcrumbs, Button, Chip, Tab, Tabs, Pagination, addToast } from "@heroui/react";
 import { useParams, useNavigate } from "react-router";
 import { SidebarRoutes } from "../../routes";
 import { MdAssessment, MdOutlineDashboard } from "react-icons/md";
@@ -42,8 +42,12 @@ export default function SingleAssessment() {
           id!,
         );
         return response || [];
-      } catch (error) {
-        console.error("Failed to fetch attempts", error);
+      } catch (error: any) {
+        addToast({
+          title: "An error occurred",
+          description: error?.body.message || error?.body?.detail || error?.message || "Network Error",
+          color: "danger",
+        });
         return [];
       }
     },
@@ -440,7 +444,7 @@ export default function SingleAssessment() {
                       size="sm"
                       color="primary"
                       variant="flat"
-                      onClick={() => console.log("Export attempts data")}
+                      onPress={() => console.log("Export attempts data")}
                     >
                       Export Report
                     </Button>

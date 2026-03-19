@@ -117,8 +117,12 @@ export default function CreateAssessment() {
           return resp.items.map((s) => ({ id: s.id, name: s.name }));
         }
         return (resp as any[]) ?? [];
-      } catch (error) {
-        console.error("Failed to load subjects", error);
+      } catch (error: any) {
+        addToast({
+          title: "An error occurred",
+          description: error?.body.message || error?.body?.detail || error?.message || "Network Error",
+          color: "danger",
+        });
         return [];
       }
     },
@@ -130,8 +134,12 @@ export default function CreateAssessment() {
     queryFn: async () => {
       try {
         return (await ApiSDK.AssessmentCategoriesService?.getCategoryConfigsApiV1CategoriesGet?.()) || [];
-      } catch (error) {
-        console.error("Failed to load categories", error);
+      } catch (error: any) {
+        addToast({
+          title: "An error occurred",
+          description: error?.body.message || error?.body?.detail || error?.message || "Network Error",
+          color: "danger",
+        });
         return [];
       }
     },

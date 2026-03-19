@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { OpenAPI } from '../../sdk/generated';
 import { getAuthHeaders } from '../../utils';
+import { addToast } from '@heroui/react';
 
 
 export default function ReportGenerator() {
@@ -59,8 +60,12 @@ export default function ReportGenerator() {
 
             setDownloadStatus("success");
         },
-        onError: (error) => {
-            console.error("Manual fetch failed:", error);
+        onError: (error: any) => {
+            addToast({
+                title: "An error occurred",
+                description: error?.body.message || error?.body?.detail || error?.message || "Network Error",
+                color: "danger",
+            });
             setDownloadStatus("error");
         }
     });
