@@ -53,8 +53,6 @@ export function AssignAssessmentModal({ onClose }: { onClose: () => void }) {
 
     const isValid = assessmentId && scopeId;
 
-    console.log(scopeId)
-
     const handleSubmit = () => {
         assign.mutate(
             {
