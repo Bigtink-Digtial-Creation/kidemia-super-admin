@@ -2,6 +2,7 @@ import type { DifficultyLevel, QuestionType } from "../../../sdk/generated";
 
 export interface OptionLocal {
     option_text: string;
+    option_content?: Record<string, any> | null;
     is_correct: boolean;
     display_order: number;
     explanation?: string | null;
@@ -12,12 +13,14 @@ export interface QuestionLocal {
     id: string;
     subject_id: string;
     question_text: string;
+    question_content?: Record<string, any> | null;
     topic_id: string;
     question_type: QuestionType | string;
     difficulty_level: DifficultyLevel | string;
     points: number;
     time_limit_seconds: number | null;
     explanation: string;
+    explanation_content?: Record<string, any> | null;
     options: OptionLocal[];
     correct_answer?: string | null;
     audio_url: string;

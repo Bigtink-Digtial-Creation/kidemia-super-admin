@@ -1,4 +1,5 @@
 import { isValidDifficultyLevel, isValidQuestionType, type QuestionLocal } from "./question.types";
+import { extractPlainText, textToTiptapJson } from "./tiptapParser";
 
 /**
  * Robustly parses a single CSV line, handling:
@@ -94,7 +95,8 @@ export const parseCsvFile = async (
         const q: QuestionLocal = {
             id: `csv-${Date.now()}-${i}`,
             subject_id: subjectId,
-            question_text: qText,
+            question_text: extractPlainText(qText),
+            question_content: textToTiptapJson(qText),
             topic_id,
             question_type: qType,
             difficulty_level: difficulty,
@@ -128,7 +130,7 @@ export const parseCsvFile = async (
             q.correct_answer = q.options[0].is_correct ? 'true' : 'false';
         } else {
             q.options = optionTexts.map((t, idx) => ({
-                option_text: t,
+                option_text: extractPlainText(t),
                 is_correct: idx + 1 === correctIndex,
                 display_order: idx + 1
             }));

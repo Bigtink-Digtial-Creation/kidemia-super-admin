@@ -11,9 +11,11 @@ import type { QuestionType } from './QuestionType';
  */
 export type QuestionUpdate = {
   question_text?: (string | null);
+  question_content?: (Record<string, any> | null);
   question_type?: (QuestionType | null);
   difficulty_level?: (DifficultyLevel | null);
   explanation?: (string | null);
+  explanation_content?: (Record<string, any> | null);
   image_url?: (string | null);
   audio_url?: (string | null);
   video_url?: (string | null);

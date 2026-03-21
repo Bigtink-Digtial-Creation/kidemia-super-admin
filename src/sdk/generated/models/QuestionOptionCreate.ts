@@ -7,6 +7,7 @@
  */
 export type QuestionOptionCreate = {
   option_text: string;
+  option_content?: (Record<string, any> | null);
   option_order: number;
   is_correct?: boolean;
   explanation?: (string | null);

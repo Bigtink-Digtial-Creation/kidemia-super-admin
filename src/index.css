@@ -1,5 +1,4 @@
-@import "tailwindcss";
-
+@import "katex/dist/katex.min.css";
 @import "tailwindcss";
 @plugin "./utils/hero.ts";
 

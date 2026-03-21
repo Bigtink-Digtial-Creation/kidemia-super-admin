@@ -13,9 +13,11 @@ export type QuestionCreate = {
   subject_id: string;
   topic_id: string;
   question_text: string;
+  question_content?: (Record<string, any> | null);
   question_type: QuestionType;
   difficulty_level: DifficultyLevel;
   explanation?: (string | null);
+  explanation_content?: (Record<string, any> | null);
   image_url?: (string | null);
   audio_url?: (string | null);
   video_url?: (string | null);

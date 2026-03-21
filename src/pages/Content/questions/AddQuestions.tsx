@@ -17,24 +17,29 @@ export default function QuestionCreationPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const [questions, setQuestions] = useState<QuestionLocal[]>([
-    {
-      id: `q-${Date.now()}`,
-      subject_id: id || '',
-      question_text: '',
-      topic_id: '',
-      question_type: 'multiple_choice',
-      difficulty_level: 'easy',
-      points: 1,
-      time_limit_seconds: null,
-      explanation: '',
-      options: [],
-      audio_url: '',
-      image_url: '',
-      video_url: '',
-      tag_ids: [] // Strictly an array
-    }
-  ]);
+  const blankQuestion = (): QuestionLocal => ({
+    id: `q-${Date.now()}`,
+    subject_id: id || "",
+    question_text: "",
+    question_content: null,
+    topic_id: "",
+    question_type: "multiple_choice",
+    difficulty_level: "easy",
+    points: 1,
+    time_limit_seconds: null,
+    explanation: "",
+    explanation_content: null,
+    options: [],
+    audio_url: "",
+    image_url: "",
+    video_url: "",
+    tag_ids: [],
+  });
+
+  const [questions, setQuestions] = useState<QuestionLocal[]>([blankQuestion()]);
+
+  const addQuestion = () => setQuestions((p) => [...p, blankQuestion()]);
+
 
   const [showBulkUpload, setShowBulkUpload] = useState(false);
 
@@ -66,27 +71,6 @@ export default function QuestionCreationPage() {
     }
   });
 
-
-
-  const addQuestion = () => {
-    const q: QuestionLocal = {
-      id: `q-${Date.now()}`,
-      subject_id: id || '',
-      question_text: '',
-      topic_id: '',
-      question_type: 'multiple_choice',
-      difficulty_level: 'easy',
-      points: 1,
-      time_limit_seconds: null,
-      explanation: '',
-      options: [],
-      audio_url: '',
-      image_url: '',
-      video_url: '',
-      tag_ids: []
-    };
-    setQuestions(prev => [...prev, q]);
-  };
 
   const updateQuestion = (qid: string, updates: Partial<QuestionLocal>) => {
     setQuestions(prev => prev.map(q => q.id === qid ? { ...q, ...updates } : q));

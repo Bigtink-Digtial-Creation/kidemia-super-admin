@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, Save } from 'lucide-react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { QuestionLocal, Topic } from './question.types';
 import { QueryKeys } from '../../../utils/queryKeys';
 import { ApiSDK } from '../../../sdk';
@@ -48,6 +48,8 @@ export default function QuestionEditPage() {
                 subject_id: questionData.subject_id,
                 topic_id: questionData.topic_id,
                 question_text: questionData.question_text,
+                question_content: questionData.question_content ?? null,
+                explanation_content: questionData.explanation_content ?? null,
                 question_type: questionData.question_type,
                 difficulty_level: questionData.difficulty_level,
                 points: questionData.points ?? 1,
@@ -60,9 +62,13 @@ export default function QuestionEditPage() {
                 tag_ids: initialTagIds,
                 options: (questionData.options ?? []).map(opt => ({
                     option_text: opt.option_text,
+                    option_content: opt.option_content ?? null,
                     is_correct: !!opt.is_correct,
                     display_order: opt.option_order ?? 1,
-                }))
+                })),
+                correct_answer: questionData.question_type === 'true_false'
+                    ? (questionData.options ?? []).find(o => o.is_correct)?.option_text?.toLowerCase() ?? null
+                    : null,
             };
             setQuestions([mappedQuestion]);
         }
@@ -71,10 +77,19 @@ export default function QuestionEditPage() {
     const topics: Topic[] = topicsData?.items || [];
     const availableTags = tagsData || [];
 
+    const queryClient = useQueryClient();
+
     const updateQuestionMutation = useMutation({
         mutationFn: (payload: any) =>
             ApiSDK.TopicQuestionsService.updateQuestionApiV1QuestionsQuestionIdPut(questionId!, payload[0]),
         onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [QueryKeys.questionDetails, questionId],
+            });
+            // Also invalidate the topic's question list so TopicDetailPage reflects changes
+            queryClient.invalidateQueries({
+                queryKey: [QueryKeys.singleSubject, effectiveSubjectId],
+            });
             addToast({
                 title: "Question updated successfully!",
                 color: "success",

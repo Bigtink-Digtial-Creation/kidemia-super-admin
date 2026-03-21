@@ -7,8 +7,15 @@ export const validateQuestions = (
     showToast: (message: string, type: 'danger') => void
 ): boolean => {
     for (const q of questions) {
-        if (!q.question_text.trim()) {
-            showToast('Please fill in all question texts', 'danger');
+        // In validateQuestions, replace the question_text check:
+        const hasContent =
+            q.question_text.trim() ||
+            (q.question_content?.content?.some(
+                (node: any) => node.content?.length > 0 || node.type === "mathBlock"
+            ) ?? false);
+
+        if (!hasContent) {
+            showToast("Please fill in all question texts", "danger");
             return false;
         }
         if (!q.topic_id) {
@@ -68,6 +75,7 @@ export const mapToApiPayload = (questions: QuestionLocal[]): QuestionCreate[] =>
             ]
             : q.options.map(o => ({
                 option_text: o.option_text,
+                option_content: o.option_content ?? null,
                 option_order: o.display_order || 1,
                 is_correct: !!o.is_correct,
                 explanation: o.explanation ?? null,
@@ -80,6 +88,8 @@ export const mapToApiPayload = (questions: QuestionLocal[]): QuestionCreate[] =>
             subject_id: q.subject_id,
             topic_id: q.topic_id,
             question_text: q.question_text,
+            question_content: q.question_content ?? null,
+            explanation_content: q.explanation_content ?? null,
             question_type,
             difficulty_level,
             explanation: q.explanation ? q.explanation : null,

@@ -6,7 +6,6 @@ export function resolveLoginRedirect(
     intendedPath?: string
 ): string {
     if (intendedPath && intendedPath !== "/") return intendedPath;
-
     if (data.institution_id) {
         return `/institution/${data.institution_id}/dashboard`;
     }

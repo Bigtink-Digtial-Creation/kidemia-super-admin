@@ -8,13 +8,25 @@ import {
     Chip,
     addToast,
 } from '@heroui/react';
-import { ArrowLeft, Plus, Search, SlidersHorizontal, Trash2, HelpCircle } from 'lucide-react';
+import {
+    ArrowLeft,
+    ArrowRight,
+    Plus,
+    Search,
+    SlidersHorizontal,
+    Trash2,
+    HelpCircle,
+    ChevronDown,
+} from 'lucide-react';
 import { useParams, useNavigate, useLocation } from 'react-router';
 
 import { useDeleteQuestion, useQuestions } from '../../../hooks/useSubjects';
 import BallSpinner from '../../../components/Spinner/BallSpinner';
 import { DeleteConfirmModal } from '../components/modals/DeleteConfirmModal';
 import { SidebarRoutes } from '../../../routes';
+import QuestionRenderer from '../../../components/editor/QuestionRenderer';
+
+const LIMIT = 20;
 
 export default function TopicDetailPage() {
     const { subjectId, topicId } = useParams<{
@@ -26,19 +38,32 @@ export default function TopicDetailPage() {
     const location = useLocation();
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteQuestionId, setDeleteQuestionId] = useState<string>('');
+    const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [page, setPage] = useState(0);
 
     const deleteQuestionModal = useDisclosure();
-
-    const { questions = [], isLoading } = useQuestions(topicId);
+    const { questions = [], total = 0, isLoading } = useQuestions(
+        topicId,
+        page * LIMIT,
+        LIMIT,
+    );
     const deleteQuestion = useDeleteQuestion();
 
-    // Get subject and topic names from navigation state
     const subjectName = location.state?.subjectName || 'Subject';
     const topicName = location.state?.topicName || 'Topic';
 
-    const filteredQuestions = questions.filter((question) =>
-        question.question_text?.toLowerCase().includes(searchTerm.toLowerCase())
+    const totalPages = Math.ceil(total / LIMIT);
+    const hasPrev = page > 0;
+    const hasNext = page < totalPages - 1;
+
+    const filteredQuestions = questions.filter((q) =>
+        q.question_text?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const handleSearch = (value: string) => {
+        setSearchTerm(value);
+        setPage(0);
+    };
 
     const handleViewQuestion = (questionId: string) => {
         navigate(SidebarRoutes.editQuestion.replace(':id', questionId), {
@@ -47,7 +72,7 @@ export default function TopicDetailPage() {
     };
 
     const handleAddQuestion = () => {
-        navigate(SidebarRoutes.addQuestionsSubject.replace(":id", subjectId!), {
+        navigate(SidebarRoutes.addQuestionsSubject.replace(':id', subjectId!), {
             state: { topicId, subjectId },
         });
     };
@@ -94,7 +119,9 @@ export default function TopicDetailPage() {
                             variant="flat"
                             size="sm"
                             className="bg-white shadow-sm"
-                            onPress={() => navigate(SidebarRoutes.singleSubject.replace(":id", subjectId!))}
+                            onPress={() =>
+                                navigate(SidebarRoutes.singleSubject.replace(':id', subjectId!))
+                            }
                         >
                             <ArrowLeft className="h-5 w-5" />
                         </Button>
@@ -140,7 +167,8 @@ export default function TopicDetailPage() {
                         <Input
                             placeholder="Search question text..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                            onChange={(e) => handleSearch(e.target.value)}
+                            onClear={() => handleSearch('')}
                             startContent={<Search className="h-5 w-5 text-gray-400" />}
                             variant="flat"
                             size="lg"
@@ -174,8 +202,12 @@ export default function TopicDetailPage() {
                                 trigger: 'bg-white border-1 border-gray-100 shadow-sm',
                             }}
                         >
-                            <SelectItem key="most_recent" textValue="Newest">Most recent</SelectItem>
-                            <SelectItem key="oldest" textValue="Oldest">Oldest</SelectItem>
+                            <SelectItem key="most_recent" textValue="Newest">
+                                Most recent
+                            </SelectItem>
+                            <SelectItem key="oldest" textValue="Oldest">
+                                Oldest
+                            </SelectItem>
                         </Select>
                     </div>
                 </div>
@@ -189,51 +221,94 @@ export default function TopicDetailPage() {
                         <div className="col-span-3 text-right">Actions</div>
                     </div>
 
-                    {filteredQuestions.map((question, index) => (
-                        <div
-                            key={question.id}
-                            className={`flex flex-col md:grid md:grid-cols-12 gap-4 p-4 md:px-6 md:py-5 rounded-xl border border-gray-100 transition-all hover:shadow-md bg-white`}
-                        >
-                            {/* Mobile Top Row */}
-                            <div className="flex justify-between items-center md:col-span-1">
-                                <span className="flex items-center gap-2 text-xs font-bold text-gray-400 md:text-sm">
-                                    <HelpCircle className="h-3 w-3 md:hidden" />
-                                    Q{index + 1}
-                                </span>
-                                <Chip size="sm" variant="flat" className="md:hidden bg-gray-100 text-gray-600">
-                                    {topicName}
-                                </Chip>
-                            </div>
+                    {filteredQuestions.map((question, index) => {
+                        const isExpanded = expandedId === question.id;
+                        const hasRichContent = !!(question as any).question_content;
+                        const globalIndex = page * LIMIT + index + 1;
 
-                            {/* Question Text */}
-                            <div className="md:col-span-8">
-                                <p className="text-gray-900 font-medium line-clamp-3 md:line-clamp-2">
-                                    {question.question_text || 'No question text available'}
-                                </p>
-                            </div>
+                        return (
+                            <div
+                                key={question.id}
+                                className="flex flex-col md:grid md:grid-cols-12 gap-4 p-4 md:px-6 md:py-5 rounded-xl border border-gray-100 transition-all hover:shadow-md bg-white"
+                            >
+                                {/* Mobile top row */}
+                                <div className="flex justify-between items-center md:col-span-1">
+                                    <span className="flex items-center gap-2 text-xs font-bold text-gray-400 md:text-sm">
+                                        <HelpCircle className="h-3 w-3 md:hidden" />
+                                        Q{globalIndex}
+                                    </span>
+                                    <Chip
+                                        size="sm"
+                                        variant="flat"
+                                        className="md:hidden bg-gray-100 text-gray-600"
+                                    >
+                                        {topicName}
+                                    </Chip>
+                                </div>
 
-                            {/* Actions */}
-                            <div className="flex items-center gap-2 pt-3 border-t border-gray-50 md:border-none md:pt-0 md:col-span-3 md:justify-end">
-                                <Button
-                                    className="flex-1 md:flex-none bg-kidemia-secondary text-white"
-                                    size="sm"
-                                    radius="sm"
-                                    onPress={() => handleViewQuestion(question.id)}
-                                >
-                                    Edit Question
-                                </Button>
-                                <Button
-                                    isIconOnly
-                                    className="bg-red-50 text-red-600"
-                                    size="sm"
-                                    radius="sm"
-                                    onPress={() => handleDeleteQuestion(question.id)}
-                                >
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
+                                {/* Question content */}
+                                <div className="md:col-span-8">
+                                    {hasRichContent ? (
+                                        <div>
+                                            <div
+                                                className={`overflow-hidden transition-all ${isExpanded ? '' : 'max-h-16'
+                                                    }`}
+                                            >
+                                                <QuestionRenderer
+                                                    key={question.id}
+                                                    question_content={(question as any).question_content}
+                                                    question_text={question.question_text}
+                                                    className="text-gray-900 font-medium text-sm"
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    setExpandedId(isExpanded ? null : question.id)
+                                                }
+                                                className="mt-1 flex items-center gap-0.5 text-xs text-orange-500 hover:text-orange-600 font-medium"
+                                            >
+                                                {isExpanded ? 'Show less' : 'Show more'}
+                                                <ChevronDown
+                                                    size={12}
+                                                    className={`transition-transform ${isExpanded ? 'rotate-180' : ''
+                                                        }`}
+                                                />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <p
+                                            className="text-gray-900 font-medium line-clamp-3 md:line-clamp-2 text-sm"
+                                            title={question.question_text}
+                                        >
+                                            {question.question_text || 'No question text available'}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex items-center gap-2 pt-3 border-t border-gray-50 md:border-none md:pt-0 md:col-span-3 md:justify-end">
+                                    <Button
+                                        className="flex-1 md:flex-none bg-kidemia-secondary text-white"
+                                        size="sm"
+                                        radius="sm"
+                                        onPress={() => handleViewQuestion(question.id)}
+                                    >
+                                        Edit Question
+                                    </Button>
+                                    <Button
+                                        isIconOnly
+                                        className="bg-red-50 text-red-600"
+                                        size="sm"
+                                        radius="sm"
+                                        onPress={() => handleDeleteQuestion(question.id)}
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
 
                     {filteredQuestions.length === 0 && (
                         <div className="py-16 text-center bg-white rounded-xl border-2 border-dashed border-gray-100">
@@ -250,6 +325,43 @@ export default function TopicDetailPage() {
                         </div>
                     )}
                 </div>
+
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-between pt-2">
+                        <p className="text-sm text-gray-500">
+                            Showing {page * LIMIT + 1}–{Math.min((page + 1) * LIMIT, total)} of{' '}
+                            {total} questions
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="flat"
+                                size="sm"
+                                radius="sm"
+                                className="bg-white border border-gray-200 shadow-sm"
+                                startContent={<ArrowLeft className="h-4 w-4" />}
+                                isDisabled={!hasPrev}
+                                onPress={() => setPage((p) => p - 1)}
+                            >
+                                Prev
+                            </Button>
+                            <span className="text-sm font-medium text-gray-600 px-1">
+                                {page + 1} / {totalPages}
+                            </span>
+                            <Button
+                                variant="flat"
+                                size="sm"
+                                radius="sm"
+                                className="bg-white border border-gray-200 shadow-sm"
+                                endContent={<ArrowRight className="h-4 w-4" />}
+                                isDisabled={!hasNext}
+                                onPress={() => setPage((p) => p + 1)}
+                            >
+                                Next
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </section>
 
             <DeleteConfirmModal
