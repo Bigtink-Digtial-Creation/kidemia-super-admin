@@ -11,6 +11,7 @@ import {
     useClassroomAnalytics,
     useClassrooms,
 } from "../../hooks/useSchools";
+import QuestionRenderer from "../../components/editor/QuestionRenderer";
 
 interface AnalyticsViewProps {
     onModal: (m: ModalType) => void;
@@ -364,9 +365,11 @@ export function AnalyticsView({ onModal }: AnalyticsViewProps) {
                                                 className="flex items-center gap-3 p-2.5 rounded-xl bg-gray-50"
                                             >
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-xs text-gray-700 truncate">
-                                                        {q.question_text}
-                                                    </p>
+                                                    <QuestionRenderer
+                                                        question_content={q.question_content}
+                                                        question_text={q.question_text}
+                                                        className="text-base font-medium text-gray-900"
+                                                    />
                                                     <p className="text-xs text-gray-400 mt-0.5">
                                                         {q.total_answers} answers
                                                     </p>

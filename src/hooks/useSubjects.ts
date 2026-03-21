@@ -237,31 +237,38 @@ export const useDeleteTopic = () => {
 };
 
 // Questions Hook (for a specific topic)
-export const useQuestions = (topicId: string | undefined) => {
+export const useQuestions = (
+    topicId: string | undefined,
+    skip: number = 0,
+    limit: number = 20,
+) => {
     const {
         data: questionsResponse,
         isLoading,
         error,
         refetch,
     } = useQuery<QuestionListResponse>({
-        queryKey: [QueryKeys.questions, topicId],
+        queryKey: [QueryKeys.questions, topicId, skip, limit],
         queryFn: async () => {
             if (!topicId) throw new Error('Topic ID required');
             return ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(
                 undefined,
                 topicId,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                skip,
+                limit,
             );
         },
         enabled: !!topicId,
         staleTime: 1000 * 60 * 5,
     });
 
-    const questions = useMemo(() => {
-        return questionsResponse?.items || [];
-    }, [questionsResponse]);
-
     return {
-        questions,
+        questions: questionsResponse?.items ?? [],
+        total: questionsResponse?.total ?? 0,   // ← make sure your QuestionListResponse exposes this
         isLoading,
         error,
         refetch,

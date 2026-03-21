@@ -14,6 +14,8 @@ export type QuestionPublicResponse = {
   subject_id: string;
   topic_id: string;
   question_text: string;
+  question_content?: (Record<string, any> | null);
+  explanation_content?: (Record<string, any> | null);
   question_type: QuestionType;
   difficulty_level: DifficultyLevel;
   image_url?: (string | null);

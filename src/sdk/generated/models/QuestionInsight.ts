@@ -5,6 +5,7 @@
 export type QuestionInsight = {
   question_id: string;
   question_text: string;
+  question_content?: (string | null);
   correct_rate: number;
   total_answers: number;
   difficulty: (string | null);

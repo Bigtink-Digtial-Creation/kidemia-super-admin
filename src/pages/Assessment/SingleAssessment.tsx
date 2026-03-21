@@ -14,6 +14,7 @@ import BallSpinner from "../../components/Spinner/BallSpinner";
 import { useMemo, useState } from "react"; // Added useMemo
 import { formatDateToDDMMYYYY, getAssessmentStatusColor, getFullName2 } from "../../utils";
 import type { AttemptResponse } from "../../sdk/generated";
+import QuestionRenderer from "../../components/editor/QuestionRenderer";
 
 export default function SingleAssessment() {
   const { id } = useParams<{ id: string }>();
@@ -349,9 +350,14 @@ export default function SingleAssessment() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start justify-between gap-3 mb-2">
-                              <div
+                              {/* <div
                                 className="text-sm text-neutral-900 flex-1"
                                 dangerouslySetInnerHTML={{ __html: question.question_text }}
+                              /> */}
+                              <QuestionRenderer
+                                question_content={question.question_content}
+                                question_text={question.question_text}
+                                className="text-base font-medium text-gray-900"
                               />
                               <div className="flex items-center gap-2 flex-shrink-0">
                                 <Chip size="sm" variant="flat" color="primary">

@@ -13,10 +13,12 @@ import { useQuery } from "@tanstack/react-query";
 import { ApiSDK } from "../../../sdk";
 import { QueryKeys } from "../../../utils/queryKeys";
 import BallSpinner from "../../../components/Spinner/BallSpinner";
+import QuestionRenderer from "../../../components/editor/QuestionRenderer";
 
 export interface QuestionRow {
     id: string;
     question_text: string;
+    question_content?: Record<string, any> | null; // ← add
     difficulty: string;
     marks: number;
     topic_name?: string;
@@ -38,6 +40,7 @@ export default function QuestionsTable({
     onSelectionChange,
 }: QuestionsTableProps) {
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+    const [expandedId, setExpandedId] = useState<string | null>(null);
 
     const { data: questionRows = [], isLoading } = useQuery<QuestionRow[]>({
         queryKey: [QueryKeys.questionsById, subjectId, topicIds, filterMode],
@@ -46,35 +49,45 @@ export default function QuestionsTable({
                 let rows: QuestionRow[] = [];
 
                 if (filterMode === "by-subject" && subjectId) {
-                    const resp = await ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(subjectId);
+                    const resp =
+                        await ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(
+                            subjectId
+                        );
                     rows = (resp?.items ?? []).map((q) => ({
                         id: String(q.id),
                         question_text: q.question_text,
+                        question_content: q.question_content ?? null, // ← add
                         difficulty: q.difficulty_level,
                         marks: q.points ?? 1,
                         topic_name: q.topic?.name,
                     }));
-                }
-                else if (filterMode === "by-topic" && topicIds?.length) {
-                    const resp = await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(topicIds);
+                } else if (filterMode === "by-topic" && topicIds?.length) {
+                    const resp =
+                        await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
+                            topicIds
+                        );
                     const topics = resp?.topics ?? [];
                     rows = topics.flatMap((topic) =>
                         (topic.questions ?? []).map((q) => ({
-                            id: String(q.id), // Used q.id from API
+                            id: String(q.id),
                             question_text: q.question_text,
+                            question_content: (q as any).question_content ?? null, // ← add
                             difficulty: q.difficulty_level,
                             marks: 1,
                             topic_name: topic.topic_name,
                         }))
                     );
-                }
-                else if (filterMode === "manual") {
-                    const resp = await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost([]);
+                } else if (filterMode === "manual") {
+                    const resp =
+                        await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
+                            []
+                        );
                     const topics = resp?.topics ?? [];
                     rows = topics.flatMap((topic) =>
                         (topic.questions ?? []).map((q) => ({
-                            id: String(q.id), // Used q.id from API
+                            id: String(q.id),
                             question_text: q.question_text,
+                            question_content: (q as any).question_content ?? null, // ← add
                             difficulty: q.difficulty_level,
                             marks: 1,
                             topic_name: topic.topic_name,
@@ -86,7 +99,11 @@ export default function QuestionsTable({
             } catch (error: any) {
                 addToast({
                     title: "An error occurred",
-                    description: error?.body.message || error?.body?.detail || error?.message || "Network Error",
+                    description:
+                        error?.body?.message ||
+                        error?.body?.detail ||
+                        error?.message ||
+                        "Network Error",
                     color: "danger",
                 });
                 return [];
@@ -100,26 +117,23 @@ export default function QuestionsTable({
                     : true,
     });
 
+    // Search works against plain text — fast and doesn't require parsing JSON
     const filteredQuestions = useMemo(() => {
         if (!searchQuery.trim()) return questionRows;
         const query = searchQuery.toLowerCase();
-        return questionRows.filter((q) => q.question_text.toLowerCase().includes(query));
+        return questionRows.filter((q) =>
+            q.question_text.toLowerCase().includes(query)
+        );
     }, [questionRows, searchQuery]);
 
     const handleSelectionChange = (keys: any) => {
         let newSelectedKeys: Set<string>;
-
         if (keys === "all") {
-            // Select all currently filtered rows
             newSelectedKeys = new Set(filteredQuestions.map((q) => String(q.id)));
         } else {
-            // Convert selection to set of strings
             newSelectedKeys = new Set(Array.from(keys).map(String));
         }
-
         setSelectedKeys(newSelectedKeys);
-
-        // Find the full row data for the parent callback
         const selectedRows = filteredQuestions.filter((row) =>
             newSelectedKeys.has(String(row.id))
         );
@@ -131,6 +145,7 @@ export default function QuestionsTable({
             case "easy": return "success";
             case "medium": return "warning";
             case "hard": return "danger";
+            case "expert": return "secondary";
             default: return "default";
         }
     };
@@ -148,7 +163,12 @@ export default function QuestionsTable({
             <Table
                 aria-label="Questions table with selection"
                 selectionMode="multiple"
-                selectedKeys={selectedKeys.size === filteredQuestions.length && filteredQuestions.length > 0 ? "all" : selectedKeys}
+                selectedKeys={
+                    selectedKeys.size === filteredQuestions.length &&
+                        filteredQuestions.length > 0
+                        ? "all"
+                        : selectedKeys
+                }
                 onSelectionChange={handleSelectionChange}
                 shadow="none"
                 radius="none"
@@ -158,7 +178,7 @@ export default function QuestionsTable({
                     table: "min-w-full",
                     thead: "[&>tr]:first:rounded-none",
                     th: "bg-gray-50 text-gray-600 border-b border-gray-100 py-4",
-                    td: "py-3 border-b border-gray-50",
+                    td: "py-3 border-b border-gray-50 align-top",
                 }}
             >
                 <TableHeader>
@@ -167,33 +187,92 @@ export default function QuestionsTable({
                     <TableColumn>DIFFICULTY</TableColumn>
                     <TableColumn>POINTS</TableColumn>
                 </TableHeader>
+
                 <TableBody emptyContent="No questions found">
-                    {filteredQuestions.map((row) => (
-                        <TableRow key={row.id} className="hover:bg-gray-50/50 transition-colors">
-                            <TableCell>
-                                <div className="max-w-md truncate" title={row.question_text}>
-                                    {row.question_text}
-                                </div>
-                            </TableCell>
-                            <TableCell>{row.topic_name || "N/A"}</TableCell>
-                            <TableCell>
-                                <Chip size="sm" variant="flat" color={getDifficultyColor(row.difficulty)}>
-                                    {row.difficulty}
-                                </Chip>
-                            </TableCell>
-                            <TableCell className="font-medium text-gray-700">{row.marks}</TableCell>
-                        </TableRow>
-                    ))}
+                    {filteredQuestions.map((row) => {
+                        const isExpanded = expandedId === row.id;
+                        const hasRichContent = !!row.question_content;
+
+                        return (
+                            <TableRow
+                                key={row.id}
+                                className="hover:bg-gray-50/50 transition-colors"
+                            >
+                                <TableCell>
+                                    <div className="max-w-md">
+                                        {hasRichContent ? (
+                                            // Rich content — use renderer, clamp to 2 lines when collapsed
+                                            <div>
+                                                <div
+                                                    className={`overflow-hidden transition-all ${isExpanded ? "" : "max-h-12"
+                                                        }`}
+                                                >
+                                                    <QuestionRenderer
+                                                        key={row.id}
+                                                        question_content={row.question_content}
+                                                        question_text={row.question_text}
+                                                        className="text-sm text-gray-800"
+                                                    />
+                                                </div>
+                                                {/* Only show expand if content is likely taller than 2 lines */}
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation(); // don't trigger row selection
+                                                        setExpandedId(isExpanded ? null : row.id);
+                                                    }}
+                                                    className="mt-0.5 text-xs text-orange-500 hover:text-orange-600 font-medium"
+                                                >
+                                                    {isExpanded ? "Show less" : "Show more"}
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            // Plain text — simple truncation, title tooltip for full text
+                                            <p
+                                                className="text-sm text-gray-800 line-clamp-2 cursor-default"
+                                                title={row.question_text}
+                                            >
+                                                {row.question_text}
+                                            </p>
+                                        )}
+                                    </div>
+                                </TableCell>
+
+                                <TableCell>
+                                    <span className="text-sm text-gray-500">
+                                        {row.topic_name || "—"}
+                                    </span>
+                                </TableCell>
+
+                                <TableCell>
+                                    <Chip
+                                        size="sm"
+                                        variant="flat"
+                                        color={getDifficultyColor(row.difficulty)}
+                                    >
+                                        {row.difficulty}
+                                    </Chip>
+                                </TableCell>
+
+                                <TableCell>
+                                    <span className="font-medium text-gray-700">{row.marks}</span>
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
 
+            {/* Footer stats */}
             <div className="mt-4 flex items-center gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
                 <div>
-                    Total: <span className="text-gray-900">{filteredQuestions.length}</span>
+                    Total:{" "}
+                    <span className="text-gray-900">{filteredQuestions.length}</span>
                 </div>
                 <div className="w-px h-3 bg-gray-200" />
                 <div>
-                    Selected: <span className="text-kidemia-secondary">{selectedKeys.size}</span>
+                    Selected:{" "}
+                    <span className="text-kidemia-secondary">{selectedKeys.size}</span>
                 </div>
                 <div className="w-px h-3 bg-gray-200" />
                 <div>

@@ -164,7 +164,6 @@ export const router = createBrowserRouter([
             ],
           },
 
-          // ── Institution dashboard ─────────────────────────────
           {
             path: "institution/:institutionId",
             element: <InstitutionRoute />,

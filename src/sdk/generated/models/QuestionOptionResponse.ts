@@ -10,6 +10,7 @@ export type QuestionOptionResponse = {
   updated_at: string;
   id: string;
   option_text: string;
+  option_content?: (Record<string, any> | null);
   option_order: number;
   is_correct?: boolean;
   explanation?: (string | null);
