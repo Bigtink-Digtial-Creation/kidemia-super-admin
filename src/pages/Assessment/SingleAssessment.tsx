@@ -389,10 +389,12 @@ export default function SingleAssessment() {
                                     <span className="font-medium text-neutral-600 flex-shrink-0">
                                       {String.fromCharCode(65 + optIndex)}.
                                     </span>
-                                    <span
-                                      className="text-neutral-700 flex-1"
-                                      dangerouslySetInnerHTML={{ __html: option.option_text }}
+                                    <QuestionRenderer
+                                      question_content={option.option_content}
+                                      question_text={option.option_text}
+                                      className="text-sm text-gray-700"
                                     />
+
                                     {option.is_correct && (
                                       <FaCheck className="w-3 h-3 text-green-600 flex-shrink-0 mt-0.5" />
                                     )}
