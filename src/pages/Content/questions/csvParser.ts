@@ -103,6 +103,7 @@ export const parseCsvFile = async (
             points,
             time_limit_seconds,
             explanation,
+            explanation_content: textToTiptapJson(explanation),
             options: [],
             audio_url,
             image_url,
