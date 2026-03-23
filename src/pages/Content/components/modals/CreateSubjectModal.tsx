@@ -73,7 +73,7 @@ export const CreateSubjectModal: React.FC<CreateSubjectModalProps> = ({
         } catch (error: any) {
             addToast({
                 title: 'Error',
-                description: error.body?.detail || error.body?.message || error.message || 'Failed to create subject',
+                description: error.body?.message || error.body?.detail || error.message || 'Failed to create subject',
                 color: 'danger',
             });
         }
