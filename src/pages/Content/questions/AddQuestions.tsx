@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, FileUp } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { QuestionLocal, Topic } from './question.types';
 import { QueryKeys } from '../../../utils/queryKeys';
 import { ApiSDK } from '../../../sdk';
@@ -56,6 +56,7 @@ export default function QuestionCreationPage() {
 
   const topics: Topic[] = topicsData?.items || [];
   const availableTags = tagsData || [];
+  const queryClient = useQueryClient();
 
   const saveQuestionsMutation = useMutation({
     mutationFn: (payload: QuestionCreate[]) =>
@@ -63,6 +64,8 @@ export default function QuestionCreationPage() {
     onSuccess: () => {
       addToast({ title: 'Questions saved successfully!', color: 'success' });
       setTimeout(() => navigate(SidebarRoutes.singleSubject.replace(':id', id!)), 1000);
+      queryClient.invalidateQueries({ queryKey: [QueryKeys.subjectTopics] });
+
     },
     onError: () => {
       addToast({ title: 'Failed to save questions', color: 'danger' });
