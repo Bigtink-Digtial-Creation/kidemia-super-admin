@@ -144,7 +144,7 @@ export const router = createBrowserRouter([
 
               // Administrator only
               {
-                element: <RoleRoute allowedRoles={["super_admin"]} />,
+                element: <RoleRoute allowedRoles={["super_admin", 'school_manager']} />,
                 children: [
                   { path: SidebarRoutes.users, element: <UserManagementPage /> },
                   { path: SidebarRoutes.roles, element: <RolesPage /> },
