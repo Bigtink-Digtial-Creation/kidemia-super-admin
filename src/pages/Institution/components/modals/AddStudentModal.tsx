@@ -7,6 +7,7 @@ import { useAddStudent, useClassrooms, useLinkStudentAccount } from "../../../..
 import { ApiSDK } from "../../../../sdk";
 import type { UserType } from "../../../../sdk/generated";
 import { PiMagicWand } from "react-icons/pi";
+import { useSubjectCategories } from "../../../../hooks/useCategories";
 
 type Step = "lookup" | "link-confirm" | "create-form";
 
@@ -16,8 +17,8 @@ interface LookupResult {
     full_name?: string;
     email?: string;
     has_institution: boolean;
-    can_link: boolean;  // false if already in another institution
-    message?: string;   // error message if can't link
+    can_link: boolean;
+    message?: string;
 }
 
 interface Form {
@@ -30,11 +31,12 @@ interface Form {
     classroom_id: string;
     send_invite: boolean;
     password: string;
+    category_name: string;
 }
 
 export function AddStudentModal({ onClose }: { onClose: () => void }) {
     const [step, setStep] = useState<Step>("lookup");
-    const [query, setQuery] = useState(""); // email or student code
+    const [query, setQuery] = useState("");
     const [lookupResult, setLookupResult] = useState<LookupResult | null>(null);
     const [isLooking, setIsLooking] = useState(false);
     const [selectedClassId, setSelectedClassId] = useState("");
@@ -49,7 +51,9 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
         classroom_id: "",
         send_invite: true,
         password: "",
+        category_name: "",
     });
+
     const generatePassword = (length = 8) => {
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
         let pass = "";
@@ -60,13 +64,13 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
     };
 
     const { data: classrooms } = useClassrooms();
+    const { data: categories } = useSubjectCategories();
     const addStudent = useAddStudent();
-    const linkStudentAccount = useLinkStudentAccount()
+    const linkStudentAccount = useLinkStudentAccount();
 
     const update = (key: keyof Form, value: string | boolean) =>
         setForm((f) => ({ ...f, [key]: value }));
 
-    // Step 1 — lookup
     const handleLookup = async () => {
         if (!query.trim()) return;
         setIsLooking(true);
@@ -78,16 +82,13 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
             setLookupResult(result);
 
             if (result.found && result.can_link) {
-                // Existing student, safe to link
                 setStep("link-confirm");
             } else if (!result.found) {
-                // Pre-fill email if query looks like an email
                 if (query.includes("@")) {
                     setForm((f) => ({ ...f, email: query.trim() }));
                 }
                 setStep("create-form");
             }
-            // If found but can't link, we stay on lookup and show the error
         } catch (err: any) {
             addToast({
                 title: "Lookup failed",
@@ -99,15 +100,14 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
         }
     };
 
-    // Step 2a — link existing student
     const handleLink = () => {
         if (!lookupResult?.student_id) return;
         linkStudentAccount.mutate(
             {
                 data: {
-                    student_id: lookupResult.student_id, // backend detects this = link, not create
-                    classroom_id: selectedClassId
-                }
+                    student_id: lookupResult.student_id,
+                    classroom_id: selectedClassId,
+                },
             },
             {
                 onSuccess: () => {
@@ -128,7 +128,6 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
         );
     };
 
-    // Step 2b — create new student
     const handleCreate = () => {
         addStudent.mutate(
             {
@@ -140,8 +139,9 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
                     date_of_birth: form.date_of_birth || undefined,
                     guardian_email: form.guardian_email || undefined,
                     classroom_id: form.classroom_id || undefined,
-                    user_type: 'student' as UserType,
-                    password: form.password
+                    category: form.category_name,
+                    user_type: "student" as UserType,
+                    password: form.password,
                 },
                 sendInvite: form.send_invite,
             },
@@ -184,6 +184,7 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
         </div>
     );
 
+
     if (step === "lookup") {
         return (
             <Modal
@@ -217,14 +218,13 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
                             value={query}
                             onChange={(e) => {
                                 setQuery(e.target.value);
-                                setLookupResult(null); // clear result on new input
+                                setLookupResult(null);
                             }}
                             onKeyDown={(e) => e.key === "Enter" && handleLookup()}
                             className="w-full pl-9 pr-4 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
                         />
                     </div>
 
-                    {/* Lookup result feedback */}
                     {lookupResult && !lookupResult.found && (
                         <div className="flex items-start gap-2.5 bg-blue-50 rounded-xl p-3 text-xs text-blue-700">
                             <AlertCircle size={14} className="mt-0.5 flex-shrink-0" />
@@ -267,7 +267,6 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
         );
     }
 
-    // ── Render: Link confirm step ─────────────────────────────────
     if (step === "link-confirm" && lookupResult) {
         return (
             <Modal
@@ -298,7 +297,6 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
                 }
             >
                 <div className="space-y-4">
-                    {/* Student card */}
                     <div className="flex items-center gap-3 bg-green-50 rounded-xl p-4 border border-green-100">
                         <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
                             <CheckCircle size={18} className="text-green-600" />
@@ -476,7 +474,43 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
                     />
                 </div>
 
-                {classroomSelect(form.classroom_id, (v) => update("classroom_id", v))}
+                {/* Category and Classroom side by side */}
+                <div className="grid grid-cols-2 gap-3">
+                    <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">
+                            Category *
+                        </label>
+                        <select
+                            value={form.category_name}
+                            onChange={(e) => update("category_name", e.target.value)}
+                            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-300 bg-white"
+                        >
+                            <option value="">Select Category</option>
+                            {categories?.filter((c) => c.is_active).map((c) => (
+                                <option key={c.id} value={c.category_name}>
+                                    {c.display_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div>
+                        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide block mb-1.5">
+                            Classroom
+                        </label>
+                        <select
+                            value={form.classroom_id}
+                            onChange={(e) => update("classroom_id", e.target.value)}
+                            className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-300 bg-white"
+                        >
+                            <option value="">Assign later</option>
+                            {classrooms?.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                    {c.name} — {c.level}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
 
                 <label className="flex items-center gap-3 cursor-pointer select-none pt-1">
                     <div
