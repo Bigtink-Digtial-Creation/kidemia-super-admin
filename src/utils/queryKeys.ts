@@ -32,6 +32,8 @@ export const QueryKeys = {
   assessmentAttempts: "assessmentAttempts",
   attemptDetail: "attemptDetail",
 
+  assessmentLeaderboard: "assessmentLeaderboard",
+
   plans: "plans",
   singlePlan: "singlePlan",
   promotions: "promotions",
