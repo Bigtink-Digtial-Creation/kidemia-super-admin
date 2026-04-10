@@ -8,6 +8,7 @@ import { ApiSDK } from "../../../../sdk";
 import type { UserType } from "../../../../sdk/generated";
 import { PiMagicWand } from "react-icons/pi";
 import { useSubjectCategories } from "../../../../hooks/useCategories";
+import { generatePassword } from "../../../../utils";
 
 type Step = "lookup" | "link-confirm" | "create-form";
 
@@ -54,14 +55,7 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
         category_name: "",
     });
 
-    const generatePassword = (length = 8) => {
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
-        let pass = "";
-        for (let i = 0; i < length; i++) {
-            pass += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return pass;
-    };
+
 
     const { data: classrooms } = useClassrooms();
     const { data: categories } = useSubjectCategories();
@@ -120,7 +114,7 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
                 onError: (err: any) => {
                     addToast({
                         title: "Failed to link student",
-                        description: err?.body?.detail || err?.message,
+                        description: err?.body?.message || err?.body?.detail || err?.message,
                         color: "danger",
                     });
                 },
@@ -154,7 +148,11 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
                     onClose();
                 },
                 onError: (err: any) => {
-                    console.error("422 detail:", JSON.stringify(err?.body, null, 2));
+                    addToast({
+                        title: "Failed to add student",
+                        description: err?.body?.detail || err?.message,
+                        color: "danger",
+                    });
                 },
             }
         );
