@@ -154,11 +154,7 @@ export function AddStudentModal({ onClose }: { onClose: () => void }) {
                     onClose();
                 },
                 onError: (err: any) => {
-                    addToast({
-                        title: "Failed to add student",
-                        description: err?.body?.detail || err?.message,
-                        color: "danger",
-                    });
+                    console.error("422 detail:", JSON.stringify(err?.body, null, 2));
                 },
             }
         );
