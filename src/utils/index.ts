@@ -121,3 +121,21 @@ export const getAuthHeaders = async () => {
     ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
   };
 };
+
+
+export const generatePassword = (length = 8) => {
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const digits = "0123456789";
+  const special = "!@#$%^&*()_+";
+  const all = letters + digits + special;
+
+  // Guarantee at least one digit
+  let pass = digits.charAt(Math.floor(Math.random() * digits.length));
+
+  for (let i = 1; i < length; i++) {
+    pass += all.charAt(Math.floor(Math.random() * all.length));
+  }
+
+  // Shuffle so the guaranteed digit isn't always first
+  return pass.split("").sort(() => Math.random() - 0.5).join("");
+};
