@@ -12,5 +12,6 @@ export type AssessmentLeaderboardEntry = {
   attempt_number: number;
   submitted_at?: (string | null);
   is_current_user?: boolean;
+  percentile?: (number | null);
 };
 

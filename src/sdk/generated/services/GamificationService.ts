@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AssessmentLeaderboardResponse } from '../models/AssessmentLeaderboardResponse';
 import type { GamificationProfileResponse } from '../models/GamificationProfileResponse';
 import type { src__domains__gamification__schemas__schemas__LeaderboardResponse } from '../models/src__domains__gamification__schemas__schemas__LeaderboardResponse';
 import type { StudentAchievementResponse } from '../models/StudentAchievementResponse';
@@ -121,6 +122,37 @@ export class GamificationService {
     return __request(OpenAPI, {
       method: 'GET',
       url: '/api/v1/gamification/stats/summary',
+    });
+  }
+  /**
+   * Get Assessment Rankings
+   * Public leaderboard for a specific assessment.
+   * Shows all submitted attempts ranked by highest score.
+   * The current user's rank is included even if they're outside the page.
+   * @param assessmentId
+   * @param limit
+   * @param offset
+   * @returns AssessmentLeaderboardResponse Successful Response
+   * @throws ApiError
+   */
+  public static getAssessmentRankingsApiV1GamificationAssessmentIdRankingGet(
+    assessmentId: string,
+    limit: number = 100,
+    offset?: number,
+  ): CancelablePromise<AssessmentLeaderboardResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/gamification/{assessment_id}/ranking',
+      path: {
+        'assessment_id': assessmentId,
+      },
+      query: {
+        'limit': limit,
+        'offset': offset,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
     });
   }
 }

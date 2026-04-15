@@ -214,37 +214,6 @@ export class AdminGamificationService {
     });
   }
   /**
-   * Get Assessment Leaderboard
-   * Public leaderboard for a specific assessment.
-   * Shows all submitted attempts ranked by highest score.
-   * The current user's rank is included even if they're outside the page.
-   * @param assessmentId
-   * @param limit
-   * @param offset
-   * @returns AssessmentLeaderboardResponse Successful Response
-   * @throws ApiError
-   */
-  public static getAssessmentLeaderboardApiV1AdminGamificationAssessmentIdLeaderboardGet(
-    assessmentId: string,
-    limit: number = 100,
-    offset?: number,
-  ): CancelablePromise<AssessmentLeaderboardResponse> {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/admin/gamification/{assessment_id}/leaderboard',
-      path: {
-        'assessment_id': assessmentId,
-      },
-      query: {
-        'limit': limit,
-        'offset': offset,
-      },
-      errors: {
-        422: `Validation Error`,
-      },
-    });
-  }
-  /**
    * Get Assessment Leaderboard Admin
    * @param assessmentId
    * @param limit
