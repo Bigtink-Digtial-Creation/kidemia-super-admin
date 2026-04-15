@@ -25,7 +25,7 @@ export type StudentWithClassroomResponse = {
   student_code?: (string | null);
   registration_date: string;
   category?: (CategoryConfigBase | null);
-  path: string;
+  path?: (string | null);
   user: UserRead;
   classroom?: (ClassroomMinimal | null);
 };

@@ -5,6 +5,7 @@
 import type { AchievementCreate } from '../models/AchievementCreate';
 import type { AchievementResponse } from '../models/AchievementResponse';
 import type { AchievementUpdate } from '../models/AchievementUpdate';
+import type { AssessmentLeaderboardResponse } from '../models/AssessmentLeaderboardResponse';
 import type { BadgeCreate } from '../models/BadgeCreate';
 import type { BadgeResponse } from '../models/BadgeResponse';
 import type { BadgeUpdate } from '../models/BadgeUpdate';
@@ -206,6 +207,34 @@ export class AdminGamificationService {
       url: '/api/v1/admin/gamification/achievements/{achievement_id}',
       path: {
         'achievement_id': achievementId,
+      },
+      errors: {
+        422: `Validation Error`,
+      },
+    });
+  }
+  /**
+   * Get Assessment Leaderboard Admin
+   * @param assessmentId
+   * @param limit
+   * @param offset
+   * @returns AssessmentLeaderboardResponse Successful Response
+   * @throws ApiError
+   */
+  public static getAssessmentLeaderboardAdminApiV1AdminGamificationAssessmentIdLeaderboardAdminGet(
+    assessmentId: string,
+    limit: number = 100,
+    offset?: number,
+  ): CancelablePromise<AssessmentLeaderboardResponse> {
+    return __request(OpenAPI, {
+      method: 'GET',
+      url: '/api/v1/admin/gamification/{assessment_id}/leaderboard/admin',
+      path: {
+        'assessment_id': assessmentId,
+      },
+      query: {
+        'limit': limit,
+        'offset': offset,
       },
       errors: {
         422: `Validation Error`,

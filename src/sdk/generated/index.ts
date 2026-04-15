@@ -24,6 +24,8 @@ export type { AssessmentCategory } from './models/AssessmentCategory';
 export type { AssessmentCreate } from './models/AssessmentCreate';
 export type { AssessmentDetailResponse } from './models/AssessmentDetailResponse';
 export type { AssessmentInfo } from './models/AssessmentInfo';
+export type { AssessmentLeaderboardEntry } from './models/AssessmentLeaderboardEntry';
+export type { AssessmentLeaderboardResponse } from './models/AssessmentLeaderboardResponse';
 export type { AssessmentListResponse } from './models/AssessmentListResponse';
 export type { AssessmentPerformanceMetrics } from './models/AssessmentPerformanceMetrics';
 export type { AssessmentResponse } from './models/AssessmentResponse';

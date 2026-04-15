@@ -5,7 +5,7 @@
 export type InstitutionAssessmentResponse = {
   id: string;
   title: string;
-  subject_name: string;
+  subject_name?: (string | null);
   total_questions: number;
   duration_minutes: number;
   status: string;

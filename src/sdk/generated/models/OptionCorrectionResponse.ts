@@ -5,6 +5,7 @@
 export type OptionCorrectionResponse = {
   id: string;
   option_text: string;
+  option_content?: (string | null);
   is_correct: boolean;
   selected: boolean;
   image_url?: (string | null);

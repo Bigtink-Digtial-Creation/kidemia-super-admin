@@ -5,11 +5,13 @@
 export type QuestionCorrectionResponse = {
   id: string;
   question_text: string;
+  question_content?: (string | null);
   question_type: string;
   image_url?: (string | null);
   audio_url?: (string | null);
   video_url?: (string | null);
   explanation?: (string | null);
+  explanation_content?: (string | null);
   points?: (number | null);
 };
 
