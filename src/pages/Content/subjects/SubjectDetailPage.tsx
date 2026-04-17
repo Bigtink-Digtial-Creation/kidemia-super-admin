@@ -8,7 +8,7 @@ import {
     Chip,
     addToast,
 } from '@heroui/react';
-import { ArrowLeft, Plus, Search, SlidersHorizontal, Trash2, Eye } from 'lucide-react';
+import { ArrowLeft, Plus, Search, SlidersHorizontal, Trash2, Eye, Pencil } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router';
 
 import { useDeleteTopic, useSubject, useTopics } from '../../../hooks/useSubjects';
@@ -16,6 +16,7 @@ import BallSpinner from '../../../components/Spinner/BallSpinner';
 import { CreateTopicModal } from '../components/modals/CreateTopicModal';
 import { DeleteConfirmModal } from '../components/modals/DeleteConfirmModal';
 import { SidebarRoutes } from '../../../routes';
+import { EditTopicModal } from '../components/modals/EditTopicModal';
 
 export default function SubjectDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -23,10 +24,12 @@ export default function SubjectDetailPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteTopicId, setDeleteTopicId] = useState<string>('');
     const [deleteTopicName, setDeleteTopicName] = useState<string>('');
+    const [editTopic, setEditTopic] = useState<{ id: string; name: string; code: string; description?: string | null } | null>(null);
 
     const createTopicModal = useDisclosure();
     const editSubjectModal = useDisclosure();
     const deleteTopicModal = useDisclosure();
+    const editTopicModal = useDisclosure();
 
     const { subject, isLoading: subjectLoading } = useSubject(id);
     const { topics } = useTopics(id);
@@ -48,6 +51,11 @@ export default function SubjectDetailPage() {
                 },
             }
         );
+    };
+
+    const handleEditTopic = (topic: { id: string; name: string; code: string; description?: string | null }) => {
+        setEditTopic(topic);
+        editTopicModal.onOpen();
     };
 
     const handleDeleteTopic = (topicId: string, topicName: string) => {
@@ -202,9 +210,23 @@ export default function SubjectDetailPage() {
 
                             {/* Content Row */}
                             <div className="md:col-span-6 space-y-1">
-                                <h3 className="font-bold text-gray-900 group-hover:text-kidemia-secondary transition-colors">
-                                    {topic.name}
-                                </h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="font-bold text-gray-900 group-hover:text-kidemia-secondary transition-colors">
+                                        {topic.name}
+                                    </h3>
+                                    <button
+                                        onClick={() => handleEditTopic({
+                                            id: topic.id,
+                                            name: topic.name,
+                                            code: topic.code,
+                                            description: topic.description,
+                                        })}
+                                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-kidemia-secondary"
+                                        title="Edit topic"
+                                    >
+                                        <Pencil className="h-3.5 w-3.5" />
+                                    </button>
+                                </div>
                                 <p className="text-sm text-gray-500 line-clamp-2 md:line-clamp-1">
                                     {topic.description || 'No description provided for this topic.'}
                                 </p>
@@ -249,12 +271,19 @@ export default function SubjectDetailPage() {
                 </div>
             </section>
 
-            {/* Modals remain same as they are already mobile-responsive in HeroUI */}
             <CreateTopicModal
                 isOpen={createTopicModal.isOpen}
                 onClose={createTopicModal.onClose}
                 subjectId={id}
                 subjectName={subject.name}
+            />
+            <EditTopicModal
+                isOpen={editTopicModal.isOpen}
+                onClose={() => {
+                    editTopicModal.onClose();
+                    setEditTopic(null);
+                }}
+                topic={editTopic}
             />
             <DeleteConfirmModal
                 isOpen={deleteTopicModal.isOpen}

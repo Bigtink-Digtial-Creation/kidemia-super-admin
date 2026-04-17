@@ -4,7 +4,7 @@ import { atomWithStorage } from 'jotai/utils';
 import { useMemo, useState } from 'react';
 import { ApiSDK } from '../sdk';
 import { QueryKeys } from '../utils/queryKeys';
-import type { QuestionListResponse, SubjectCreate, SubjectListResponse, SubjectResponse, TopicCreate, TopicListResponse } from '../sdk/generated';
+import type { QuestionListResponse, SubjectCreate, SubjectListResponse, SubjectResponse, TopicCreate, TopicListResponse, TopicUpdate } from '../sdk/generated';
 
 // Atoms for state management
 export const subjectFiltersAtom = atomWithStorage('subject-filters', {
@@ -216,6 +216,24 @@ export const useCreateTopic = () => {
             queryClient.invalidateQueries({ queryKey: [QueryKeys.subjectTopics] });
             queryClient.invalidateQueries({
                 queryKey: [QueryKeys.singleSubject, variables.subject_id],
+            });
+        },
+    });
+};
+
+
+// update Topic Hook
+export const useUpdateTopic = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({ topicId, data }: { topicId: string; data: TopicUpdate }) => {
+            return ApiSDK.SubjectTopicsService.updateTopicApiV1TopicsTopicIdPut(topicId, data);
+        },
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: [QueryKeys.subjectTopics] });
+            queryClient.invalidateQueries({
+                queryKey: [QueryKeys.subjectTopics, variables.topicId],
             });
         },
     });
