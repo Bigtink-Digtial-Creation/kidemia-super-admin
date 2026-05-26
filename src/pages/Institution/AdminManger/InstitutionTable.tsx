@@ -52,6 +52,7 @@ function formatDate(iso: string): { absolute: string; relative: string } {
 }
 
 
+
 export default function InstitutionTable({
     institutions,
     onSelect,
