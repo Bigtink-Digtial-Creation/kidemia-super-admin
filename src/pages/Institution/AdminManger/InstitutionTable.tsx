@@ -11,6 +11,7 @@ import type {
     InstitutionStatusUpdate,
 } from "../../../sdk/generated";
 import { TIERS } from "../utils";
+import { formatDate } from "../../../utils";
 
 interface InstitutionTableProps {
     institutions: InstitutionAdminListItem[];
@@ -22,33 +23,6 @@ interface InstitutionTableProps {
         id: string;
         data: InstitutionStatusUpdate;
     }) => void;
-}
-
-
-function formatDate(iso: string): { absolute: string; relative: string } {
-    const date = new Date(iso);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / 86_400_000);
-    const diffWeeks = Math.floor(diffDays / 7);
-    const diffMonths = Math.floor(diffDays / 30.44);
-    const diffYears = Math.floor(diffDays / 365.25);
-
-    let relative: string;
-    if (diffDays < 1) relative = "Today";
-    else if (diffDays === 1) relative = "Yesterday";
-    else if (diffDays < 7) relative = `${diffDays}d ago`;
-    else if (diffDays < 30) relative = `${diffWeeks}w ago`;
-    else if (diffMonths < 12) relative = `${diffMonths}mo ago`;
-    else relative = `${diffYears}yr${diffYears > 1 ? "s" : ""} ago`;
-
-    const absolute = date.toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-    });
-
-    return { absolute, relative };
 }
 
 
@@ -264,7 +238,7 @@ export default function InstitutionTable({
                                         {inst.is_public ? "Public" : "Private"}
                                     </span>
                                     <span className="text-xs text-gray-500 font-medium">
-                                        6 students
+                                        {inst.total_students.toLocaleString()} students
                                     </span>
                                     <span className="text-[10px] text-gray-400 ml-auto">{relative}</span>
                                 </div>
