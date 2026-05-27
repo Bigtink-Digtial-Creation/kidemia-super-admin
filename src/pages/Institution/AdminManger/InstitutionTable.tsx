@@ -264,7 +264,7 @@ export default function InstitutionTable({
                                         {inst.is_public ? "Public" : "Private"}
                                     </span>
                                     <span className="text-xs text-gray-500 font-medium">
-                                        {inst.total_students.toLocaleString()} students
+                                        6 students
                                     </span>
                                     <span className="text-[10px] text-gray-400 ml-auto">{relative}</span>
                                 </div>
