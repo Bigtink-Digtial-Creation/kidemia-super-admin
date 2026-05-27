@@ -61,9 +61,6 @@ export default function AdminInstitutionManager() {
         return matchSearch && matchTier && matchPublic;
     });
 
-    console.log("Institutions:", institutions);
-    console.log("Filters:", filters);
-
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
 

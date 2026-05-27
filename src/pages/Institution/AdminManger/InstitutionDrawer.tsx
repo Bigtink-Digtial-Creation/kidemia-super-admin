@@ -5,6 +5,7 @@ import type { InstitutionAdminListItem, InstitutionStatusUpdate } from "../../..
 import { useVerifyInstitution, useChangeInstitutionTier } from "../../../hooks/useInstitutions";
 import { addToast } from "@heroui/react";
 import { useState } from "react";
+import { formatDate } from "../../../utils";
 
 interface InstitutionDrawerProps {
     institution: InstitutionAdminListItem;
@@ -19,6 +20,9 @@ export function InstitutionDrawer({ institution: inst, onClose, onToggleAccess }
 
     const verifyInstitution = useVerifyInstitution();
     const changeTier = useChangeInstitutionTier();
+
+    const { absolute } = formatDate(inst.created_at);
+
 
     const handleVerify = async () => {
         try {
@@ -118,7 +122,7 @@ export function InstitutionDrawer({ institution: inst, onClose, onToggleAccess }
                         {[
                             { icon: MapPin, text: [inst.city, inst.state, inst.country].filter(Boolean).join(", ") || "—" },
                             { icon: Mail, text: inst.owner_email },
-                            { icon: Calendar, text: `Onboarded ${inst.created_at}` },
+                            { icon: Calendar, text: `Onboarded ${absolute}` },
                         ].map(({ icon: Icon, text }, i) => (
                             <div key={i} className="flex items-center gap-3 text-sm text-gray-600 min-w-0">
                                 <Icon size={14} className="text-gray-400 flex-shrink-0" />
