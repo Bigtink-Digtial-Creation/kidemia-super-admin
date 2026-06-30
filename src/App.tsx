@@ -15,7 +15,7 @@ import DashboardLayout from "./layouts/Dashboard.layout";
 import LoginPage from "./pages/Auth/Login";
 import ForgotPasswordPage from "./pages/Auth/ForgotPassword";
 import ChangePasswordPage from "./pages/Auth/ChangePassword";
-import SignUpPage from "./pages/Auth/SignUp";
+// import SignUpPage from "./pages/Auth/SignUp";
 import ResetPasswordPage from "./pages/Auth/Password/ResetPassword";
 import VerifyEmailPage from "./pages/Auth/Password/VerifyEmail";
 import EmailVerificationRequiredPage from "./pages/Auth/Password/EmailVerificationRequired";
@@ -83,7 +83,7 @@ export const router = createBrowserRouter([
               { path: AuthRoutes.forgotPassword, element: <ForgotPasswordPage /> },
               { path: AuthRoutes.changePassword, element: <ChangePasswordPage /> },
               { path: AuthRoutes.resetPassword, element: <ResetPasswordPage /> },
-              { path: AuthRoutes.signup, element: <SignUpPage /> },
+              // { path: AuthRoutes.signup, element: <SignUpPage /> },
               { path: AuthRoutes.verifyEmail, element: <VerifyEmailPage /> },
             ],
           },

@@ -196,7 +196,7 @@ export default function LoginPage() {
         </div>
       </Form>
 
-      <div className="w-full">
+      {/* <div className="w-full">
         <p className="text-base text-kidemia-black font-medium text-center">
           I don't have an account{" "}
           <Link
@@ -206,7 +206,7 @@ export default function LoginPage() {
             Sign Up
           </Link>
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }
