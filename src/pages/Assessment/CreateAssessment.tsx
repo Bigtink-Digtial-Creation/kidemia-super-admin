@@ -58,6 +58,7 @@ export default function CreateAssessment() {
   const qc = useQueryClient();
 
   const [allowCrossSubject, setAllowCrossSubject] = useState(false);
+  const [crossSubjectIds, setCrossSubjectIds] = useState<string[]>([]);
 
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
@@ -130,6 +131,16 @@ export default function CreateAssessment() {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  const handleCrossSubjectToggle = (on: boolean) => {
+    setAllowCrossSubject(on);
+    if (on) {
+      setCrossSubjectIds(subjectId ? [subjectId] : []);
+    } else {
+      setCrossSubjectIds([]);
+    }
+    setSelectedQuestionIds([]); // avoid keeping stale picks from a different pool
+  };
 
   const { data: categories = [] } = useQuery({
     queryKey: [QueryKeys.assessmentCategories],
@@ -595,12 +606,30 @@ export default function CreateAssessment() {
                 <Switch
                   size="sm"
                   isSelected={allowCrossSubject}
-                  onValueChange={setAllowCrossSubject}
+                  onValueChange={handleCrossSubjectToggle}
                 />
                 <span className="text-sm text-neutral-700">
                   Combine questions from multiple subjects
                 </span>
               </label>
+
+
+              {allowCrossSubject && (
+                <Select
+                  label="Subjects to include"
+                  labelPlacement="outside"
+                  placeholder="Select subjects"
+                  selectionMode="multiple"
+                  selectedKeys={new Set(crossSubjectIds)}
+                  onSelectionChange={(keys) => setCrossSubjectIds(Array.from(keys) as string[])}
+                  classNames={{ label: "text-sm font-medium mb-1.5" }}
+                  className="mb-4"
+                >
+                  {subjects.map((s: any) => (
+                    <SelectItem key={s.id}>{s.name ?? s.title}</SelectItem>
+                  ))}
+                </Select>
+              )}
 
 
               <RadioGroup
@@ -617,8 +646,9 @@ export default function CreateAssessment() {
                 {questionSelectionMode === "manual" && (
                   <QuestionsTable
                     subjectId={subjectId}
+                    subjectIds={allowCrossSubject ? crossSubjectIds : undefined}
                     topicIds={topicIds}
-                    filterMode={allowCrossSubject ? "manual" : questionFilterMode}
+                    filterMode={allowCrossSubject ? "by-subjects" : questionFilterMode}
                     searchQuery={searchQuery}
                     onSelectionChange={onQuestionsSelectionChange}
                   />
