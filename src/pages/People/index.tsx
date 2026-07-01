@@ -11,6 +11,7 @@ import {
     useUpdateUser,
     useUpdateUserRole,
     useUsers,
+    useUserStats,
 } from '../../hooks/useUsers';
 import { UserFilters } from './components/users/UserFilters';
 import { UserTable } from './components/users/UserTable';
@@ -33,6 +34,9 @@ export default function UserManagementPage() {
         setPagination,
         refetch,
     } = useUsers();
+
+    const { data: stats, isFetching: isStatsFetching } = useUserStats();
+
 
     const { roles: availableRoles } = useAvailableRoles();
     const updateUser = useUpdateUser();
@@ -183,17 +187,9 @@ export default function UserManagementPage() {
 
                     {/* STATS */}
                     <div className="flex sm:grid sm:grid-cols-3 gap-4 overflow-x-auto pb-4 sm:pb-0 snap-x snap-mandatory scrollbar-hide">
-                        <StatCard label="Total" value={totalCount} />
-                        <StatCard
-                            label="Active"
-                            value={users.filter(u => u.is_active).length}
-                            color="text-emerald-600"
-                        />
-                        <StatCard
-                            label="Suspended"
-                            value={users.filter(u => !u.is_active).length}
-                            color="text-rose-600"
-                        />
+                        <StatCard label="Total" value={stats?.total ?? 0} isLoading={isStatsFetching} />
+                        <StatCard label="Active" value={stats?.active ?? 0} color="text-emerald-600" isLoading={isStatsFetching} />
+                        <StatCard label="Suspended" value={stats?.suspended ?? 0} color="text-rose-600" isLoading={isStatsFetching} />
                     </div>
 
                     {/* FILTERS */}

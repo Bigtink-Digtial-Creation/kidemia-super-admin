@@ -64,6 +64,7 @@ export const useUsers = () => {
 
 
 
+
 // User Details Hook
 export const useUserDetails = (userId: string | null) => {
     const {
@@ -291,3 +292,34 @@ export function useCreateUser() {
         },
     });
 }
+
+
+export interface UserStatsResult {
+    total: number;
+    active: number;
+    suspended: number;
+}
+
+export const useUserStats = () => {
+    return useQuery<UserStatsResult>({
+        queryKey: [QueryKeys.users, 'stats-all'],
+        queryFn: async () => {
+            const allUsers = await ApiSDK.UsersService.listUsersMinimalApiV1UsersMinimalGet(
+                0,          // skip
+                10000,      // limit - bump this if you expect more users than this
+                undefined,  // search
+                undefined,  // status - fetch both active & suspended
+                undefined,  // role
+                'created_at',
+                'desc'
+            );
+
+            const total = allUsers.length;
+            const active = allUsers.filter((u) => u.is_active).length;
+            const suspended = total - active;
+
+            return { total, active, suspended };
+        },
+        staleTime: 1000 * 60 * 5, // 5 min - these are just summary stats
+    });
+};
