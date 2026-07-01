@@ -37,9 +37,6 @@ export default function UserManagementPage() {
 
     const { data: stats, isFetching: isStatsFetching } = useUserStats();
 
-    console.log('users', stats);
-
-
     const { roles: availableRoles } = useAvailableRoles();
     const updateUser = useUpdateUser();
     const updateUserRole = useUpdateUserRole();
