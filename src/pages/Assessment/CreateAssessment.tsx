@@ -57,6 +57,8 @@ export default function CreateAssessment() {
   const navigate = useNavigate();
   const qc = useQueryClient();
 
+  const [allowCrossSubject, setAllowCrossSubject] = useState(false);
+
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
   const [description, setDescription] = useState("");
@@ -91,7 +93,7 @@ export default function CreateAssessment() {
   const [detectTabSwitching, setDetectTabSwitching] = useState(false);
   const [maxTabSwitches, setMaxTabSwitches] = useState<number>(0);
   const [passingPercentage] = useState<number>(50);
-  const [maxAttempts] = useState<number>(10);
+  const [maxAttempts, setMaxAttempts] = useState<number>(10);
   const [isPublic, setIsPublic] = useState(true);
   const [requireEnrollment, setRequireEnrollment] = useState(false);
   const [status, setStatus] = useState<string>("draft");
@@ -589,6 +591,18 @@ export default function CreateAssessment() {
 
               <h2 className="text-base font-md text-kidemia-gray mb-2">Question Selection</h2>
 
+              <label className="flex items-center gap-2 mb-3 cursor-pointer">
+                <Switch
+                  size="sm"
+                  isSelected={allowCrossSubject}
+                  onValueChange={setAllowCrossSubject}
+                />
+                <span className="text-sm text-neutral-700">
+                  Combine questions from multiple subjects
+                </span>
+              </label>
+
+
               <RadioGroup
                 orientation="horizontal"
                 value={questionSelectionMode}
@@ -604,7 +618,7 @@ export default function CreateAssessment() {
                   <QuestionsTable
                     subjectId={subjectId}
                     topicIds={topicIds}
-                    filterMode={questionFilterMode}
+                    filterMode={allowCrossSubject ? "manual" : questionFilterMode}
                     searchQuery={searchQuery}
                     onSelectionChange={onQuestionsSelectionChange}
                   />
@@ -642,6 +656,17 @@ export default function CreateAssessment() {
                     placeholder="60"
                     value={String(durationMinutes)}
                     onChange={(e) => setDurationMinutes(Number(e.target.value))}
+                    classNames={{ label: "text-sm font-medium mb-1.5" }}
+                  />
+                  <Input
+                    label="Max attempts"
+                    labelPlacement="outside"
+                    type="number"
+                    size="sm"
+                    min={1}
+                    placeholder="10"
+                    value={String(maxAttempts)}
+                    onChange={(e) => setMaxAttempts(Math.max(1, Number(e.target.value) || 1))}
                     classNames={{ label: "text-sm font-medium mb-1.5" }}
                   />
                 </div>
