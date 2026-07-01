@@ -26,14 +26,16 @@ export interface QuestionRow {
 
 interface QuestionsTableProps {
     subjectId?: string;
+    subjectIds?: string[];
     topicIds?: string[];
-    filterMode: "by-subject" | "by-topic" | "manual";
+    filterMode: "by-subject" | "by-subjects" | "by-topic" | "manual";
     searchQuery?: string;
     onSelectionChange: (selectedRows: QuestionRow[]) => void;
 }
 
 export default function QuestionsTable({
     subjectId,
+    subjectIds,
     topicIds,
     filterMode,
     searchQuery = "",
@@ -43,7 +45,7 @@ export default function QuestionsTable({
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
     const { data: questionRows = [], isLoading } = useQuery<QuestionRow[]>({
-        queryKey: [QueryKeys.questionsById, subjectId, topicIds, filterMode],
+        queryKey: [QueryKeys.questionsById, subjectId, subjectIds, topicIds, filterMode],
         queryFn: async () => {
             try {
                 let rows: QuestionRow[] = [];
@@ -61,6 +63,22 @@ export default function QuestionsTable({
                         marks: q.points ?? 1,
                         topic_name: q.topic?.name,
                     }));
+                } else if (filterMode === "by-subjects" && subjectIds?.length) {
+                    const results = await Promise.all(
+                        subjectIds.map((sid) =>
+                            ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(sid)
+                        )
+                    );
+                    rows = results.flatMap((resp) =>
+                        (resp?.items ?? []).map((q) => ({
+                            id: String(q.id),
+                            question_text: q.question_text,
+                            question_content: q.question_content ?? null,
+                            difficulty: q.difficulty_level,
+                            marks: q.points ?? 1,
+                            topic_name: q.topic?.name,
+                        }))
+                    );
                 } else if (filterMode === "by-topic" && topicIds?.length) {
                     const resp =
                         await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
@@ -112,9 +130,12 @@ export default function QuestionsTable({
         enabled:
             filterMode === "by-subject"
                 ? !!subjectId
-                : filterMode === "by-topic"
-                    ? (topicIds?.length ?? 0) > 0
-                    : true,
+                : filterMode === "by-subjects"
+                    ? (subjectIds?.length ?? 0) > 0
+                    : filterMode === "by-topic"
+                        ? (topicIds?.length ?? 0) > 0
+                        : true,
+
     });
 
     // Search works against plain text — fast and doesn't require parsing JSON
