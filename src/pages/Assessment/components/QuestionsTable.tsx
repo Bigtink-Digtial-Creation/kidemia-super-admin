@@ -1,28 +1,24 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell,
-    Chip,
-    addToast,
+    Table, TableHeader, TableColumn, TableBody, TableRow, TableCell,
+    Chip, Button, addToast,
 } from "@heroui/react";
-import { useQuery } from "@tanstack/react-query";
 import { ApiSDK } from "../../../sdk";
-import { QueryKeys } from "../../../utils/queryKeys";
 import BallSpinner from "../../../components/Spinner/BallSpinner";
 import QuestionRenderer from "../../../components/editor/QuestionRenderer";
+
+const PAGE_SIZE = 50;
 
 export interface QuestionRow {
     id: string;
     question_text: string;
-    question_content?: Record<string, any> | null; // ← add
+    question_content?: Record<string, any> | null;
     difficulty: string;
     marks: number;
     topic_name?: string;
 }
+
+interface Cursor { skip: number; total: number; done: boolean; }
 
 interface QuestionsTableProps {
     subjectId?: string;
@@ -32,6 +28,15 @@ interface QuestionsTableProps {
     searchQuery?: string;
     onSelectionChange: (selectedRows: QuestionRow[]) => void;
 }
+
+const mapQuestion = (q: any, topicNameOverride?: string): QuestionRow => ({
+    id: String(q.id),
+    question_text: q.question_text,
+    question_content: q.question_content ?? null,
+    difficulty: q.difficulty_level,
+    marks: q.points ?? 1,
+    topic_name: topicNameOverride ?? q.topic?.name,
+});
 
 export default function QuestionsTable({
     subjectId,
@@ -44,108 +49,135 @@ export default function QuestionsTable({
     const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
-    const { data: questionRows = [], isLoading } = useQuery<QuestionRow[]>({
-        queryKey: [QueryKeys.questionsById, subjectId, subjectIds, topicIds, filterMode],
-        queryFn: async () => {
-            try {
-                let rows: QuestionRow[] = [];
+    const [rows, setRows] = useState<QuestionRow[]>([]);
+    const [singleCursor, setSingleCursor] = useState<Cursor>({ skip: 0, total: 0, done: false });
+    const [subjectCursors, setSubjectCursors] = useState<Record<string, Cursor>>({});
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
+    // Reset + fetch first page whenever the filter context changes
+    useEffect(() => {
+        let cancelled = false;
+
+        const loadInitial = async () => {
+            setIsLoading(true);
+            setRows([]);
+            setSelectedKeys(new Set());
+            setSingleCursor({ skip: 0, total: 0, done: false });
+            setSubjectCursors({});
+
+            try {
                 if (filterMode === "by-subject" && subjectId) {
-                    const resp =
-                        await ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(
-                            subjectId
-                        );
-                    rows = (resp?.items ?? []).map((q) => ({
-                        id: String(q.id),
-                        question_text: q.question_text,
-                        question_content: q.question_content ?? null, // ← add
-                        difficulty: q.difficulty_level,
-                        marks: q.points ?? 1,
-                        topic_name: q.topic?.name,
-                    }));
+                    const resp = await ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(
+                        subjectId, null, null, null, null, null, 0, PAGE_SIZE
+                    );
+                    if (cancelled) return;
+                    const items = (resp?.items ?? []).map((q: any) => mapQuestion(q));
+                    setRows(items);
+                    setSingleCursor({ skip: PAGE_SIZE, total: resp?.total ?? 0, done: items.length < PAGE_SIZE });
+
                 } else if (filterMode === "by-subjects" && subjectIds?.length) {
                     const results = await Promise.all(
                         subjectIds.map((sid) =>
-                            ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(sid)
+                            ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(
+                                sid, null, null, null, null, null, 0, PAGE_SIZE
+                            )
                         )
                     );
-                    rows = results.flatMap((resp) =>
-                        (resp?.items ?? []).map((q) => ({
-                            id: String(q.id),
-                            question_text: q.question_text,
-                            question_content: q.question_content ?? null,
-                            difficulty: q.difficulty_level,
-                            marks: q.points ?? 1,
-                            topic_name: q.topic?.name,
-                        }))
-                    );
-                } else if (filterMode === "by-topic" && topicIds?.length) {
-                    const resp =
-                        await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
-                            topicIds
-                        );
-                    const topics = resp?.topics ?? [];
-                    rows = topics.flatMap((topic) =>
-                        (topic.questions ?? []).map((q) => ({
-                            id: String(q.id),
-                            question_text: q.question_text,
-                            question_content: (q as any).question_content ?? null, // ← add
-                            difficulty: q.difficulty_level,
-                            marks: 1,
-                            topic_name: topic.topic_name,
-                        }))
-                    );
-                } else if (filterMode === "manual") {
-                    const resp =
-                        await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(
-                            []
-                        );
-                    const topics = resp?.topics ?? [];
-                    rows = topics.flatMap((topic) =>
-                        (topic.questions ?? []).map((q) => ({
-                            id: String(q.id),
-                            question_text: q.question_text,
-                            question_content: (q as any).question_content ?? null, // ← add
-                            difficulty: q.difficulty_level,
-                            marks: 1,
-                            topic_name: topic.topic_name,
-                        }))
-                    );
-                }
+                    if (cancelled) return;
+                    let merged: QuestionRow[] = [];
+                    const cursors: Record<string, Cursor> = {};
+                    results.forEach((resp, i) => {
+                        const sid = subjectIds[i];
+                        const items = (resp?.items ?? []).map((q: any) => mapQuestion(q));
+                        merged = merged.concat(items);
+                        cursors[sid] = { skip: PAGE_SIZE, total: resp?.total ?? 0, done: items.length < PAGE_SIZE };
+                    });
+                    setRows(merged);
+                    setSubjectCursors(cursors);
 
-                return rows;
+                } else if (filterMode === "by-topic" && topicIds?.length) {
+                    const resp = await ApiSDK.TopicQuestionsService.getQuestionsByTopicsApiV1QuestionsByTopicsPost(topicIds);
+                    if (cancelled) return;
+                    const topics = resp?.topics ?? [];
+                    setRows(topics.flatMap((t) => (t.questions ?? []).map((q: any) => mapQuestion(q, t.topic_name))));
+                }
             } catch (error: any) {
                 addToast({
                     title: "An error occurred",
-                    description:
-                        error?.body?.message ||
-                        error?.body?.detail ||
-                        error?.message ||
-                        "Network Error",
+                    description: error?.body?.detail || error?.body?.message || error?.message || "Network Error",
                     color: "danger",
                 });
-                return [];
+            } finally {
+                if (!cancelled) setIsLoading(false);
             }
-        },
-        enabled:
-            filterMode === "by-subject"
-                ? !!subjectId
-                : filterMode === "by-subjects"
-                    ? (subjectIds?.length ?? 0) > 0
-                    : filterMode === "by-topic"
-                        ? (topicIds?.length ?? 0) > 0
-                        : true,
+        };
 
-    });
+        loadInitial();
+        return () => { cancelled = true; };
+    }, [subjectId, JSON.stringify(subjectIds), JSON.stringify(topicIds), filterMode]);
 
-    // Search works against plain text — fast and doesn't require parsing JSON
+    const hasMore = useMemo(() => {
+        if (filterMode === "by-subject") return !singleCursor.done;
+        if (filterMode === "by-subjects") return Object.values(subjectCursors).some((c) => !c.done);
+        return false; // by-topic has no pagination on the current endpoint
+    }, [filterMode, singleCursor, subjectCursors]);
+
+    const loadMore = async () => {
+        setIsLoadingMore(true);
+        try {
+            if (filterMode === "by-subject" && subjectId && !singleCursor.done) {
+                const resp = await ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(
+                    subjectId, null, null, null, null, null, singleCursor.skip, PAGE_SIZE
+                );
+                const items = (resp?.items ?? []).map((q: any) => mapQuestion(q));
+                setRows((prev) => [...prev, ...items]);
+                setSingleCursor((prev) => ({
+                    skip: prev.skip + PAGE_SIZE,
+                    total: resp?.total ?? prev.total,
+                    done: items.length < PAGE_SIZE,
+                }));
+
+            } else if (filterMode === "by-subjects" && subjectIds?.length) {
+                const pending = subjectIds.filter((sid) => !subjectCursors[sid]?.done);
+                const results = await Promise.all(
+                    pending.map((sid) =>
+                        ApiSDK.TopicQuestionsService.getQuestionsApiV1QuestionsGet(
+                            sid, null, null, null, null, null, subjectCursors[sid]?.skip ?? 0, PAGE_SIZE
+                        )
+                    )
+                );
+                let newItems: QuestionRow[] = [];
+                const updated = { ...subjectCursors };
+                results.forEach((resp, i) => {
+                    const sid = pending[i];
+                    const items = (resp?.items ?? []).map((q: any) => mapQuestion(q));
+                    newItems = newItems.concat(items);
+                    updated[sid] = {
+                        skip: (subjectCursors[sid]?.skip ?? 0) + PAGE_SIZE,
+                        total: resp?.total ?? subjectCursors[sid]?.total ?? 0,
+                        done: items.length < PAGE_SIZE,
+                    };
+                });
+                setRows((prev) => [...prev, ...newItems]);
+                setSubjectCursors(updated);
+            }
+        } catch (error: any) {
+            addToast({
+                title: "An error occurred",
+                description: error?.body?.detail || error?.body?.message || error?.message || "Network Error",
+                color: "danger",
+            });
+        } finally {
+            setIsLoadingMore(false);
+        }
+    };
+
     const filteredQuestions = useMemo(() => {
-        if (!searchQuery.trim()) return questionRows;
+        if (!searchQuery.trim()) return rows;
         const query = searchQuery.toLowerCase();
-        return questionRows.filter((q) =>
-            q.question_text.toLowerCase().includes(query)
-        );
-    }, [questionRows, searchQuery]);
+        return rows.filter((q) => q.question_text.toLowerCase().includes(query));
+    }, [rows, searchQuery]);
 
     const handleSelectionChange = (keys: any) => {
         let newSelectedKeys: Set<string>;
@@ -155,10 +187,7 @@ export default function QuestionsTable({
             newSelectedKeys = new Set(Array.from(keys).map(String));
         }
         setSelectedKeys(newSelectedKeys);
-        const selectedRows = filteredQuestions.filter((row) =>
-            newSelectedKeys.has(String(row.id))
-        );
-        onSelectionChange(selectedRows);
+        onSelectionChange(filteredQuestions.filter((row) => newSelectedKeys.has(String(row.id))));
     };
 
     const getDifficultyColor = (difficulty: string) => {
@@ -185,8 +214,7 @@ export default function QuestionsTable({
                 aria-label="Questions table with selection"
                 selectionMode="multiple"
                 selectedKeys={
-                    selectedKeys.size === filteredQuestions.length &&
-                        filteredQuestions.length > 0
+                    selectedKeys.size === filteredQuestions.length && filteredQuestions.length > 0
                         ? "all"
                         : selectedKeys
                 }
@@ -213,21 +241,13 @@ export default function QuestionsTable({
                     {filteredQuestions.map((row) => {
                         const isExpanded = expandedId === row.id;
                         const hasRichContent = !!row.question_content;
-
                         return (
-                            <TableRow
-                                key={row.id}
-                                className="hover:bg-gray-50/50 transition-colors"
-                            >
+                            <TableRow key={row.id} className="hover:bg-gray-50/50 transition-colors">
                                 <TableCell>
                                     <div className="max-w-md">
                                         {hasRichContent ? (
-                                            // Rich content — use renderer, clamp to 2 lines when collapsed
                                             <div>
-                                                <div
-                                                    className={`overflow-hidden transition-all ${isExpanded ? "" : "max-h-12"
-                                                        }`}
-                                                >
+                                                <div className={`overflow-hidden transition-all ${isExpanded ? "" : "max-h-12"}`}>
                                                     <QuestionRenderer
                                                         key={row.id}
                                                         question_content={row.question_content}
@@ -235,73 +255,51 @@ export default function QuestionsTable({
                                                         className="text-sm text-gray-800"
                                                     />
                                                 </div>
-                                                {/* Only show expand if content is likely taller than 2 lines */}
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation(); // don't trigger row selection
-                                                        setExpandedId(isExpanded ? null : row.id);
-                                                    }}
+                                                    onClick={(e) => { e.stopPropagation(); setExpandedId(isExpanded ? null : row.id); }}
                                                     className="mt-0.5 text-xs text-orange-500 hover:text-orange-600 font-medium"
                                                 >
                                                     {isExpanded ? "Show less" : "Show more"}
                                                 </button>
                                             </div>
                                         ) : (
-                                            // Plain text — simple truncation, title tooltip for full text
-                                            <p
-                                                className="text-sm text-gray-800 line-clamp-2 cursor-default"
-                                                title={row.question_text}
-                                            >
+                                            <p className="text-sm text-gray-800 line-clamp-2 cursor-default" title={row.question_text}>
                                                 {row.question_text}
                                             </p>
                                         )}
                                     </div>
                                 </TableCell>
-
+                                <TableCell><span className="text-sm text-gray-500">{row.topic_name || "—"}</span></TableCell>
                                 <TableCell>
-                                    <span className="text-sm text-gray-500">
-                                        {row.topic_name || "—"}
-                                    </span>
-                                </TableCell>
-
-                                <TableCell>
-                                    <Chip
-                                        size="sm"
-                                        variant="flat"
-                                        color={getDifficultyColor(row.difficulty)}
-                                    >
+                                    <Chip size="sm" variant="flat" color={getDifficultyColor(row.difficulty)}>
                                         {row.difficulty}
                                     </Chip>
                                 </TableCell>
-
-                                <TableCell>
-                                    <span className="font-medium text-gray-700">{row.marks}</span>
-                                </TableCell>
+                                <TableCell><span className="font-medium text-gray-700">{row.marks}</span></TableCell>
                             </TableRow>
                         );
                     })}
                 </TableBody>
             </Table>
 
-            {/* Footer stats */}
+            {hasMore && (
+                <div className="flex justify-center mt-4">
+                    <Button size="sm" variant="flat" isLoading={isLoadingMore} onClick={loadMore}>
+                        Load more questions
+                    </Button>
+                </div>
+            )}
+
             <div className="mt-4 flex items-center gap-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                <div>
-                    Total:{" "}
-                    <span className="text-gray-900">{filteredQuestions.length}</span>
-                </div>
+                <div>Loaded: <span className="text-gray-900">{filteredQuestions.length}</span></div>
                 <div className="w-px h-3 bg-gray-200" />
-                <div>
-                    Selected:{" "}
-                    <span className="text-kidemia-secondary">{selectedKeys.size}</span>
-                </div>
+                <div>Selected: <span className="text-kidemia-secondary">{selectedKeys.size}</span></div>
                 <div className="w-px h-3 bg-gray-200" />
                 <div>
                     Marks:{" "}
                     <span className="text-gray-900">
-                        {filteredQuestions
-                            .filter((row) => selectedKeys.has(String(row.id)))
-                            .reduce((sum, row) => sum + row.marks, 0)}
+                        {filteredQuestions.filter((row) => selectedKeys.has(String(row.id))).reduce((sum, row) => sum + row.marks, 0)}
                     </span>
                 </div>
             </div>
