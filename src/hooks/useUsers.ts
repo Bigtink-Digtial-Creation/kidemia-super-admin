@@ -294,6 +294,9 @@ export function useCreateUser() {
 }
 
 
+
+const MAX_PAGE_SIZE = 100; // matches backend's `le=100` constraint
+
 export interface UserStatsResult {
     total: number;
     active: number;
@@ -304,22 +307,38 @@ export const useUserStats = () => {
     return useQuery<UserStatsResult>({
         queryKey: [QueryKeys.users, 'stats-all'],
         queryFn: async () => {
-            const allUsers = await ApiSDK.UsersService.listUsersMinimalApiV1UsersMinimalGet(
-                0,          // skip
-                10000,      // limit - bump this if you expect more users than this
-                undefined,  // search
-                undefined,  // status - fetch both active & suspended
-                undefined,  // role
-                'created_at',
-                'desc'
-            );
+            let skip = 0;
+            let total = 0;
+            let active = 0;
 
-            const total = allUsers.length;
-            const active = allUsers.filter((u) => u.is_active).length;
-            const suspended = total - active;
+            while (true) {
+                const page = await ApiSDK.UsersService.listUsersMinimalApiV1UsersMinimalGet(
+                    skip,
+                    MAX_PAGE_SIZE,
+                    undefined, // search
+                    undefined, // is_active - fetch both
+                    undefined, // role
+                    'created_at',
+                    'desc'
+                );
 
-            return { total, active, suspended };
+                if (page.length === 0) break;
+
+                total += page.length;
+                active += page.filter((u) => u.is_active).length;
+
+                skip += MAX_PAGE_SIZE;
+
+                // Last page was smaller than the max - nothing left to fetch
+                if (page.length < MAX_PAGE_SIZE) break;
+            }
+
+            return {
+                total,
+                active,
+                suspended: total - active,
+            };
         },
-        staleTime: 1000 * 60 * 5, // 5 min - these are just summary stats
+        staleTime: 1000 * 60 * 5,
     });
 };
