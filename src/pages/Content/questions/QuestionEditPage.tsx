@@ -94,7 +94,13 @@ export default function QuestionEditPage() {
                 title: "Question updated successfully!",
                 color: "success",
             });
-            setTimeout(() => navigate(SidebarRoutes.singleSubject.replace(':id', effectiveSubjectId!)), 1000);
+            setTimeout(() => {
+                if (window.history.state?.idx > 0) {
+                    navigate(-1);
+                } else {
+                    navigate(SidebarRoutes.singleSubject.replace(':id', effectiveSubjectId!));
+                }
+            }, 1000);
         },
         onError: () => {
             addToast({
