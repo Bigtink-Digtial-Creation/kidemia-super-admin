@@ -651,6 +651,8 @@ function SettingItem({
 
 // ─── Leaderboard Tab ──────────────────────────────────────────────────────────
 
+// ─── Leaderboard Tab ──────────────────────────────────────────────────────────
+
 function LeaderboardTab({
   leaderboard,
   isLoading,
@@ -659,6 +661,19 @@ function LeaderboardTab({
   isLoading: boolean;
   totalQuestions?: number;
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
+
+  const entries = leaderboard?.entries ?? [];
+
+  const paginatedEntries = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return entries.slice(start, end);
+  }, [entries, currentPage]);
+
+  const totalPages = Math.ceil(entries.length / rowsPerPage);
+
   if (isLoading) {
     return (
       <div className="p-6 flex justify-center py-12">
@@ -667,7 +682,7 @@ function LeaderboardTab({
     );
   }
 
-  if (!leaderboard || leaderboard.entries.length === 0) {
+  if (!leaderboard || entries.length === 0) {
     return (
       <div className="p-6 text-center py-12 text-neutral-500">
         <FaTrophy className="w-12 h-12 mx-auto mb-3 opacity-30" />
@@ -677,8 +692,8 @@ function LeaderboardTab({
     );
   }
 
-  const { entries, total_participants, current_user_rank } = leaderboard;
-  const [first, second, third] = entries;
+  const { total_participants, current_user_rank } = leaderboard;
+  const [first, second, third] = entries; // podium always shows top 3 overall, not per-page
 
   const rankMeta = (rank: number) => {
     if (rank === 1)
@@ -722,14 +737,14 @@ function LeaderboardTab({
               <div
                 key={entry.user_id}
                 className={`flex flex-col items-center p-4 rounded-xl border text-center ${isFirst
-                    ? "border-amber-300 bg-amber-50 ring-2 ring-amber-200"
-                    : "border-neutral-200 bg-neutral-50"
+                  ? "border-amber-300 bg-amber-50 ring-2 ring-amber-200"
+                  : "border-neutral-200 bg-neutral-50"
                   }`}
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold mb-2 overflow-hidden ${isFirst
-                      ? "bg-amber-200 text-amber-800"
-                      : "bg-neutral-200 text-neutral-700"
+                    ? "bg-amber-200 text-amber-800"
+                    : "bg-neutral-200 text-neutral-700"
                     }`}
                 >
                   {entry.student_avatar ? (
@@ -757,7 +772,7 @@ function LeaderboardTab({
         </div>
       )}
 
-      {/* Full table */}
+      {/* Full table — paginated */}
       <div className="rounded-lg border border-neutral-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[500px]">
@@ -781,7 +796,7 @@ function LeaderboardTab({
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-200 bg-white">
-              {entries.map((entry) => {
+              {paginatedEntries.map((entry) => {
                 const meta = rankMeta(entry.rank);
                 return (
                   <tr
@@ -825,10 +840,10 @@ function LeaderboardTab({
                         <div className="w-16 md:w-24 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full ${entry.score >= 70
-                                ? "bg-green-500"
-                                : entry.score >= 50
-                                  ? "bg-amber-400"
-                                  : "bg-red-400"
+                              ? "bg-green-500"
+                              : entry.score >= 50
+                                ? "bg-amber-400"
+                                : "bg-red-400"
                               }`}
                             style={{ width: `${Math.min(entry.score, 100)}%` }}
                           />
@@ -852,6 +867,19 @@ function LeaderboardTab({
             </tbody>
           </table>
         </div>
+        {totalPages > 1 && (
+          <div className="py-3 px-4 flex justify-center border-t border-neutral-200">
+            <Pagination
+              isCompact
+              showControls
+              showShadow
+              color="danger"
+              page={currentPage}
+              total={totalPages}
+              onChange={(page) => setCurrentPage(page)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
